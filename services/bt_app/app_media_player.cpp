@@ -21,6 +21,10 @@
 #include "app_bt_trace.h"
 #include "tgt_hardware.h"
 
+#ifdef WL_DET
+#include "app_mic_alg.h"
+#endif
+
 #ifdef MEDIA_PLAYER_SUPPORT
 
 #include "hal_uart.h"
@@ -1273,6 +1277,11 @@ int app_play_audio_onoff(bool onoff, APP_AUDIO_STATUS* status)
         return 0;
     }
     if (onoff ) {
+
+#ifdef WL_DET
+    app_mic_alg_audioloop(false,APP_SYSFREQ_78M);
+#endif
+
 #if defined(__AI_VOICE__)||defined(BISTO_ENABLED)
         app_ai_if_inform_music_or_prompt_status(true, AUD_SAMPRATE_16000);
         app_ai_if_pre_music_or_prompt_check();
@@ -1475,6 +1484,9 @@ int app_play_audio_onoff(bool onoff, APP_AUDIO_STATUS* status)
          app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO1,THIRDPARTY_START);
 #endif
 
+#ifdef WL_DET
+        app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
+#endif
     }
     isRun = onoff;
 

@@ -43,9 +43,9 @@ typedef uint64_t                            GPIO_MAP_T;
 typedef uint32_t                            GPIO_MAP_T;
 #endif
 
-#ifndef APP_TEST_MODE
-#define CHECK_PWRKEY_AT_BOOT
-#endif
+// #ifndef APP_TEST_MODE
+// #define CHECK_PWRKEY_AT_BOOT
+// #endif
 #ifdef NO_PWRKEY
 #undef CHECK_PWRKEY_AT_BOOT
 #endif

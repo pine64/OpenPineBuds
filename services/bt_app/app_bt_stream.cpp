@@ -86,6 +86,12 @@
 #include "audio_process.h"
 #include "app_a2dp.h"
 #include "audio_dump.h"
+#include "math.h"
+
+#ifdef WL_DET
+#include "app_mic_alg.h"
+#endif
+
 #if (A2DP_DECODER_VER == 2)
 #include "a2dp_decoder.h"
 #endif
@@ -6000,6 +6006,11 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
         audio_prompt_stop_playing();
 #endif
 
+
+#ifdef WL_DET
+        app_mic_alg_audioloop(false,APP_SYSFREQ_78M);
+#endif
+
 #if defined(IBRT)
         app_ibrt_ui_rssi_reset();
         app_ibrt_if_exec_sleep_hook_blocker_set(APP_IBRT_IF_SLEEP_HOOK_BLOCKER_HFP_SCO);
@@ -6679,6 +6690,11 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq)
         app_ibrt_if_exec_sleep_hook_blocker_clr(APP_IBRT_IF_SLEEP_HOOK_BLOCKER_HFP_SCO);
         app_ibrt_ui_rssi_reset();
 #endif
+
+#ifdef WL_DET
+        app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
+#endif
+
     }
 
     isRun=on;

@@ -37,6 +37,8 @@ static int16_t *app_audioloop_play_cache = NULL;
 
 static uint32_t app_factorymode_data_come(uint8_t *buf, uint32_t len)
 {
+    DUMP16("%d,",(int*)buf,30);
+
     app_audio_pcmbuff_put(buf, len);
     if (a2dp_cache_status == APP_AUDIO_CACHE_QTY){
         a2dp_cache_status = APP_AUDIO_CACHE_OK;

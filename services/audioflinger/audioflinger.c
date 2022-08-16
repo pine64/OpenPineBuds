@@ -117,7 +117,7 @@ extern void tws_playback_ticks_check_for_mix_prompt(void);
 #define AF_STACK_SIZE                   (1024*10)
 #else
 #ifndef AF_STACK_SIZE
-#define AF_STACK_SIZE                   (1024*3)
+#define AF_STACK_SIZE                   (1024*8)
 #endif
 #endif
 

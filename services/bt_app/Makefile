@@ -69,6 +69,7 @@ ccflags-y += \
 	-Iapps/anc/inc \
 	-Iapps/key \
 	-Iapps/main \
+	-Iapps/mic_alg \
 	-Iapps/common \
 	-Iapps/audioplayers \
 	-Iapps/audioplayers/a2dp_decoder \

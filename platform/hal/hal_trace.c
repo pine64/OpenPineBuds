@@ -103,6 +103,8 @@ static void hal_trace_fault_handler(void);
 
 #define TRACE_NEAR_FULL_THRESH          200
 
+#define TRACE_CRLF 
+
 #ifdef TRACE_CRLF
 #define NEW_LINE_STR                    "\r\n"
 #else
@@ -1204,7 +1206,7 @@ int hal_trace_dump(const char *fmt, unsigned int size,  unsigned int count, cons
         case sizeof(uint16_t):
                 while(i<count && len<sizeof(buf))
                 {
-                    len += snprintf(&buf[len], sizeof(buf) - len, fmt, *(uint16_t *)((uint16_t *)buffer+i));
+                    len += snprintf(&buf[len], sizeof(buf) - len, fmt, *(int16_t *)((int16_t *)buffer+i));
                     i++;
                 }
                 break;

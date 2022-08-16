@@ -142,6 +142,11 @@
 #include "ota_common.h"
 #endif
 
+
+#ifdef WL_DET
+#include "app_mic_alg.h"
+#endif
+
 #ifdef AUDIO_DEBUG_V0_1_0
 extern "C" int speech_tuning_init(void);
 #endif
@@ -599,7 +604,6 @@ extern "C" int app_voice_stop(APP_STATUS_INDICATION_T status, uint8_t device_id)
 }
 
 #endif
-/*
 static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
@@ -607,8 +611,7 @@ static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
 
     signal_send_to_main_thread(0x2);
 }
-*/
-#if 0//!defined(BLE_ONLY_ENABLED)
+#if 1//!defined(BLE_ONLY_ENABLED)
 static void app_poweron_scan(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
@@ -684,7 +687,7 @@ static void app_poweron_key_init(void)
 
 static uint8_t app_poweron_wait_case(void)
 {
-//    uint32_t stime = 0, etime = 0;
+    uint32_t stime = 0, etime = 0;
 
 #ifdef __POWERKEY_CTRL_ONOFF_ONLY__
     g_pwron_case = APP_POWERON_CASE_NORMAL;
@@ -1797,6 +1800,10 @@ int app_deinit(int deinit_case)
     int nRet = 0;
     TRACE(2,"%s case:%d",__func__, deinit_case);
 
+#ifdef WL_DET
+    app_mic_alg_audioloop(false,APP_SYSFREQ_78M);
+#endif
+
 #ifdef __PC_CMD_UART__
     app_cmd_close();
 #endif
@@ -2295,7 +2302,7 @@ int app_init(void)
 #ifdef POWER_ON_ENTER_TWS_PAIRING_ENABLED
     bool need_check_key = false;
 #else
-    bool need_check_key = true;
+    bool need_check_key = false;
 #endif
     uint8_t pwron_case = APP_POWERON_CASE_INVALID;
 #ifdef BT_USB_AUDIO_DUAL_MODE
@@ -2467,14 +2474,16 @@ extern int rpc_service_setup(void);
 	/*****************************************************************************/
 //    app_bt_connect2tester_init();
     nv_record_env_get(&nvrecord_env);
-/*
-if( bt_addr[0] < 0x22 ||bt_addr[0] > 0x33 ||bt_addr[1] != 0x22 || bt_addr[2] != 0x22 ||bt_addr[3] != 0x22||bt_addr[4] != 0x22||bt_addr[5] != 0x22)
-	{
-	TRACE(3,"BT ADDR ERRO!!!\n");
-	    nRet = -1;
-	    goto exit;
-	}
-*/
+
+
+#ifdef AUDIO_LOOPBACK
+#ifdef WL_DET
+    app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
+#endif
+
+    while(1);
+#endif
+
 #ifdef BISTO_ENABLED
     nv_record_gsound_rec_init();
 #endif

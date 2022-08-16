@@ -20,6 +20,10 @@ ifeq ($(ANC_APP),1)
 obj-y += anc/
 endif
 
+ifeq ($(WL_DET),1)
+obj-y += mic_alg/
+endif
+
 ifeq ($(VOICE_DETECTOR_EN),1)
 obj-y += voice_detector/
 endif
