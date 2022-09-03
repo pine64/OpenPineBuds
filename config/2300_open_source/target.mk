@@ -10,14 +10,13 @@ RTOS        ?= 1
 
 #KERNEL      ?= FREERTOS
 
-
 LIBC_ROM    ?= 1
 
 export USER_SECURE_BOOT	?= 0
 # enable:1
 # disable:0
 
-WATCHER_DOG ?= 0
+WATCHER_DOG ?= 1
 
 DEBUG_PORT  ?= 1
 # 0: usb
@@ -40,9 +39,7 @@ export FORCE_SCO_MAX_RETX ?= 0
 export FA_RX_GAIN_CTRL ?= 1
 
 export BT_FA_ECC ?= 0
-
 export CONTROLLER_DUMP_ENABLE ?= 0
-
 export CONTROLLER_MEM_LOG_ENABLE ?= 0
 
 export INTERSYS_DEBUG ?= 1
@@ -61,11 +58,27 @@ AUDIO_OUTPUT_MONO ?= 0
 
 AUDIO_OUTPUT_DIFF ?= 0
 
+#### ANC DEFINE START ######
+export ANC_APP		    ?= 0
+export ANC_FF_ENABLED	?= 0
+export ANC_FB_ENABLED	?= 0
+export AUDIO_ANC_FB_MC ?= 0
+export AUDIO_SECTION_SUPPT ?= 0
+export AUD_SECTION_STRUCT_VERSION ?= 2
+export AUDIO_ANC_FB_MC_HW ?=0
+export APP_ANC_KEY ?= 0
+export ANC_FB_CHECK ?= 0
+##### ANC DEFINE END ######
+
+APP_ANC_TEST ?= 0
+
+TEST_OVER_THE_AIR ?= 0
+
 HW_FIR_EQ_PROCESS ?= 0
 
-SW_IIR_EQ_PROCESS ?= 0
+SW_IIR_EQ_PROCESS ?= 1
 
-HW_DAC_IIR_EQ_PROCESS ?= 1
+HW_DAC_IIR_EQ_PROCESS ?= 0
 
 HW_IIR_EQ_PROCESS ?= 0
 
@@ -85,7 +98,7 @@ RESAMPLE_ANY_SAMPLE_RATE ?= 1
 
 OSC_26M_X4_AUD2BB ?= 1
 
-AUDIO_OUTPUT_VOLUME_DEFAULT ?= 12
+AUDIO_OUTPUT_VOLUME_DEFAULT ?= 17
 # range:1~16
 
 AUDIO_INPUT_CAPLESSMODE ?= 0
@@ -135,6 +148,8 @@ HSP_ENABLE ?= 0
 
 HFP_1_6_ENABLE ?= 1
 
+BTIF_HID_DEVICE ?= 1
+
 MSBC_PLC_ENABLE ?= 1
 
 MSBC_PLC_ENCODER ?= 1
@@ -151,8 +166,6 @@ APP_I2S_A2DP_SOURCE ?= 0
 
 VOICE_PROMPT ?= 1
 
-export THROUGH_PUT ?= 0
-
 #### Google related feature ####
 # the overall google service switch
 # currently, google service includes BISTO and GFPS
@@ -162,28 +175,25 @@ export GOOGLE_SERVICE_ENABLE ?= 0
 # BISTO is an isolated service relative to GFPS
 export BISTO_ENABLE ?= 0
 
-# macro switch for reduced_guesture
-export REDUCED_GUESTURE_ENABLE ?= 0
-
 # GSOUND_HOTWORD is a hotword library running on Bluetooth audio device
 # GSOUND_HOTWORD is a subset of BISTO
 export GSOUND_HOTWORD_ENABLE ?= 0
-
-# this is a subset choice for gsound hotword
-export GSOUND_HOTWORD_EXTERNAL ?= 0
 
 # GFPS is google fastpair service
 # GFPS is an isolated service relative to BISTO
 export GFPS_ENABLE ?= 0
 #### Google related feature ####
 
+export BTIF_HID_DEVICE ?= 1
+ifeq ($(BTIF_HID_DEVICE),1)
+KBUILD_CPPFLAGS += -DBTIF_HID_DEVICE
+endif
+
 BLE ?= 0
 
 TOTA ?= 0
 
-GATT_OVER_BR_EDR ?= 0
-
-OTA_ENABLE ?= 0
+OTA_ENABLE ?= 1
 
 TILE_DATAPATH_ENABLED ?= 0
 
@@ -208,7 +218,7 @@ A2DP_SCALABLE_ON ?= 0
 A2DP_LHDC_ON ?= 0
 ifeq ($(A2DP_LHDC_ON),1)
 A2DP_LHDC_V3 ?= 1
-A2DP_LHDC_LARC ?= 1
+A2DP_LHDC_LARC ?= 0
 export FLASH_UNIQUE_ID ?= 1
 endif
 
@@ -220,7 +230,7 @@ A2DP_SCALABLE_ON ?= 0
 
 FACTORY_MODE ?= 1
 
-ENGINEER_MODE ?= 1
+ENGINEER_MODE ?= 0
 
 ULTRA_LOW_POWER	?= 1
 
@@ -235,8 +245,6 @@ CORE_DUMP_TO_FLASH ?= 0
 ENHANCED_STACK ?= 1
 
 export SYNC_BT_CTLR_PROFILE ?= 0
-
-export A2DP_AVDTP_CP ?= 0
 
 export A2DP_DECODER_VER := 2
 
@@ -254,7 +262,6 @@ export SPEECH_CODEC ?= 1
 
 export TWS_PROMPT_SYNC ?= 0
 export MIX_AUDIO_PROMPT_WITH_A2DP_MEDIA_ENABLED ?= 0
-export IOS_MFI ?= 0
 
 export FLASH_SIZE ?= 0x400000
 export FLASH_SUSPEND ?= 1
@@ -282,13 +289,12 @@ endif
 
 USE_THIRDPARTY ?= 0
 export USE_KNOWLES ?= 0
+export USE_CYBERON ?= 0
 
 ifeq ($(CURRENT_TEST),1)
 export VCODEC_VOLT ?= 1.6V
 export VANA_VOLT ?= 1.35V
 else
-export VCODEC_VOLT ?= 1.8V
-export VANA_VOLT ?= 1.35V
 endif
 
 export LAURENT_ALGORITHM ?= 0
@@ -301,13 +307,7 @@ export BTADDR_FOR_DEBUG ?= 1
 
 export POWERKEY_I2C_SWITCH ?=0
 
-export WL_DET ?= 0
-
-export AUDIO_LOOPBACK ?= 0
-
 AUTO_TEST ?= 0
-
-BES_AUTOMATE_TEST ?= 0
 
 export DUMP_NORMAL_LOG ?= 0
 
@@ -332,23 +332,22 @@ AUDIO_BUFFER_SIZE := 100*1024
 endif
 
 export TRACE_BUF_SIZE := 16*1024
-export TRACE_BAUD_RATE := 921600
+export TRACE_BAUD_RATE := 10*115200
 
-init-y :=
-core-y := platform/ services/ apps/ utils/cqueue/ utils/list/ services/multimedia/ utils/intersyshci/
+init-y      :=
+core-y      := platform/ services/ apps/ utils/cqueue/ utils/list/ services/multimedia/ utils/intersyshci/
 
-KBUILD_CPPFLAGS += \
-    -Iplatform/cmsis/inc \
-    -Iservices/audioflinger \
-    -Iplatform/hal \
-    -Iservices/fs/ \
-    -Iservices/fs/sd \
-    -Iservices/fs/fat \
-    -Iservices/fs/fat/ChaN
+KBUILD_CPPFLAGS +=  -Iplatform/cmsis/inc \
+                    -Iservices/audioflinger \
+                    -Iplatform/hal \
+                    -Iservices/fs/ \
+                    -Iservices/fs/sd \
+                    -Iservices/fs/fat \
+                    -Iservices/fs/fat/ChaN
 
 KBUILD_CPPFLAGS += \
     -DAPP_AUDIO_BUFFER_SIZE=$(AUDIO_BUFFER_SIZE) \
-    -DCHARGER_PLUGINOUT_RESET=0 
+    -DCHARGER_PLUGINOUT_RESET=0 \
 #    -D__A2DP_AVDTP_CP__ \
     
 ifeq ($(BES_AUDIO_DEV_Main_Board_9v0),1)
@@ -372,14 +371,9 @@ ifeq ($(CURRENT_TEST),1)
 INTSRAM_RUN ?= 1
 endif
 ifeq ($(INTSRAM_RUN),1)
-LDS_FILE := best1000_intsram.lds
+LDS_FILE    := best1000_intsram.lds
 else
-LDS_FILE := best1000.lds
-endif
-
-ifeq ($(GATT_OVER_BR_EDR),1)
-export GATT_OVER_BR_EDR ?= 1
-KBUILD_CPPFLAGS += -D__GATT_OVER_BR_EDR__
+LDS_FILE    := best1000.lds
 endif
 
 ifeq ($(TOTA),1)
@@ -391,23 +385,35 @@ KBUILD_CPPFLAGS += -DTEST_OVER_THE_AIR_ENANBLED
 export TEST_OVER_THE_AIR ?= 1
 endif
 
-KBUILD_CPPFLAGS += -DSHOW_RSSI
 ifneq ($(A2DP_DECODER_VER), )
 KBUILD_CPPFLAGS += -DA2DP_DECODER_VER=$(A2DP_DECODER_VER)
 endif
 
-KBUILD_CPPFLAGS += \
-    # -DHAL_TRACE_RX_ENABLE
+ifeq ($(ANC_APP),1)
+KBUILD_CPPFLAGS += -DANC_APP
+endif
+
+ifeq ($(USE_CYBERON),1)
+
+export THIRDPARTY_LIB ?= cyberon
+KBUILD_CPPFLAGS += -D__CYBERON
+
+export KWS_IN_RAM := 1
+ifeq ($(KWS_IN_RAM),1)
+CPPFLAGS_${LDS_FILE} += -DKWS_IN_RAM
+endif #KWS_IN_RAM
+
+endif #USE_CYBERON
 
 KBUILD_CFLAGS +=
 
 LIB_LDFLAGS += -lstdc++ -lsupc++
 
+#CFLAGS_IMAGE += -u _printf_float -u _scanf_float
+
+#LDFLAGS_IMAGE += --wrap main
+
 export BTIF_HID_DEVICE ?= 1
 ifeq ($(BTIF_HID_DEVICE),1)
 KBUILD_CPPFLAGS += -DBTIF_HID_DEVICE
 endif
-
-#CFLAGS_IMAGE += -u _printf_float -u _scanf_float
-
-#LDFLAGS_IMAGE += --wrap main

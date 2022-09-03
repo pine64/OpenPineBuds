@@ -1985,10 +1985,8 @@ static void analog_aud_codec_config_speaker(void)
         ana_spk_enabled = en;
         if (en) {
             analog_aud_enable_dac_pa(CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV);
-			app_mutetimer_start();
         } else {
             analog_aud_enable_dac_pa(0);
-			app_mute_ctrl(false);
         }
     }
 }

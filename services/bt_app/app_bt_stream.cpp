@@ -3434,6 +3434,11 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
         start_by_sbc = false;
 #endif
 
+
+#ifdef WL_DET
+        app_mic_alg_audioloop(false,APP_SYSFREQ_78M);
+#endif
+
 #ifdef PLAYBACK_USE_I2S
         hal_cmu_audio_resample_enable();
 #endif
@@ -4305,6 +4310,10 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq)
 		#ifdef AUDIO_ANC_FB_ADJ_MC
         af_stream_start(ADJ_MC_STREAM_ID, AUD_STREAM_CAPTURE);
 	    #endif
+#endif
+
+#ifdef WL_DET
+        app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
 #endif
 
 #ifdef __THIRDPARTY

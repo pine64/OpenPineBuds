@@ -629,12 +629,12 @@ const APP_KEY_HANDLE  app_ibrt_ui_test_key_cfg[] =
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
 #endif
 
-   // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"app_ibrt_ui_test_key", app_bt_sleep, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-   // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOWN},"app_ibrt_ui_test_key", app_wakeup_sleep, NULL},
+   {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"app_ibrt_ui_test_key", app_bt_sleep, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOWN},"app_ibrt_ui_test_key", app_wakeup_sleep, NULL},
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"app_ibrt_ui_test_key", app_test_key, NULL},
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_test_key, NULL},
    // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_NONE},"app_ibrt_ui_test_key", app_test_key, NULL},
@@ -732,64 +732,67 @@ ibrt_pairing_info_t g_ibrt_pairing_info[] =
     
 };
 
-/******************************pwrkey_det_timer*********************************************************/
-osTimerId pwrkey_detid = NULL;
-void startpwrkey_det(int ms);
-void stoppwrkey_det(void);
-static void pwrkey_detfun(const void *);
-osTimerDef(defpwrkey_det,pwrkey_detfun);
-void pwrkey_detinit(void)
-{
-	TRACE(3,"%s",__func__);
-	pwrkey_detid = osTimerCreate(osTimer(defpwrkey_det),osTimerOnce,(void *)0);
-}
+// /******************************pwrkey_det_timer*********************************************************/
+// osTimerId pwrkey_detid = NULL;
+// void startpwrkey_det(int ms);
+// void stoppwrkey_det(void);
+// static void pwrkey_detfun(const void *);
+// osTimerDef(defpwrkey_det,pwrkey_detfun);
+// void pwrkey_detinit(void)
+// {
+// 	TRACE(3,"%s",__func__);
+// 	pwrkey_detid = osTimerCreate(osTimer(defpwrkey_det),osTimerOnce,(void *)0);
+// }
 
-extern void app_ibrt_customif_test1_cmd_send(uint8_t *p_buff, uint16_t length);
-static void pwrkey_detfun(const void *)
-{
+// extern void app_ibrt_customif_test1_cmd_send(uint8_t *p_buff, uint16_t length);
+// static void pwrkey_detfun(const void *)
+// {
 	
-	static ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-	static bool last_pwrkey = false;
-	bool curr_pwrkey_sta;
-	curr_pwrkey_sta = hal_pwrkey_pressed();
-	APP_KEY_STATUS inear_status[] = {APP_KEY_CODE_FN3,HAL_KEY_EVENT_CLICK};
-	APP_KEY_STATUS outear_status[] = {APP_KEY_CODE_FN4,HAL_KEY_EVENT_CLICK};
-	//TRACE(3,"pwrkey = %d",curr_pwrkey_sta);
-	if(curr_pwrkey_sta != last_pwrkey){
-		if(curr_pwrkey_sta == true){
-			//app_wakeup_sleep(NULL,NULL);
-		    	TRACE(3,"%s PLAY",__func__);
-			if (IBRT_SLAVE == p_ibrt_ctrl->current_role){
-				app_ibrt_customif_test1_cmd_send((uint8_t *)inear_status, sizeof(APP_KEY_STATUS));
-			}else{
-				a2dp_handleKey(AVRCP_KEY_PLAY);
-			}
-		}else{
-			//app_bt_sleep(NULL,NULL);
-			TRACE(3,"%s PAUSE",__func__);
-			//a2dp_handleKey(AVRCP_KEY_PAUSE);
-			if (IBRT_SLAVE == p_ibrt_ctrl->current_role){
-				app_ibrt_customif_test1_cmd_send((uint8_t *)outear_status, sizeof(APP_KEY_STATUS));
-			}else{
-				a2dp_handleKey(AVRCP_KEY_PAUSE);
-			}
-		}
-		last_pwrkey = curr_pwrkey_sta;
-	}
-	startpwrkey_det(200);
-}
+// 	static ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
+// 	static bool last_pwrkey = false;
+// 	bool curr_pwrkey_sta;
+// 	curr_pwrkey_sta = hal_pwrkey_pressed();
+// 	APP_KEY_STATUS inear_status[] = {APP_KEY_CODE_FN3,HAL_KEY_EVENT_CLICK};
+// 	APP_KEY_STATUS outear_status[] = {APP_KEY_CODE_FN4,HAL_KEY_EVENT_CLICK};
+// 	//TRACE(3,"pwrkey = %d",curr_pwrkey_sta);
+// 	if(curr_pwrkey_sta != last_pwrkey){
+// 		if(curr_pwrkey_sta == true){
+// 			//app_wakeup_sleep(NULL,NULL);
+// 		    	TRACE(3,"%s PLAY",__func__);
+//                 	app_bt_accessmode_set(BTIF_BT_DEFAULT_ACCESS_MODE_PAIR);
+// 					app_voice_report(APP_STATUS_INDICATION_BOTHSCAN,0);
 
-void startpwrkey_det(int ms)
-{
-	//TRACE(3,"\n\n !!!!!!!!!!start %s\n\n",__func__);
-	osTimerStart(pwrkey_detid,ms);
-}
+// 			if (IBRT_SLAVE == p_ibrt_ctrl->current_role){
+// 				app_ibrt_customif_test1_cmd_send((uint8_t *)inear_status, sizeof(APP_KEY_STATUS));
+// 			}else{
+// 				a2dp_handleKey(AVRCP_KEY_PLAY);
+// 			}
+// 		}else{
+// 			//app_bt_sleep(NULL,NULL);
+// 			TRACE(3,"%s PAUSE",__func__);
+// 			//a2dp_handleKey(AVRCP_KEY_PAUSE);
+// 			if (IBRT_SLAVE == p_ibrt_ctrl->current_role){
+// 				app_ibrt_customif_test1_cmd_send((uint8_t *)outear_status, sizeof(APP_KEY_STATUS));
+// 			}else{
+// 				a2dp_handleKey(AVRCP_KEY_PAUSE);
+// 			}
+// 		}
+// 		last_pwrkey = curr_pwrkey_sta;
+// 	}
+// 	startpwrkey_det(200);
+// }
 
-void stoppwrkey_det(void)
-{
-	//TRACE("\n\n!!!!!!!!!!  stop %s\n\n",__func__);
-	osTimerStop(pwrkey_detid);
-}
+// void startpwrkey_det(int ms)
+// {
+// 	//TRACE(3,"\n\n !!!!!!!!!!start %s\n\n",__func__);
+// 	osTimerStart(pwrkey_detid,ms);
+// }
+
+// void stoppwrkey_det(void)
+// {
+// 	//TRACE("\n\n!!!!!!!!!!  stop %s\n\n",__func__);
+// 	osTimerStop(pwrkey_detid);
+// }
 
 
 

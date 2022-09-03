@@ -695,15 +695,7 @@ void app_tws_set_side_from_addr(uint8_t *addr)
 
 void app_tws_set_side_from_gpio(void)
 {
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_hw_tws_channel_cfg, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)cfg_hw_tws_channel_cfg.pin, HAL_GPIO_DIR_IN, 1);
-    if (tgt_tws_get_channel_is_right()) {
-        app_tws_set_side(EAR_SIDE_RIGHT);
-        TRACE(0, "Right earbud");
-    } else {
-        app_tws_set_side(EAR_SIDE_LEFT);
-        TRACE(0, "Left earbud");
-    }
+
 }
 
 #endif

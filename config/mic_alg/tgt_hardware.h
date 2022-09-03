@@ -140,8 +140,6 @@ extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_tws_channel_cfg;
 //extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_INT;
 	
 extern bool tgt_tws_get_channel_is_right(void);
-extern void app_mute_ctrl(bool Status);
-extern void app_mutetimer_start();
 
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SDA;
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SCL;

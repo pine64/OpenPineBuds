@@ -604,6 +604,8 @@ extern "C" int app_voice_stop(APP_STATUS_INDICATION_T status, uint8_t device_id)
 }
 
 #endif
+#if 1//!defined(BLE_ONLY_ENABLED)
+
 static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
@@ -611,7 +613,6 @@ static void app_poweron_normal(APP_KEY_STATUS *status, void *param)
 
     signal_send_to_main_thread(0x2);
 }
-#if 1//!defined(BLE_ONLY_ENABLED)
 static void app_poweron_scan(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
@@ -658,6 +659,7 @@ const  APP_KEY_HANDLE  pwron_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},           "power on: shutdown"     , app_bt_key_shutdown, NULL},
 };
 #elif defined(__ENGINEER_MODE_SUPPORT__)
+s
 const  APP_KEY_HANDLE  pwron_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITUP},           "power on: normal"     , app_poweron_normal, NULL},
 #if !defined(BLE_ONLY_ENABLED)
@@ -687,11 +689,12 @@ static void app_poweron_key_init(void)
 
 static uint8_t app_poweron_wait_case(void)
 {
-    uint32_t stime = 0, etime = 0;
 
 #ifdef __POWERKEY_CTRL_ONOFF_ONLY__
     g_pwron_case = APP_POWERON_CASE_NORMAL;
 #else
+    uint32_t stime = 0, etime = 0;
+
     TRACE(1,"poweron_wait_case enter:%d", g_pwron_case);
     if (g_pwron_case == APP_POWERON_CASE_INVALID){
         stime = hal_sys_timer_get();
@@ -1671,7 +1674,6 @@ static void once_delay_event_Timer_fun(const void *)
 				app_ibrt_sync_volume_info();
 			break;
 		case 9:
-			touch_reset();
 			break;
 		default:
 			break;
@@ -1697,39 +1699,7 @@ void stoponce_delay_event_Timer_(void)
 #include "tgt_hardware.h"
 extern struct BT_DEVICE_T  app_bt_device;
 extern void hal_gpio_pin_set(enum HAL_GPIO_PIN_T pin);
-osTimerId app_mute_timer = NULL;
-static void app_mute_timehandler(void const *n);
-osTimerDef (APP_MUTE_TIMER, app_mute_timehandler);
-/*
-static void app_mute_ctrl_init(void)
-{
- 	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&MuteOutPwl, 1);
-       hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)MuteOutPwl.pin, HAL_GPIO_DIR_OUT, 0);
 
-       app_mute_timer = osTimerCreate (osTimer(APP_MUTE_TIMER), osTimerOnce, NULL);
-}
-*/
-
-void app_mute_ctrl(bool Status)
-{
-	if(Status == true)
-	{
-			hal_gpio_pin_set((enum HAL_GPIO_PIN_T)MuteOutPwl.pin);
-	}
-	else
-	{
-			hal_gpio_pin_clr((enum HAL_GPIO_PIN_T)MuteOutPwl.pin);
-	}
-}
-
-void app_mutetimer_start()
-{
-	osTimerStart(app_mute_timer, 190);
-}
-static void app_mute_timehandler(void const *n)
-{
-	app_mute_ctrl(true);
-}
 
 bool Curr_Is_Master(void)
 {
@@ -2111,38 +2081,6 @@ void touch_evt_handler(enum HAL_GPIO_PIN_T pin)
 }
 
 
-void touch_evt_handler_sda(enum HAL_GPIO_PIN_T pin)
-{
-	TRACE(3,"SDA_TOUCH!!!");
-}
-
-void tou_io_init(void)
-{
-	TRACE(3,"%s!!!",__func__);
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_I2C_SCL, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_I2C_SCL.pin, HAL_GPIO_DIR_IN, 1);	
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_I2C_SDA, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_I2C_SDA.pin, HAL_GPIO_DIR_IN, 1);
-	
-	struct HAL_GPIO_IRQ_CFG_T gpiocfg_sda;
-	gpiocfg_sda.irq_enable = true;
-	gpiocfg_sda.irq_debounce = true;
-	gpiocfg_sda.irq_type = HAL_GPIO_IRQ_TYPE_EDGE_SENSITIVE;
-	gpiocfg_sda.irq_polarity=HAL_GPIO_IRQ_POLARITY_LOW_FALLING ;
-	gpiocfg_sda.irq_handler = touch_evt_handler;
-	hal_gpio_setup_irq((enum HAL_GPIO_PIN_T)TOUCH_I2C_SCL.pin, &gpiocfg_sda);
-
-	struct HAL_GPIO_IRQ_CFG_T gpiocfg;
-	gpiocfg.irq_enable = true;
-	gpiocfg.irq_debounce = true;
-	gpiocfg.irq_type = HAL_GPIO_IRQ_TYPE_EDGE_SENSITIVE;
-	gpiocfg.irq_polarity=HAL_GPIO_IRQ_POLARITY_LOW_FALLING ;
-	gpiocfg.irq_handler = touch_evt_handler_sda;
-	hal_gpio_setup_irq((enum HAL_GPIO_PIN_T)TOUCH_I2C_SDA.pin, &gpiocfg);
-	
-
-}
-
 /******************************LED_status_timer*********************************************************/
 osTimerId LED_statusid = NULL;
 void startLED_status(int ms);
@@ -2183,50 +2121,6 @@ void stopLED_status(void)
 /********************************LED_status_timer*******************************************************/
 
 
-/******************************TOUCH_INT_TEST_timer*********************************************************/
-void touch_reset(void);
-osTimerId TOUCH_INT_TESTid = NULL;
-void startTOUCH_INT_TEST(int ms);
-void stopTOUCH_INT_TEST(void);
-static void TOUCH_INT_TESTfun(const void *);
-osTimerDef(defTOUCH_INT_TEST,TOUCH_INT_TESTfun);
-void TOUCH_INT_TESTinit(void)
-{
-	TOUCH_INT_TESTid = osTimerCreate(osTimer(defTOUCH_INT_TEST),osTimerOnce,(void *)0);
-	
-	//startTOUCH_INT_TEST(100);
-	//touch_reset();
-}
-static void TOUCH_INT_TESTfun(const void *)
-{
-	TRACE(3,"\n!!!!!!enter %s\n",__func__);
-	//app_i2c_demo_init();
-	//hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_INT, 1);
-	//hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_INT.pin, HAL_GPIO_DIR_IN, 0);	
-	tou_io_init();
-}
-
-void startTOUCH_INT_TEST(int ms)
-{
-	TRACE(3,"\n !!!!!!!!!!start %s\n",__func__);
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_I2C_SCL, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_I2C_SCL.pin, HAL_GPIO_DIR_OUT, 0);	
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_I2C_SDA, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_I2C_SDA.pin, HAL_GPIO_DIR_OUT, 0);
-	//hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_INT, 1);
-	//hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_INT.pin, HAL_GPIO_DIR_OUT, 0);	
-	
-	osTimerStart(TOUCH_INT_TESTid,ms);
-}
-void stopTOUCH_INT_TEST(void)
-{
-	osTimerStop(TOUCH_INT_TESTid);
-}
-
-void touch_reset(void)
-{
-	startTOUCH_INT_TEST(50);
-}
 
 /********************************TOUCH_INT_TEST_timer*******************************************************/
 
@@ -2238,7 +2132,6 @@ void user_io_timer_init(void)
 	Auto_Shutdowm_Timerinit();
 	delay_report_toneinit();
 	once_delay_event_Timer_init();
-	TOUCH_INT_TESTinit();
 	//app_i2c_demo_init();
 	//tou_io_init();
 }
@@ -2466,17 +2359,14 @@ extern int rpc_service_setup(void);
     nv_record_env_init();
     nvrec_dev_data_open();
     factory_section_open();
-	/******************************************************************************/
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_I2C_SCL, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_I2C_SCL.pin, HAL_GPIO_DIR_OUT, 1);	
-	hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&TOUCH_I2C_SDA, 1);
-	hal_gpio_pin_set_dir((enum HAL_GPIO_PIN_T)TOUCH_I2C_SDA.pin, HAL_GPIO_DIR_OUT, 1);
+
 	/*****************************************************************************/
 //    app_bt_connect2tester_init();
     nv_record_env_get(&nvrecord_env);
 
 
 #ifdef AUDIO_LOOPBACK
+
 #ifdef WL_DET
     app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
 #endif
@@ -2558,7 +2448,7 @@ extern int rpc_service_setup(void);
 
     if (pwron_case == APP_POWERON_CASE_REBOOT){
 		app_status_indication_init();
-	user_io_timer_init();
+	//user_io_timer_init();
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
@@ -2589,10 +2479,10 @@ extern int rpc_service_setup(void);
                 TRACE(1,"ibrt_ui_log:power on %d fetch out", nvrecord_env->ibrt_mode.mode);
                 app_ibrt_ui_event_entry(IBRT_FETCH_OUT_EVENT);
             }
-			startLED_status(1000);
+			//startLED_status(1000);
 				once_event_case = 9;
 				startonce_delay_event_Timer_(1000);
-				startpwrkey_det(200);
+				//startpwrkey_det(200);
         }
 #elif defined(IS_MULTI_AI_ENABLED)
         //when ama and bisto switch, earphone need reconnect with peer, master need reconnect with phone
@@ -2654,7 +2544,7 @@ extern int rpc_service_setup(void);
     }
 #endif
     else{
-	user_io_timer_init();
+	//user_io_timer_init();
 	app_status_indication_init();
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
@@ -2757,7 +2647,7 @@ extern int rpc_service_setup(void);
 				//			app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
 					//break;
                         }
-						startpwrkey_det(200);
+						//startpwrkey_det(200);
                     }
 #elif defined(IS_MULTI_AI_ENABLED)
                     //when ama and bisto switch, earphone need reconnect with peer, master need reconnect with phone
