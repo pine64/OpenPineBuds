@@ -2127,8 +2127,8 @@ void user_io_timer_init(void)
 {
 	//app_mute_ctrl_init();
 	LED_statusinit();
-	pwrkey_detinit();
-	Auto_Shutdowm_Timerinit();
+	//pwrkey_detinit();
+	//Auto_Shutdowm_Timerinit();
 	delay_report_toneinit();
 	once_delay_event_Timer_init();
 	//app_i2c_demo_init();
@@ -2468,10 +2468,12 @@ extern int rpc_service_setup(void);
             {
                 TRACE(0,"ibrt_ui_log:power on unknow mode");
                 app_ibrt_enter_limited_mode();
-			if(app_tws_is_right_side()){
+			    //if(app_tws_is_right_side())
+			    if(1)
+                {
 				TRACE(0,"app_start_tws_serching_direactly");
 				app_start_tws_serching_direactly();
-			}
+			    }
             }
             else
             {
