@@ -33,8 +33,25 @@ extern "C" {
 #define EQ_HW_FIR_LIST_NUM                  3
 
 //pwl
+
+#ifdef __BT_DEBUG_TPORTS__
+#define CFG_HW_PLW_NUM (0)
+#else
+#ifdef __APP_USE_LED_INDICATE_IBRT_STATUS__
+#define CFG_HW_PLW_NUM (0)
+#else
 #define CFG_HW_PLW_NUM (2)
+#endif
+#endif
+	
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_pinmux_pwl[CFG_HW_PLW_NUM];
+#ifdef __APP_USE_LED_INDICATE_IBRT_STATUS__	
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_ibrt_indication_pinmux_pwl[3];
+#endif
+
+#ifdef __KNOWLES
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_pinmux_uart[2];
+#endif
 
 //adckey define
 #define CFG_HW_ADCKEY_NUMBER 0
@@ -46,15 +63,22 @@ extern const uint16_t CFG_HW_ADCKEY_MAP_TABLE[CFG_HW_ADCKEY_NUMBER];
 
 #define BTA_AV_CO_SBC_MAX_BITPOOL  52
 
+#ifdef __BT_DEBUG_TPORTS__
+#ifdef TPORTS_KEY_COEXIST
+#define CFG_HW_GPIOKEY_NUM (2)
+#else
+#define CFG_HW_GPIOKEY_NUM (0)
+#endif
+#else
 //gpiokey define
 #ifdef IS_MULTI_AI_ENABLED
 #define CFG_HW_GPIOKEY_NUM (3)
 #elif BES_AUDIO_DEV_Main_Board_9v0
 #define CFG_HW_GPIOKEY_NUM (6)
 #else
-#define CFG_HW_GPIOKEY_NUM (3)
+#define CFG_HW_GPIOKEY_NUM (1)
 #endif
-
+#endif
 
 extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM];
 
@@ -73,14 +97,12 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
 #endif
 
 #define ANC_FF_MIC_CH_L                     AUD_CHANNEL_MAP_CH0
-#define ANC_FF_MIC_CH_R                     0
+#define ANC_FF_MIC_CH_R                     AUD_CHANNEL_MAP_CH1
 #define ANC_FB_MIC_CH_L                     AUD_CHANNEL_MAP_CH2
-#define ANC_FB_MIC_CH_R                     0
-
-#define ANC_VMIC_CFG                        (AUD_VMIC_MAP_VMIC3)
+#define ANC_FB_MIC_CH_R                     AUD_CHANNEL_MAP_CH3
 
 // audio codec
-#define CFG_HW_AUD_INPUT_PATH_NUM           4
+#define CFG_HW_AUD_INPUT_PATH_NUM           3
 extern const struct AUD_IO_PATH_CFG_T cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_PATH_NUM];
 
 #define CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV  (AUD_CHANNEL_MAP_CH0)
@@ -113,6 +135,12 @@ extern const struct HAL_IOMUX_PIN_FUNCTION_MAP app_battery_ext_charger_enable_cf
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP app_battery_ext_charger_detecter_cfg;
 extern const struct HAL_IOMUX_PIN_FUNCTION_MAP app_battery_ext_charger_indicator_cfg;
 
+//extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_INT;
+	
+extern bool tgt_tws_get_channel_is_right(void);
+
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SDA;
+extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SCL;
 #ifdef __cplusplus
 }
 #endif

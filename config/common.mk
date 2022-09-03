@@ -2155,6 +2155,11 @@ ifeq ($(SPEECH_RX_EQ),1)
 export SPEECH_RX_24BIT = 1
 endif
 
+export WL_UI ?= 0
+ifeq ($(WL_UI),1)
+KBUILD_CPPFLAGS += -DWL_UI
+endif
+
 
 export SPEECH_PROCESS_FRAME_MS 	?= 16
 ifeq ($(SPEECH_CODEC_CAPTURE_CHANNEL_NUM),1)

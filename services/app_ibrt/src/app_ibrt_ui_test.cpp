@@ -612,82 +612,18 @@ void app_ibrt_ui_test_voice_assistant_key(APP_KEY_STATUS *status, void *param)
 
 const APP_KEY_HANDLE  app_ibrt_ui_test_key_cfg[] =
 {
-#if defined(__AI_VOICE__) || defined(BISTO_ENABLED)
-    {{APP_KEY_CODE_GOOGLE, APP_KEY_EVENT_FIRST_DOWN}, "google assistant key", app_ibrt_ui_test_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_GOOGLE, APP_KEY_EVENT_UP}, "google assistant key", app_ibrt_ui_test_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_GOOGLE, APP_KEY_EVENT_LONGPRESS}, "google assistant key", app_ibrt_ui_test_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_GOOGLE, APP_KEY_EVENT_CLICK}, "google assistant key", app_ibrt_ui_test_voice_assistant_key, NULL},
-    {{APP_KEY_CODE_GOOGLE, APP_KEY_EVENT_DOUBLECLICK}, "google assistant key", app_ibrt_ui_test_voice_assistant_key, NULL},
-#endif
-#ifdef TILE_DATAPATH
-    {{APP_KEY_CODE_TILE,APP_KEY_EVENT_DOWN},"tile function key",app_ibrt_ui_test_key, NULL},
-    {{APP_KEY_CODE_TILE,APP_KEY_EVENT_UP},"tile function key",app_ibrt_ui_test_key, NULL},
-#endif
+
 #if defined( __BT_ANC_KEY__)&&defined(ANC_APP)
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
 #else
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
 #endif
 
-   {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"app_ibrt_ui_test_key", app_bt_sleep, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"app_ibrt_ui_test_key", app_bt_sleep, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOWN},"app_ibrt_ui_test_key", app_wakeup_sleep, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"app_ibrt_ui_test_key", app_test_key, NULL},
-    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_test_key, NULL},
-   // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_NONE},"app_ibrt_ui_test_key", app_test_key, NULL},
-    
-
-#if defined(CHIP_BEST1400)
-#ifdef IBRT_SEARCH_UI
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key",app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"app_ibrt_ui_test_key",app_ibrt_search_ui_gpio_key_handle, NULL},
-#endif
-#elif defined(CHIP_BEST1402)
-#ifdef IBRT_SEARCH_UI
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key",app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGPRESS},"app_ibrt_ui_test_key",app_ibrt_search_ui_gpio_key_handle, NULL},
-#endif
-#else
-#ifdef IBRT_SEARCH_UI
-#ifdef TPORTS_KEY_COEXIST
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN1,HAL_KEY_EVENT_LONGPRESS},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-#else
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-    //{{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-   // {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key",app_ibrt_search_ui_gpio_key_handle, NULL},
-   // {{APP_KEY_CODE_FN2,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_search_ui_gpio_key_handle, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_LONGLONGPRESS},"app_ibrt_ui_test_key",app_ibrt_ui_test_key, NULL},
-
-#endif
-#else
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key_io_event, NULL},
-    {{APP_KEY_CODE_FN1,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key_io_event, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key_io_event, NULL},
-    {{APP_KEY_CODE_FN2,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key_io_event, NULL},
-#endif
-#endif
-    {{APP_KEY_CODE_FN3,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key_io_event, NULL},
-    {{APP_KEY_CODE_FN3,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key_io_event, NULL},
-    /*
-    #ifdef BES_AUDIO_DEV_Main_Board_9v0
-        {{APP_KEY_CODE_FN1,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_key1, NULL},
-        {{APP_KEY_CODE_FN2,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_key2, NULL},
-        {{APP_KEY_CODE_FN3,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_key3, NULL},
-        {{APP_KEY_CODE_FN4,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_key4, NULL},
-        {{APP_KEY_CODE_FN5,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_key5, NULL},
-        {{APP_KEY_CODE_FN6,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_key6, NULL},
-    #endif
-    */
 };
 
 /*

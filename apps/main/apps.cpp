@@ -659,7 +659,6 @@ const  APP_KEY_HANDLE  pwron_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},           "power on: shutdown"     , app_bt_key_shutdown, NULL},
 };
 #elif defined(__ENGINEER_MODE_SUPPORT__)
-s
 const  APP_KEY_HANDLE  pwron_key_handle_cfg[] = {
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_INITUP},           "power on: normal"     , app_poweron_normal, NULL},
 #if !defined(BLE_ONLY_ENABLED)
