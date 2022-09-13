@@ -376,8 +376,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
 #else
 #if CHARGER_PLUGINOUT_RESET
                 TRACE(0,"CHARGING-->RESET");
-                osTimerStop(app_battery_timer);
-                app_shutdown();
+                app_reset();
 #else
                 app_battery_measure.status = APP_BATTERY_STATUS_NORMAL;
 #endif

@@ -383,6 +383,8 @@ void app_bt_sleep(APP_KEY_STATUS *status, void *param)
 	a2dp_handleKey(AVRCP_KEY_PAUSE);
 }
 
+
+
 void app_wakeup_sleep(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
@@ -613,15 +615,19 @@ void app_ibrt_ui_test_voice_assistant_key(APP_KEY_STATUS *status, void *param)
 const APP_KEY_HANDLE  app_ibrt_ui_test_key_cfg[] =
 {
 
-#if defined( __BT_ANC_KEY__)&&defined(ANC_APP)
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
+#if defined(ANC_APP)
+
+#endif
+
+#if defined(__BT_ANC_KEY__)&&defined(ANC_APP)
+    //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt anc key",app_anc_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"app_ibrt_ui_test_key", app_anc_key, NULL},
 #else
     //{{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
 #endif
 
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP},"app_ibrt_ui_test_key", app_bt_sleep, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
-    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"app_ibrt_ui_test_key", app_bt_sleep, NULL},
+    {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"app_ibrt_ui_test_key", app_wakeup_sleep, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
     {{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"app_ibrt_ui_test_key", app_ibrt_ui_test_key, NULL},
 };
