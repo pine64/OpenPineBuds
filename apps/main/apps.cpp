@@ -2334,7 +2334,6 @@ extern int rpc_service_setup(void);
                 goto exit;
 #endif
                 goto exit;
-
                 break;
             case APP_BATTERY_OPEN_MODE_CHARGING_PWRON:
                 TRACE(0,"CHARGING PWRON!");
@@ -2381,14 +2380,6 @@ extern int rpc_service_setup(void);
 
 #ifdef AUDIO_LOOPBACK
 
-    while (1)
-    {
-        /* code */
-        uint8_t gpio_val = hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin);
-		osDelay(500);
-        TRACE(1,"gpio val is:%d \n\r",gpio_val);
-    }
-    
 #ifdef WL_DET
     app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
 #endif
