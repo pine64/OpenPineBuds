@@ -2141,7 +2141,7 @@ void user_io_timer_init(void)
 	//app_mute_ctrl_init();
 	LED_statusinit();
 	//pwrkey_detinit();
-	//Auto_Shutdowm_Timerinit();
+	Auto_Shutdowm_Timerinit();
 	delay_report_toneinit();
 	once_delay_event_Timer_init();
 	//app_i2c_demo_init();
@@ -2470,7 +2470,7 @@ extern int rpc_service_setup(void);
 
     if (pwron_case == APP_POWERON_CASE_REBOOT){
 		app_status_indication_init();
-	//user_io_timer_init();
+	    user_io_timer_init();
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
@@ -2568,8 +2568,8 @@ extern int rpc_service_setup(void);
     }
 #endif
     else{
-	//user_io_timer_init();
-	app_status_indication_init();
+        user_io_timer_init();
+        app_status_indication_init();
         app_status_indication_set(APP_STATUS_INDICATION_POWERON);
 #ifdef MEDIA_PLAYER_SUPPORT
         app_voice_report(APP_STATUS_INDICATION_POWERON, 0);
