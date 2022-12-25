@@ -988,13 +988,14 @@ const struct_anc_cfg * anc_coef_list_44p1k[ANC_COEF_LIST_NUM] = {
 const IIR_CFG_T audio_eq_sw_iir_cfg = {
     .gain0 = 0,
     .gain1 = 0,
-    .num = 5,
+    .num = 6,
     .param = {
-        {IIR_TYPE_PEAK, .0,   200,   2},
-        {IIR_TYPE_PEAK, .0,   600,  2},
-        {IIR_TYPE_PEAK, .0,   2000.0, 2},
-        {IIR_TYPE_PEAK, .0,  6000.0, 2},
-        {IIR_TYPE_PEAK, .0,  12000.0, 2}            
+        {IIR_TYPE_PEAK, -3.3,   333,   2},
+        {IIR_TYPE_PEAK, -0.7,   577,  2},
+        {IIR_TYPE_PEAK, 0.6,   1000, 2},
+        {IIR_TYPE_PEAK, 3,  2000, 2},
+        {IIR_TYPE_PEAK, 4.5,  4000, 2},
+        {IIR_TYPE_PEAK, -4.4,  8000, 2}
     }
 };
 
@@ -1037,59 +1038,21 @@ const FIR_CFG_T * const audio_eq_hw_fir_cfg_list[EQ_HW_FIR_LIST_NUM]={
 };
 
 //hardware dac iir eq
-const IIR_CFG_T audio_eq_hw_dac_iir_cfg = {
-    .gain0 = 0,
-    .gain1 = 0,
-    .num = 8,
-    .param = {
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-        {IIR_TYPE_PEAK, 0,   1000.0,   0.7},
-    }
-};
+const IIR_CFG_T audio_eq_hw_dac_iir_cfg = audio_eq_sw_iir_cfg;
 
 const IIR_CFG_T * const POSSIBLY_UNUSED audio_eq_hw_dac_iir_cfg_list[EQ_HW_DAC_IIR_LIST_NUM]={
     &audio_eq_hw_dac_iir_cfg,
 };
 
 //hardware dac iir eq
-const IIR_CFG_T audio_eq_hw_adc_iir_adc_cfg = {
-    .gain0 = 0,
-    .gain1 = 0,
-    .num = 1,
-    .param = {
-        {IIR_TYPE_PEAK, 0.0,   1000.0,   0.7},
-    }
-};
+const IIR_CFG_T audio_eq_hw_adc_iir_adc_cfg = audio_eq_sw_iir_cfg;
 
 const IIR_CFG_T * const POSSIBLY_UNUSED audio_eq_hw_adc_iir_cfg_list[EQ_HW_ADC_IIR_LIST_NUM]={
     &audio_eq_hw_adc_iir_adc_cfg,
 };
 
-
-
 //hardware iir eq
-const IIR_CFG_T audio_eq_hw_iir_cfg = {
-    .gain0 = 0,
-    .gain1 = 0,
-    .num = 8,
-    .param = {
-        {IIR_TYPE_PEAK, -10.1,   100.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   400.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   700.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   1000.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   3000.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   5000.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   7000.0,   7},
-        {IIR_TYPE_PEAK, -10.1,   9000.0,   7},
-            
-    }
-};
+const IIR_CFG_T audio_eq_hw_iir_cfg = audio_eq_sw_iir_cfg;
 
 const IIR_CFG_T * const POSSIBLY_UNUSED audio_eq_hw_iir_cfg_list[EQ_HW_IIR_LIST_NUM]={
     &audio_eq_hw_iir_cfg,
