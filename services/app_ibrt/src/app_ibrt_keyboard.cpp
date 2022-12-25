@@ -134,8 +134,10 @@ void app_ibrt_search_ui_handle_key(APP_KEY_STATUS *status, void *param)
 			case APP_KEY_EVENT_SIXTHCLICK:
 				if(!app_device_bt_is_connected()&&(!app_tws_ibrt_tws_link_connected())){
 					qxw_dut_mode_enable = true;
-					app_factorymode_bt_signalingtest(NULL,NULL);
-				}
+#ifdef __FACTORY_MODE_SUPORT__
+                    app_factorymode_bt_signalingtest(NULL,NULL);
+#endif
+                }
 				break;
 			case APP_KEY_EVENT_EIGHTHCLICK:
 				if(!app_device_bt_is_connected()){
