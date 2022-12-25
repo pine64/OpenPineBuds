@@ -1369,17 +1369,30 @@ void app_latency_switch_key_handler(void)
 	} 
 }
 
+void app_bt_function_key(APP_KEY_STATUS *status, void *param)
+{
+    TRACE(2,"%s event %d", __func__, status->event);
+     bt_key_send(status);
+}
+
 void app_key_init(void)
 {
-#if defined(IBRT)
+#if defined(IBRT_TESTMODE)
     app_ibrt_ui_test_key_init();
 #else
     uint8_t i = 0;
     TRACE(1,"%s",__func__);
 
+    const APP_KEY_HANDLE  key_cfg[] = {
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_bt_function_key, NULL},
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"bt function key",app_bt_function_key, NULL},
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"bt function key",app_bt_function_key, NULL},
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"bt anc key",app_anc_key, NULL},
+    };
+
     app_key_handle_clear();
-    for (i=0; i<(sizeof(app_key_handle_cfg)/sizeof(APP_KEY_HANDLE)); i++){
-        app_key_handle_registration(&app_key_handle_cfg[i]);
+    for (i=0; i<(sizeof(key_cfg)/sizeof(APP_KEY_HANDLE)); i++){
+        app_key_handle_registration(&key_cfg[i]);
     }
 #endif
 }
