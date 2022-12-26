@@ -3,8 +3,10 @@ services:
   builder:
     stdin_open: true
     tty: true
+    privileged: true
     build:
       context: .
     command: /bin/bash
     volumes:
       - ./:/src:Z
+      - /dev/:/dev/
