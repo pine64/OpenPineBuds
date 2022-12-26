@@ -2608,9 +2608,9 @@ else
 CPU_CFLAGS += -mfloat-abi=soft
 endif
 
-ifneq ($(ALLOW_WARNING),1)
-KBUILD_CPPFLAGS += -Werror
-endif
+# ifneq ($(ALLOW_WARNING),1)
+# KBUILD_CPPFLAGS += -Werror
+# endif
 
 ifeq ($(PIE),1)
 ifneq ($(TOOLCHAIN),armclang)

@@ -1,1 +1,2 @@
-make T=mic_back -j DEBUG=1 clean
+#!/bin/bash
+make T=open_source -j DEBUG=1 clean
