@@ -1,0 +1,28 @@
+说明文档：
+1 核心函数在这个函数里面：
+void vol_state_process(uint32_t db_val)
+{
+    TRACE(2,"db value is:%d volume_is:%d ",db_val,app_bt_stream_local_volume_get());
+
+    if((db_val < 52) && (app_bt_stream_local_volume_get() > 10))
+    {
+        app_bt_volumedown();
+    }
+    else if((db_val > 60) && (app_bt_stream_local_volume_get() < 13))
+    {
+        app_bt_volumeup();
+    }
+    else if((db_val > 72) && (app_bt_stream_local_volume_get() < 15))
+    {
+        app_bt_volumeup();
+    }
+
+}
+该函数的含义是，当前db小于52db的时候i，且音量目前大于10,就降低音量，只要这个满足，会一直降低的
+当周围噪声大于60db，且目前音量小于13，就增加音量。
+当目前噪声音量大于72db，且目前音量小于15,就增加音量。
+
+假如想改变场景，只需要调整这个函数的里面的这几个数据即可。假如不知道怎么调整，把场景的日志发给我即可。
+
+假如需要按键开关控制，只需要在这个函数vol_state_process((uint32_t)db_sum);被调用的地方使用一个全局变量控制是否调用这个函数即可。
+

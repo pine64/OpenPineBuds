@@ -380,7 +380,7 @@ void app_bt_sleep(APP_KEY_STATUS *status, void *param)
 {
     TRACE(3,"%s %d,%d",__func__, status->code, status->event);
 	//app_ibrt_ui_event_entry(IBRT_CLOSE_BOX_EVENT);
-	a2dp_handleKey(AVRCP_KEY_PAUSE);
+    bt_key_handle_func_click();
 }
 
 

@@ -33,6 +33,7 @@
 #include "anc_assist.h"
 #include "app_ibrt_keyboard.h"
 #include "app_ibrt_ui.h"
+#include "apps.h"
 
 #include "app_status_ind.h"
 #ifdef __SIMPLE_INTERNAL_PLAYER_SUPPORT__
@@ -1423,11 +1424,15 @@ static int app_anc_handle_process(APP_MESSAGE_BODY *msg_body)
             {
                 anc_work_status = ANC_STATUS_ON;
                 //recommand to play "ANC ON" prompt here...
+			    app_voice_report(APP_STATUS_INDICATION_ALEXA_START,0);//close latlatency mode
+
             }
             if (evt == ANC_EVENT_FADE_OUT)
             {
                 anc_work_status = ANC_STATUS_INIT_ON;
                 //recommand to play "ANC OFF" prompt here...
+			    app_voice_report(APP_STATUS_INDICATION_ALEXA_STOP,0);//close latlatency mode
+
             }
             break;
         case ANC_EVENT_CHANGE_SAMPLERATE:
