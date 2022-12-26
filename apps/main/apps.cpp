@@ -2297,7 +2297,7 @@ extern int rpc_service_setup(void);
     usb_os_init();
 #endif
     nRet = app_battery_open();
-    TRACE(1,"BATTERY %d",nRet);
+    TRACE(1,"Yin BATTERY %d",nRet);
     if (pwron_case != APP_POWERON_CASE_TEST){
 #ifdef USER_REBOOT_PLAY_MUSIC_AUTO
         TRACE(0,"hal_sw_bootmode_clear HAL_SW_BOOTMODE_LOCAL_PLAYER!!!!!!");
@@ -2320,6 +2320,8 @@ extern int rpc_service_setup(void);
 #elif defined(BTUSB_AUDIO_MODE)
                 goto exit;
 #endif
+                goto exit;
+
                 break;
             case APP_BATTERY_OPEN_MODE_CHARGING_PWRON:
                 TRACE(0,"CHARGING PWRON!");
@@ -2366,6 +2368,14 @@ extern int rpc_service_setup(void);
 
 #ifdef AUDIO_LOOPBACK
 
+    while (1)
+    {
+        /* code */
+        uint8_t gpio_val = hal_gpio_pin_get_val((enum HAL_GPIO_PIN_T)app_battery_ext_charger_detecter_cfg.pin);
+		osDelay(500);
+        TRACE(1,"gpio val is:%d \n\r",gpio_val);
+    }
+    
 #ifdef WL_DET
     app_mic_alg_audioloop(true,APP_SYSFREQ_78M);
 #endif
