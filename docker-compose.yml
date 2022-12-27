@@ -8,5 +8,5 @@ services:
       context: .
     command: /bin/bash
     volumes:
-      - ./:/src:Z
+      - ./:/usr/src:Z
       - /dev/:/dev/
