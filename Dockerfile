@@ -9,12 +9,13 @@ FROM debian:buster
 LABEL maintainer="Ben V. Brown <ralim@ralimtek.com>"
 
 
-RUN apt update && apt-get install -y make git bash curl tar bzip2
+RUN apt update && apt-get install -y make git bash curl tar bzip2 bc
 
 WORKDIR /src
 # Git trust
 RUN git config --global --add safe.directory /src
-# Grab arm compiler
+# Grab arm compiler; we have to use this ancient one or else we get boot failures. Probably subtle link issues.
+
 RUN curl https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 | tar -xj
 ENV PATH="${PATH}:/src/gcc-arm-none-eabi-9-2019-q4-major/bin"
 WORKDIR /usr/src
