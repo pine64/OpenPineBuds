@@ -663,6 +663,7 @@ static APP_TWS_SIDE_T app_tws_side = EAR_SIDE_UNKNOWN;
 void app_tws_set_side(APP_TWS_SIDE_T side)
 {
     ASSERT((EAR_SIDE_LEFT == side) || (EAR_SIDE_RIGHT == side), "Error: setting invalid side");
+    TRACE(1,"Set TWS side to %d",side);
     app_tws_side = side;
 }
 
@@ -681,22 +682,25 @@ bool app_tws_is_unknown_side(void)
     return (app_tws_side == EAR_SIDE_UNKNOWN);
 }
 
-void app_tws_set_side_from_addr(uint8_t *addr)
-{
-    ASSERT(addr, "Error: address invalid");
-    if (addr[0] & 0x1) {
-        app_tws_set_side(EAR_SIDE_RIGHT);
-        TRACE(0, "Right earbud");
-    } else {
-        app_tws_set_side(EAR_SIDE_LEFT);
-        TRACE(0, "Left earbud");
-    }
-}
+// void app_tws_set_side_from_addr(uint8_t *addr)
+// {
+//     ASSERT(addr, "Error: address invalid");
+//     if (addr[0] & 0x1) {
+//         app_tws_set_side(EAR_SIDE_RIGHT);
+//         TRACE(0, "Right earbud");
+//     } else {
+//         app_tws_set_side(EAR_SIDE_LEFT);
+//         TRACE(0, "Left earbud");
+//     }
+// }
 
 void app_tws_set_side_from_gpio(void)
 {
-
+    if (tgt_tws_get_channel_is_right()){
+        app_tws_set_side(EAR_SIDE_RIGHT);
+    }else {
+        app_tws_set_side(EAR_SIDE_LEFT);
+    }
 }
-
 #endif
 
