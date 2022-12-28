@@ -10,7 +10,7 @@ RTOS        ?= 1
 
 #KERNEL      ?= FREERTOS
 
-
+NO_PWRKEY    = 0 # We have powerkey input
 LIBC_ROM    ?= 1
 
 export USER_SECURE_BOOT	?= 0
@@ -258,7 +258,7 @@ export A2DP_AVDTP_CP ?= 0
 
 export A2DP_DECODER_VER := 2
 
-export IBRT ?= 1
+export IBRT = 1
 
 export IBRT_SEARCH_UI ?= 1
 
