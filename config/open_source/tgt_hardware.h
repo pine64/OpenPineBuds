@@ -76,7 +76,7 @@ extern const uint16_t CFG_HW_ADCKEY_MAP_TABLE[CFG_HW_ADCKEY_NUMBER];
 #elif BES_AUDIO_DEV_Main_Board_9v0
 #define CFG_HW_GPIOKEY_NUM (6)
 #else
-#define CFG_HW_GPIOKEY_NUM (1)
+#define CFG_HW_GPIOKEY_NUM (0)
 #endif
 #endif
 
