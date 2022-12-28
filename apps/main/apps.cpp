@@ -1396,12 +1396,17 @@ void app_key_init(void)
     }
 #endif
 }
+void app_key_reboot(APP_KEY_STATUS *status, void *param)
+{
+    TRACE(1,"%s ",__func__);
+    hal_cmu_sys_reboot();
+}
 
 void app_key_init_on_charging(void)
 {
     uint8_t i = 0;
     const APP_KEY_HANDLE  key_cfg[] = {
-        // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_REPEAT},"ota function key",app_ota_key_handler, NULL},
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"long press reboot",app_key_reboot, NULL},
         // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function key",app_dfu_key_handler, NULL},
 #ifdef __USB_COMM__
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"usb cdc key",app_usb_cdc_comm_key_handler, NULL},
