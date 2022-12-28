@@ -350,7 +350,7 @@ AUDIO_BUFFER_SIZE := 100*1024
 endif
 
 export TRACE_BUF_SIZE := 16*1024
-export TRACE_BAUD_RATE := 921600
+export TRACE_BAUD_RATE := 2000000
 
 init-y :=
 core-y := platform/ services/ apps/ utils/cqueue/ utils/list/ services/multimedia/ utils/intersyshci/
