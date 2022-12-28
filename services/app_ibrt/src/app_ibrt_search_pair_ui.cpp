@@ -15,6 +15,7 @@
  ****************************************************************************/
 #include <string.h>
 #include "app_tws_ibrt_trace.h"
+#include "app_tws_if.h"
 #include "bluetooth.h"
 #include "btapp.h"
 #include "app_ibrt_ui.h"
@@ -210,22 +211,27 @@ void app_bt_manager_ibrt_role_process(const btif_event_t *Event)
                     {
                         memcpy(p_ibrt_ctrl->local_addr.address,p_remote_dev_addr->address,6);
                     }
-                        
-#if 0
-                    p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_LRMERGE;
-#else
-                    if(IBRT_MASTER == p_ibrt_ctrl->nv_role)
-                    {
-                        TRACE(0,"#right");
+                    if (app_tws_is_left_side()){
+                        p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_LCHNL;
+                    }else {
                         p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_RCHNL;
                     }
-                    else if(IBRT_SLAVE == p_ibrt_ctrl->nv_role)
-                    {
-                        TRACE(0,"#left");
-                        p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_LCHNL;
 
-                    }
-#endif
+// #if 0
+//                     p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_LRMERGE;
+// #else
+//                     if(IBRT_MASTER == p_ibrt_ctrl->nv_role)
+//                     {
+//                         TRACE(0,"#right");
+//                         p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_RCHNL;
+//                     }
+//                     else if(IBRT_SLAVE == p_ibrt_ctrl->nv_role)
+//                     {
+//                         TRACE(0,"#left");
+//                         p_ibrt_ctrl->audio_chnl_sel = A2DP_AUDIO_CHANNEL_SELECT_LCHNL;
+
+//                     }
+// #endif
                 }
 
             }
