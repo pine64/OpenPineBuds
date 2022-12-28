@@ -2233,7 +2233,7 @@ int app_init(void)
     TRACE(2,"__factory_start: %p length: 0x%x", __factory_start, FACTORY_SECTION_SIZE);
 
     TRACE(0,"app_init\n");
-
+    app_tws_set_side_from_gpio();
 #ifdef __RPC_ENABLE__
 extern int rpc_service_setup(void);
     rpc_service_setup();
