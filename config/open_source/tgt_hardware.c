@@ -104,6 +104,23 @@ uint8_t bt_addr[6] = {
 #endif
 };
 
+const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_tws_channel_cfg  = {
+    HAL_IOMUX_PIN_P1_4, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENABLE
+};
+
+bool tgt_tws_get_channel_is_right(void)
+{
+#ifdef __FIXED_TWS_EAR_SIDE__
+    return TWS_EAR_SIDE_ROLE; 
+#else
+    hal_iomux_init((struct HAL_IOMUX_PIN_FUNCTION_MAP *)&cfg_hw_tws_channel_cfg,1);
+
+  // Pinebuds pull down to 0 for right ear, but float to 1 for left ear
+  return (hal_gpio_pin_get_val(
+              (enum HAL_GPIO_PIN_T)cfg_hw_tws_channel_cfg.pin) == 0);
+#endif
+}
+
 //audio config
 //freq bands range {[0k:2.5K], [2.5k:5K], [5k:7.5K], [7.5K:10K], [10K:12.5K], [12.5K:15K], [15K:17.5K], [17.5K:20K]}
 //gain range -12~+12
@@ -181,13 +198,13 @@ const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_INT ={
 };
 */
 
-const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SDA ={
-	HAL_IOMUX_PIN_P2_1, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENABLE
-};
+// const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SDA ={
+// 	HAL_IOMUX_PIN_P2_1, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENABLE
+// };
 
-const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SCL ={
-	HAL_IOMUX_PIN_P2_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENABLE
-};
+// const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SCL ={
+// 	HAL_IOMUX_PIN_P2_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO, HAL_IOMUX_PIN_PULLUP_ENABLE
+// };
 
 
 
@@ -318,10 +335,6 @@ Filter4_A=[    134217728,   -264794659,    130668486];
             32767,
         },
 */ 
-
-
-
-
 
 		.dac_gain_offset=0,
 		.adc_gain_offset=(0)*4,
