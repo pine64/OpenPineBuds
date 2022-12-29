@@ -988,14 +988,21 @@ const struct_anc_cfg * anc_coef_list_44p1k[ANC_COEF_LIST_NUM] = {
 const IIR_CFG_T audio_eq_sw_iir_cfg = {
     .gain0 = 0,
     .gain1 = 0,
-    .num = 6,
+    .num = 13,
     .param = {
-        {IIR_TYPE_PEAK, -3.3,   333,   2},
-        {IIR_TYPE_PEAK, -0.7,   577,  2},
-        {IIR_TYPE_PEAK, 0.6,   1000, 2},
-        {IIR_TYPE_PEAK, 3,  2000, 2},
-        {IIR_TYPE_PEAK, 4.5,  4000, 2},
-        {IIR_TYPE_PEAK, -4.4,  8000, 2}
+        {IIR_TYPE_PEAK, -2.2,   10,   2},
+        {IIR_TYPE_PEAK, 5.1,   21,   2},
+        {IIR_TYPE_PEAK, 0.9,   42,   2},
+        {IIR_TYPE_PEAK, -6,   83,   2},
+        {IIR_TYPE_PEAK, -6,   166,   2},
+        {IIR_TYPE_PEAK, -4.6,   333,   2},
+        {IIR_TYPE_PEAK, -2,   577,  2},
+        {IIR_TYPE_PEAK, -0.7,   1000, 2},
+        {IIR_TYPE_PEAK, 1.7,  2000, 2},
+        {IIR_TYPE_PEAK, 3.2,  4000, 2},
+        {IIR_TYPE_PEAK, -5.6,  8000, 2},
+        {IIR_TYPE_PEAK, 10.1,   16000,   2},
+        {IIR_TYPE_PEAK, 5.9,   20000,   2},
     }
 };
 
