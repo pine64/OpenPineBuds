@@ -401,6 +401,7 @@ int app_battery_handle_process_charging(uint32_t status,  union APP_BATTERY_MSG_
         {
             TRACE(1,"FULL_CHARGING:%d", app_battery_measure.currvolt);
             app_status_indication_set(APP_STATUS_INDICATION_FULLCHARGE);
+            app_shutdown();
 #ifdef MEDIA_PLAYER_SUPPORT
 #if defined(BT_USB_AUDIO_DUAL_MODE) || defined(IBRT)
 #else
