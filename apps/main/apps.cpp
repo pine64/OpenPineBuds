@@ -1944,7 +1944,7 @@ int app_deinit(int deinit_case)
 {
     int nRet = 0;
     TRACE(2,"%s case:%d",__func__, deinit_case);
-
+    app_tws_if_trigger_role_switch();
 #ifdef WL_DET
     app_mic_alg_audioloop(false,APP_SYSFREQ_78M);
 #endif
