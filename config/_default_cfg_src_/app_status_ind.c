@@ -97,13 +97,13 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
     struct APP_PWL_CFG_T cfg0;
     struct APP_PWL_CFG_T cfg1;
 
-    TRACE(2,"%s %d",__func__, status);
-
     if (app_status == status)
         return 0;
 
     if (app_status_ind_filter == status)
         return 0;
+
+    TRACE(2,"%s %d",__func__, status);
 
     app_status = status;
     memset(&cfg0, 0, sizeof(struct APP_PWL_CFG_T));
@@ -160,6 +160,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             app_pwl_start(APP_PWL_ID_1);
             break;
         case APP_STATUS_INDICATION_CONNECTING:
+            // LED's alternating Red/Blue
             cfg0.part[0].level = 1;
             cfg0.part[0].time = (300);
             cfg0.part[1].level = 0;
@@ -212,25 +213,32 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status)
             app_pwl_start(APP_PWL_ID_1);
             break;
         case APP_STATUS_INDICATION_FULLCHARGE:
-            cfg0.part[0].level = 1;
+            cfg0.part[0].level = 0;
             cfg0.part[0].time = (5000);
             cfg0.parttotal = 1;
             cfg0.startlevel = 1;
-            cfg0.periodic = true;
+            cfg0.periodic = false;
             app_pwl_setup(APP_PWL_ID_0, &cfg0);
             app_pwl_start(APP_PWL_ID_0);
+            app_pwl_setup(APP_PWL_ID_1, &cfg0);
+            app_pwl_start(APP_PWL_ID_1);
             break;
         case APP_STATUS_INDICATION_POWEROFF:
-            cfg1.part[0].level = 1;
-            cfg1.part[0].time = (3000);
-            cfg1.part[1].level = 0;
-            cfg1.part[1].time = (200);
-            cfg1.parttotal = 2;
+            cfg1.part[0].level = 0;
+            cfg1.part[0].time = (100);
+            cfg1.parttotal = 1;
             cfg1.startlevel = 1;
             cfg1.periodic = false;
+            cfg0.part[0].level = 0;
+            cfg0.part[0].time = (100);
+            cfg0.parttotal = 1;
+            cfg0.startlevel = 1;
+            cfg0.periodic = false;
 
             app_pwl_setup(APP_PWL_ID_1, &cfg1);
             app_pwl_start(APP_PWL_ID_1);
+            app_pwl_setup(APP_PWL_ID_0, &cfg0);
+            app_pwl_start(APP_PWL_ID_0);
             break;
         case APP_STATUS_INDICATION_CHARGENEED:
             cfg1.part[0].level = 1;
