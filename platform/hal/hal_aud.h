@@ -223,12 +223,12 @@ enum AUD_IO_PATH_T {
     AUD_IO_PATH_NULL = 0,
 
     // Input path
-    AUD_INPUT_PATH_MAINMIC,
-    AUD_INPUT_PATH_VADMIC,
-    AUD_INPUT_PATH_ASRMIC,
+    AUD_INPUT_PATH_MAINMIC, // Main User Mic
+    AUD_INPUT_PATH_VADMIC, // Voice Activity Detection
+    AUD_INPUT_PATH_ASRMIC, // Ambient Sound Reduction? (? Is this the external mic?)
     AUD_INPUT_PATH_LINEIN,
     AUD_INPUT_PATH_NTMIC,
-    AUD_INPUT_PATH_ANC_WNR,
+    AUD_INPUT_PATH_ANC_WNR, // Wind Noise Reduction
     AUD_INPUT_PATH_USBAUDIO,
 #ifdef __ANC_ASSIST__
     AUD_INPUT_PATH_AF_ANC,
