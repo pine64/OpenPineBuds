@@ -229,10 +229,8 @@ uint32_t app_bt_restore_spp_app_ctx(uint8_t *buf, uint32_t buf_len, uint32_t app
 uint32_t app_bt_save_map_app_ctx(btif_remote_device_t *rem_dev, uint8_t *buf, uint32_t buf_len);
 uint32_t app_bt_restore_map_app_ctx(uint8_t *buf, uint32_t buf_len);
 #endif
-#ifdef BTIF_HID_DEVICE
-uint32_t app_bt_save_hid_app_ctx(uint8_t *buf);
 uint32_t app_bt_restore_hid_app_ctx(uint8_t *buf);
-#endif
+uint32_t app_bt_save_hid_app_ctx(uint8_t *buf);
 #endif /* ENHANCED_STACK */
 #endif
 

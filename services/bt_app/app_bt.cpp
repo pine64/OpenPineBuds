@@ -4840,6 +4840,12 @@ uint32_t app_bt_restore_hid_app_ctx(uint8_t *buf)
 
     return offset;
 }
+#else 
+uint32_t app_bt_restore_hid_app_ctx(uint8_t *buf)
+{return 0;}
+uint32_t app_bt_save_hid_app_ctx(uint8_t *buf)
+{return 0;}
+
 #endif
 #endif /* ENHANCED_STACK */
 
