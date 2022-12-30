@@ -1378,13 +1378,13 @@ void app_latency_switch_key_handler(void)
  * Right Ear:
  * Single tap : Play/Pause
  * Double tap : Next track
- * Hold       : Fast-Forward
+ * Hold       : ANC on/off
  * Triple tap : Volume Up
  * 
  * Left Ear:
  * Single tap : Play/Pause
  * Double tap : Previous track
- * Hold       : Rewind
+ * Hold       : ANC on/off
  * Triple tap : Volume Down
  
  * Single pod active:
@@ -1522,37 +1522,11 @@ void app_key_long_press_down(APP_KEY_STATUS *status, void *param)
         send_prev_track();
     }else {
         //Bud's are working as a pair
-        if (app_tws_is_left_side()){
-            TRACE(0,"Handling %s as left bud",__func__);
-            //Lefty
-          
-        }else {
-            TRACE(0,"Handling %s as right bud",__func__);
-            //Righty
-           
-        }
+       app_anc_key(status,param);
     }
 }
 
 
-void app_key_long_press_up(APP_KEY_STATUS *status, void *param)
-{
-   TRACE(2,"%s event %d", __func__, status->event);
-
-    if (!app_tws_ibrt_tws_link_connected()){
-        //No other bud paired
-        TRACE(0,"Handling %s in single bud mode",__func__);
-    }else {
-        //Bud's are working as a pair
-        if (app_tws_is_left_side()){
-            TRACE(0,"Handling %s as left bud",__func__);
-            //Lefty
-        }else {
-            TRACE(0,"Handling %s as right bud",__func__);
-            //Righty
-        }
-    }
-}
 
 void app_key_reboot(APP_KEY_STATUS *status, void *param)
 {
@@ -1573,7 +1547,6 @@ void app_key_init(void)
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"",app_key_triple_tap, NULL},
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"",app_key_quad_tap, NULL},
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"",app_key_long_press_down, NULL},
-        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"",app_key_long_press_up, NULL},
     };
 
     app_key_handle_clear();

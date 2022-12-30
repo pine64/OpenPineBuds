@@ -20,7 +20,7 @@ In order to program the buds from inside of the docker container; privileged mod
 # Now that the firmware has finished building; if there are no errors you can load it to your buds
 # You may need to take the buds out of the case, wait three seconds, place them back. This wakes them up and the programmer needs to catch this reboot.
 
-# You can try the helper script by running 
+# You can try the helper script by running
 ./download.sh
 
 # Or do it manually by :
@@ -48,14 +48,14 @@ bestool write-image out/open_source/open_source.bin --port /dev/ttyACM1
 
 - Single tap : Play/Pause
 - Double tap : Next track
-- Hold : Fast-Forward (Currently non functional, WIP)
+- Hold : Toggle ANC(Currently non functional, WIP)
 - Triple tap : Volume Up
 
 #### Left Ear:
 
 - Single tap : Play/Pause
 - Double tap : Previous track
-- Hold : Rewind (Currently non functional, WIP)
+- Hold : Toggle ANC(Currently non functional, WIP)
 - Triple tap : Volume Down
 
 ### Single pod active
