@@ -1402,7 +1402,7 @@ void app_latency_switch_key_handler(void)
 */
 
 void send_vol_up(void){
-    uint8_t action[] = {IBRT_ACTION_AVRCP_VOLUP};
+    uint8_t action[] = {IBRT_ACTION_LOCAL_VOLUP};
     app_ibrt_if_start_user_action(action, sizeof(action));
 }
 void send_play_pause(void){
@@ -1415,7 +1415,7 @@ void send_play_pause(void){
     }
 }
 void send_vol_down(void){
-    uint8_t action[] = {IBRT_ACTION_AVRCP_VOLDN};
+    uint8_t action[] = {IBRT_ACTION_LOCAL_VOLDN};
     app_ibrt_if_start_user_action(action, sizeof(action));
 }
 
