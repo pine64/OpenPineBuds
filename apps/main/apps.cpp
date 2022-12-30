@@ -1470,27 +1470,8 @@ void app_key_double_tap(APP_KEY_STATUS *status, void *param){
     }
 
 }
-void app_key_hold_tap(APP_KEY_STATUS *status, void *param){
-    TRACE(2,"%s event %d", __func__, status->event);
 
-    if (!app_tws_ibrt_tws_link_connected()){
-        //No other bud paired
-        TRACE(0,"Handling %s in single bud mode",__func__);
-        send_play_pause();
-    }else {
-        //Bud's are working as a pair
-        if (app_tws_is_left_side()){
-            TRACE(0,"Handling %s as left bud",__func__);
-            //Lefty
-            send_play_pause();
-        }else {
-            TRACE(0,"Handling %s as right bud",__func__);
-            //Righty
-            send_play_pause();
-        }
-    }
 
-}
 void app_key_triple_tap(APP_KEY_STATUS *status, void *param){
     TRACE(2,"%s event %d", __func__, status->event);
 
@@ -1531,11 +1512,54 @@ void app_key_quad_tap(APP_KEY_STATUS *status, void *param){
     }
 }
 
+void app_key_long_press_down(APP_KEY_STATUS *status, void *param)
+{
+   TRACE(2,"%s event %d", __func__, status->event);
+
+    if (!app_tws_ibrt_tws_link_connected()){
+        //No other bud paired
+        TRACE(0,"Handling %s in single bud mode",__func__);
+        send_prev_track();
+    }else {
+        //Bud's are working as a pair
+        if (app_tws_is_left_side()){
+            TRACE(0,"Handling %s as left bud",__func__);
+            //Lefty
+          
+        }else {
+            TRACE(0,"Handling %s as right bud",__func__);
+            //Righty
+           
+        }
+    }
+}
+
+
+void app_key_long_press_up(APP_KEY_STATUS *status, void *param)
+{
+   TRACE(2,"%s event %d", __func__, status->event);
+
+    if (!app_tws_ibrt_tws_link_connected()){
+        //No other bud paired
+        TRACE(0,"Handling %s in single bud mode",__func__);
+    }else {
+        //Bud's are working as a pair
+        if (app_tws_is_left_side()){
+            TRACE(0,"Handling %s as left bud",__func__);
+            //Lefty
+        }else {
+            TRACE(0,"Handling %s as right bud",__func__);
+            //Righty
+        }
+    }
+}
+
 void app_key_reboot(APP_KEY_STATUS *status, void *param)
 {
     TRACE(1,"%s ",__func__);
     hal_cmu_sys_reboot();
 }
+
 
 void app_key_init(void)
 {
@@ -1548,10 +1572,8 @@ void app_key_init(void)
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_DOUBLECLICK},"",app_key_double_tap, NULL},
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"",app_key_triple_tap, NULL},
         {{APP_KEY_CODE_PWR,APP_KEY_EVENT_ULTRACLICK},"",app_key_quad_tap, NULL},
-        // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CONTINUED_DOWN},"",app_key_hold_tap, NULL},
-        // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"",app_key_hold_tap, NULL},
-        // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_TRIPLECLICK},"bt anc key",app_anc_key, NULL},
-        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGLONGPRESS},"long click reboot",app_key_reboot, NULL},
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_LONGPRESS},"",app_key_long_press_down, NULL},
+        {{APP_KEY_CODE_PWR,APP_KEY_EVENT_UP_AFTER_LONGPRESS},"",app_key_long_press_up, NULL},
     };
 
     app_key_handle_clear();
