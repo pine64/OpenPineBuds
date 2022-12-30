@@ -786,21 +786,6 @@ void app_bt_key_enter_nosignal_mode(APP_KEY_STATUS *status, void *param)
     }
 }
 
-void app_bt_singleclick(APP_KEY_STATUS *status, void *param)
-{
-    TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-}
-
-void app_bt_doubleclick(APP_KEY_STATUS *status, void *param)
-{
-    TRACE(3,"%s %d,%d",__func__, status->code, status->event);
-}
-
-void app_power_off(APP_KEY_STATUS *status, void *param)
-{
-    TRACE(0,"app_power_off\n");
-}
-
 extern "C" void OS_NotifyEvm(void);
 
 #define PRESS_KEY_TO_ENTER_OTA_INTERVEL    (15000)          // press key 15s enter to ota
