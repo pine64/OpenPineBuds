@@ -4844,7 +4844,12 @@ uint32_t app_bt_restore_hid_app_ctx(uint8_t *buf)
 uint32_t app_bt_restore_hid_app_ctx(uint8_t *buf)
 {return  4;}
 uint32_t app_bt_save_hid_app_ctx(uint8_t *buf)
-{return  4;}
+{
+    buf[0]=0;
+    buf[1]=0;
+    buf[2]=0;
+    buf[3]=0;
+    return  4;}
 
 #endif
 #endif /* ENHANCED_STACK */
