@@ -9,7 +9,7 @@ FROM debian:buster
 LABEL maintainer="Ben V. Brown <ralim@ralimtek.com>"
 
 
-RUN apt update && apt-get install -y make git bash curl tar bzip2 bc
+RUN apt update && apt-get install -y make git bash curl tar bzip2 bc xxd ffmpeg
 
 WORKDIR /src
 # Git trust
