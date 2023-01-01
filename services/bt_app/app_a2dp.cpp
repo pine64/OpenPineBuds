@@ -516,7 +516,7 @@ bool a2dp_id_from_bdaddr(bt_bdaddr_t *bd_addr, uint8_t *id)
 #ifdef __BT_ONE_BRING_TWO__
 #define APP_BT_PAUSE_MEDIA_PLAYER_DELAY  300
 osTimerId   app_bt_pause_media_player_delay_timer_id = NULL;
-extern uint8_t avrcp_palyback_status[BT_DEVICE_NUM];
+extern uint8_t avrcp_playback_status[BT_DEVICE_NUM];
 static uint8_t deviceIdPendingForMediaPlayerPause = 0;
 static uint8_t deviceIdInMediaPlayHoldState = BT_DEVICE_NUM;
 static void app_bt_pause_media_player_delay_timer_handler(void const *n);
@@ -562,9 +562,9 @@ bool app_bt_is_music_player_working(uint8_t deviceId)
 {
     TRACE(3,"device %d a2dp streaming %d playback state %d",
         deviceId, app_bt_is_a2dp_streaming(deviceId),
-        avrcp_palyback_status[deviceId]);
+        avrcp_playback_status[deviceId]);
     return (app_bt_is_a2dp_streaming(deviceId) &&
-        avrcp_palyback_status[deviceId]);
+        avrcp_playback_status[deviceId]);
 }
 
 void app_bt_suspend_a2dp_streaming(uint8_t deviceId)
@@ -643,7 +643,7 @@ FRAM_TEXT_LOC uint8_t bt_sbc_player_get_sample_bit(void) {
 
 #ifdef __BT_ONE_BRING_TWO__
 
-uint8_t avrcp_palyback_status[BT_DEVICE_NUM] = {0};
+uint8_t avrcp_playback_status[BT_DEVICE_NUM] = {0};
 static struct BT_DEVICE_ID_DIFF avrcp_bond_a2dp_stream;
 static uint8_t avrcp_bonding_a2dp_id[BT_DEVICE_NUM] = {BT_DEVICE_NUM,BT_DEVICE_NUM};
 static POSSIBLY_UNUSED uint8_t a2dp_get_cur_stream_id(void)
@@ -839,7 +839,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
             avrcp_get_current_media_status(device_id);
             APP_A2DP_TRACE(2,"::AVRCP_EVENT_CONNECT avrcp_version=0x%x,device_id=%d\n", btif_get_avrcp_version( channel),device_id);
 #ifdef __BT_ONE_BRING_TWO__
-            avrcp_palyback_status[device_id] = 0;
+            avrcp_playback_status[device_id] = 0;
             avrcp_bonding_a2dp_id[device_id] = BT_DEVICE_NUM;
             avrcp_distinguish_bonding_a2dp_stream(chnl,device_id);
 #endif
@@ -887,7 +887,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
             app_bt_device.track_changed[device_id] = 0;
 #endif
 #ifdef __BT_ONE_BRING_TWO__
-            avrcp_palyback_status[device_id ] = 0;
+            avrcp_playback_status[device_id ] = 0;
             avrcp_bonding_a2dp_id[device_id] = BT_DEVICE_NUM;
 #endif
 
@@ -1070,14 +1070,14 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                         TRACE(1,"::avrcp_callback_CT ACRCP notify rsp playback states=%x",btif_get_avrcp_adv_notify(parms)->p.mediaStatus);
 #if defined(__BT_ONE_BRING_TWO__)
                     if(btif_get_avrcp_adv_notify(parms)->p.mediaStatus == 0x1){
-                        avrcp_palyback_status[device_id] = 0x01;
+                        avrcp_playback_status[device_id] = 0x01;
                         if (app_bt_is_to_resume_music_player(device_id) ||
                                 (BTIF_HF_AUDIO_CON == app_bt_device.hf_audio_state[device_id_other]))
                         {
                             app_bt_pause_media_player_again(device_id);
                         }
                     }else if(btif_get_avrcp_adv_notify(parms)->p.mediaStatus == 0x0||btif_get_avrcp_adv_notify(parms)->p.mediaStatus == 0x2){
-                        avrcp_palyback_status[device_id] = 0x00;
+                        avrcp_playback_status[device_id] = 0x00;
                         app_bt_device.latestPausedDevId = device_id;
                     }
 #endif
@@ -1091,22 +1091,22 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                         return;
                     }
                     avrcp_bonding_a2dp_another = (avrcp_bond_a2dp_stream.id== BT_DEVICE_ID_1)?(BT_DEVICE_ID_2):(BT_DEVICE_ID_1);
-                    TRACE(5,"avrcp_palyback_status_id[%d] = %d , avrcp_palyback_status_id_other[%d] = %d cur_a2dp_stream = %d",device_id,
-                            avrcp_palyback_status[device_id],device_id_other,avrcp_palyback_status[device_id_other],app_bt_device.curr_a2dp_stream_id);
-                    if((avrcp_palyback_status[BT_DEVICE_ID_1] == 0) &&
-                       (avrcp_palyback_status[BT_DEVICE_ID_2] == 0)){
+                    TRACE(5,"avrcp_playback_status_id[%d] = %d , avrcp_playback_status_id_other[%d] = %d cur_a2dp_stream = %d",device_id,
+                            avrcp_playback_status[device_id],device_id_other,avrcp_playback_status[device_id_other],app_bt_device.curr_a2dp_stream_id);
+                    if((avrcp_playback_status[BT_DEVICE_ID_1] == 0) &&
+                       (avrcp_playback_status[BT_DEVICE_ID_2] == 0)){
                         app_bt_device.a2dp_play_pause_flag = 0;
                     }
                     else{
                         app_bt_device.a2dp_play_pause_flag = 1;
                     }
                     if(is_a2dp_streaming !=0){
-                        if(avrcp_palyback_status[device_id] == 1) /*&&
-                                                                    (avrcp_palyback_status[BT_DEVICE_ID_2] == 1))*/ {
+                        if(avrcp_playback_status[device_id] == 1) /*&&
+                                                                    (avrcp_playback_status[BT_DEVICE_ID_2] == 1))*/ {
                             app_audio_manager_sendrequest(APP_BT_STREAM_MANAGER_START,BT_STREAM_SBC,avrcp_bond_a2dp_stream.id,MAX_RECORD_NUM);
                             a2dp_set_cur_stream(avrcp_bond_a2dp_stream.id);
 #if 1
-                            if(avrcp_palyback_status[device_id_other] == 1){
+                            if(avrcp_playback_status[device_id_other] == 1){
                                 btapp_a2dp_suspend_music(device_id_other);
                                 app_audio_manager_sendrequest(APP_BT_STREAM_MANAGER_STOP,BT_STREAM_SBC,avrcp_bonding_a2dp_another,MAX_RECORD_NUM);
                                 /*if(bt_media_is_media_active_by_device(BT_STREAM_SBC,avrcp_bond_a2dp_stream.id_other) != 0)*/
@@ -1118,8 +1118,8 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
 #endif
                         }
                         if(is_a2dp_streaming >2){
-                            if((avrcp_palyback_status[device_id] == 1) &&
-                                    (avrcp_palyback_status[device_id_other] == 0)){
+                            if((avrcp_playback_status[device_id] == 1) &&
+                                    (avrcp_playback_status[device_id_other] == 0)){
                                 a2dp_set_cur_stream(avrcp_bond_a2dp_stream.id);
                             }
                             if(app_bt_device.a2dp_play_pause_flag == 0){
@@ -1127,7 +1127,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                             }
                         }
                         if(app_bt_device.a2dp_play_pause_flag == 1){
-                            if(avrcp_palyback_status[device_id] == 0){
+                            if(avrcp_playback_status[device_id] == 0){
                                 a2dp_set_cur_stream(avrcp_bonding_a2dp_another);
                                 app_a2dp_unhold_mute();
                             }
@@ -1169,9 +1169,9 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl, const avrcp_cal
                 TRACE(1,"AVRCP get play status returns %d", btif_get_avrcp_adv_rsp_play_status(parms)->mediaStatus);
             #if defined(__BT_ONE_BRING_TWO__)
                 if(btif_get_avrcp_adv_rsp_play_status(parms)->mediaStatus == 0x1){
-                    avrcp_palyback_status[device_id] = 0x01;
+                    avrcp_playback_status[device_id] = 0x01;
                 }else if(btif_get_avrcp_adv_rsp_play_status(parms)->mediaStatus == 0x0||btif_get_avrcp_adv_rsp_play_status(parms)->mediaStatus == 0x2){
-                    avrcp_palyback_status[device_id] = 0x00;
+                    avrcp_playback_status[device_id] = 0x00;
                 }
             #endif
             }

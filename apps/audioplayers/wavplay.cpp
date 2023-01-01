@@ -66,14 +66,14 @@ static unsigned int g_curr_play_index = 0;
 wave_file_t g_wave_file_info;
 static char g_wav_header[WAVE_FILE_HEADER_SIZE];
 FILE *g_wave_file_handle = NULL;
-static int32_t (*wav_file_palyback_callback)(int32_t ) = NULL;
+static int32_t (*wav_file_playback_callback)(int32_t ) = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 void wav_file_set_playeback_cb(int32_t (* cb)(int32_t))
 {
-    wav_file_palyback_callback = cb;
+    wav_file_playback_callback = cb;
 }
 bool wav_file_isplaydone(void)
 {
@@ -90,8 +90,8 @@ uint32_t wav_file_audio_more_data(uint8_t *buf, uint32_t len)
     if(wav_file_isplaydone()) {
         memset(buf, 0, len);
         status = 0;
-        if (wav_file_palyback_callback)
-             wav_file_palyback_callback(status);
+        if (wav_file_playback_callback)
+             wav_file_playback_callback(status);
         return (len);
     }
 //    stime = hal_sys_timer_get();
@@ -102,8 +102,8 @@ uint32_t wav_file_audio_more_data(uint8_t *buf, uint32_t len)
     if (reallen != len){
         memset(buf, 0, len);
         status = -1;
-        if (wav_file_palyback_callback)
-             wav_file_palyback_callback(status);
+        if (wav_file_playback_callback)
+             wav_file_playback_callback(status);
         return (len);
     }
 
@@ -246,8 +246,8 @@ uint32_t stop_wav_file(void)
         fclose(g_wave_file_handle);
         g_wave_file_handle = NULL;
     }
-    if (wav_file_palyback_callback)
-        wav_file_palyback_callback = NULL;
+    if (wav_file_playback_callback)
+        wav_file_playback_callback = NULL;
 
     return 0;
 }
