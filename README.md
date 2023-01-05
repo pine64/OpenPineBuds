@@ -18,6 +18,10 @@ In order to program the buds from inside of the docker container; privileged mod
 ./build.sh # This will run make and build the output program. If you have weird build errors try running clean.sh or rm -rf'ing the out folder first
 
 # Now that the firmware has finished building; if there are no errors you can load it to your buds
+
+# You may want to back up the firmware currently on the buds - it will be deleted when the new firmware is loaded on:
+./backup.sh
+
 # You may need to take the buds out of the case, wait three seconds, place them back. This wakes them up and the programmer needs to catch this reboot.
 
 # You can try the helper script by running
