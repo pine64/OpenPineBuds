@@ -25,6 +25,7 @@
 *.BAK
 *.orig
 \#*#
+firmware-backups/
 
 # Tag files
 /tags
