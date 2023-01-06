@@ -1,0 +1,34 @@
+name: Container image builder workflow
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: gh-ref-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-push-images:
+    name: Build and push container image for PineBuds Pro SDK to GHCR.io
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Build images
+        id: build
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ github.repository }}
+          context: /
+          tags: ${{ contains(github.ref_name, 'main') && 'latest' || github.ref_name }}-sdk
+          containerfiles: /Dockerfile
+
+      - name: Push container
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build.outputs.image }}
+          tags: ${{ steps.build.outputs.tags }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
