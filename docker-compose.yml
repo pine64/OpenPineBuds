@@ -6,7 +6,6 @@ services:
     privileged: true
     build:
       context: .
-    command: /bin/bash
     volumes:
       - ./:/usr/src:Z
       - /dev/:/dev/
