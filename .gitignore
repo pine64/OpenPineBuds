@@ -19,6 +19,7 @@
 !.gitattributes
 !.mailmap
 !.github
+!.devcontainer
 
 # Backup files
 *~
