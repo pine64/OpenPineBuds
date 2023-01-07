@@ -1,23 +1,47 @@
-FROM rust:1-slim-buster as programmer_build
-LABEL maintainer="Ben V. Brown <ralim@ralimtek.com>"
+FROM debian:bullseye-slim AS base
+
+FROM base AS rust_build
+
+LABEL org.opencontainers.image.authors = "Ben V. Brown <ralim@ralimtek.com>, Dom Rodriguez <shymega@shymega.org.uk>"
+
 WORKDIR /usr/src
-RUN apt-get update && apt-get install -y git pkg-config libudev-dev bc
-RUN git clone https://github.com/Ralim/bestool.git
-RUN cd /usr/src/bestool/bestool/ && cargo build --release
+ENV PATH="/root/.cargo/bin:$PATH"
 
-FROM debian:buster
-LABEL maintainer="Ben V. Brown <ralim@ralimtek.com>"
+RUN apt-get update \
+    && apt-get install -y \
+        bc \
+        build-essential \
+        curl \
+        git  \
+        libudev-dev \
+        pkg-config \
+    && curl https://sh.rustup.rs -sSf | bash -s -- -y \
+    && git clone https://github.com/Ralim/bestool.git \
+    && cd /usr/src/bestool/bestool/ \
+    && cargo build --release
 
+FROM base as dev_env
 
-RUN apt update && apt-get install -y make git bash curl tar bzip2 bc xxd ffmpeg
+WORKDIR /usr/src
 
-WORKDIR /src
-# Git trust
-RUN git config --global --add safe.directory /src
-# Grab arm compiler; we have to use this ancient one or else we get boot failures. Probably subtle link issues.
+RUN apt-get update \
+    && apt-get install -y \ 
+        bash \
+        bc \
+        bzip2 \
+        curl \
+        ffmpeg \
+        git \
+        make \
+        tar \
+        xxd \
+    && git config --global --add safe.directory /src \
+    && mkdir -pv /src \
+    && curl \
+        https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 | tar -xj -C /src/
 
-RUN curl https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 | tar -xj
 ENV PATH="${PATH}:/src/gcc-arm-none-eabi-9-2019-q4-major/bin"
-WORKDIR /usr/src
-COPY --from=programmer_build /usr/src/bestool/bestool/target/release/bestool /usr/local/bin/bestool
+COPY --from=rust_build /usr/src/bestool/bestool/target/release/bestool /usr/local/bin/bestool
 COPY . /usr/src
+
+ENTRYPOINT ["/bin/bash"]
