@@ -5,7 +5,7 @@ The docker image will build bestool for you first, then drop you into the dev co
 
 ## Usage
 
-To use this setup to build & flash your pine buds you will need a system with docker setup at the minimum.
+To use this setup to build & flash your PineBuds you will need a system with docker setup at the minimum.
 Docker is used to (1) make this all much more reprodicible and easier to debug and (2) so that we dont mess with your host system at all.
 In order to program the buds from inside of the docker container; privileged mode is used. So do be a tad more careful than usual.
 
@@ -34,12 +34,12 @@ bestool write-image out/open_source/open_source.bin --port /dev/ttyACM0
 bestool write-image out/open_source/open_source.bin --port /dev/ttyACM1
 ```
 
-## Changelist from stock opeen source SDK
+## Changelist from stock open source SDK
 
 - Long hold (5 ish seconds) the button on the back when buds are in the case to force a device reboot (so it can be programmed)
 - Use the resistor in the buds to pick Left/Right rather than TWS master/slave pairing
 - Pressing the button on the back while in the case no longer triggers DFU mode
-- Debugging baud rate raised to 200000 to match stock firmware
+- Debugging baud rate raised to 2000000 to match stock firmware
 - Fixed TWS operation such that putting either bud into the case correctly switches to the other bud
 - Working (mostly) audio controls using the touch button on the buds
 - Turned off showing up as a HID keyboard, as not sure _why_ you would; but it stops android nagging me about a new keyboard
