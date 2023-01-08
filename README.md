@@ -39,7 +39,7 @@ bestool write-image out/open_source/open_source.bin --port /dev/ttyACM1
 - Long hold (5 ish seconds) the button on the back when buds are in the case to force a device reboot (so it can be programmed)
 - Use the resistor in the buds to pick Left/Right rather than TWS master/slave pairing
 - Pressing the button on the back while in the case no longer triggers DFU mode
-- Debugging baud rate raised to 200000 to match stock firmware
+- Debugging baud rate raised to 2000000 to match stock firmware
 - Fixed TWS operation such that putting either bud into the case correctly switches to the other bud
 - Working (mostly) audio controls using the touch button on the buds
 - Turned off showing up as a HID keyboard, as not sure _why_ you would; but it stops android nagging me about a new keyboard
