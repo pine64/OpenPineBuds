@@ -1,7 +1,7 @@
 #!/bin/sh
 txt_to_wav() {
   xxd -r -p $arg1 > out.raw
-  ffmpeg  \
+  ffmpeg -y \
     -v info         `# verbosity - other options are "quiet", "error", "panic"` \
     -f sbc          `# accept SBC format` \
     -ac 1           `# audio channel: #1` \
@@ -11,7 +11,7 @@ txt_to_wav() {
 }
 
 wav_to_txt() {
-  ffmpeg \
+  ffmpeg -y \
     -v info            `# verbosity - other options are "quiet", "error", "panic"` \
     -i $arg1           `#input file: $arg1` \
     -f sbc             `#output format: SBC` \
