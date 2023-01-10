@@ -1,12 +1,23 @@
 #!/bin/sh
 txt_to_wav() {
   xxd -r -p $arg1 > out.raw
-  ffmpeg -f sbc -ac 1 -i ./out.raw $arg2
+  ffmpeg \
+    -f sbc          `# accept SBC format` \
+    -ac 1           `# audio channel: #1` \
+    -i ./out.raw    `# input file: out.raw` \
+    $arg2           `# output to $arg2`
   rm ./out.raw
 }
 
 wav_to_txt() {
-  ffmpeg -i $arg1 -f sbc -ac 16000 -ac 1 -map_metadata -1 out.raw
+  ffmpeg \
+    -i $arg1           `#input file: $arg1` \
+    -f sbc             `#output format: SBC` \
+    -ac 16000          `# ????` \
+    -ac 1              `# audio channel: #1` \
+    -map_metadata -1   `# ????` \
+    out.raw            `# output to out.raw`
+
   xxd -i ./out.raw | head -n -2 \
     | tail -n +2 | sed 's/ //g' \
     | tr --delete '\n' \
