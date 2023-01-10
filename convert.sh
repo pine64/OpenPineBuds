@@ -13,7 +13,7 @@ wav_to_txt() {
   ffmpeg \
     -i $arg1           `#input file: $arg1` \
     -f sbc             `#output format: SBC` \
-    -ac 16000          `# ????` \
+    -ar 16000          `# audio rate: 16 kHz` \
     -ac 1              `# audio channel: #1` \
     -map_metadata -1   `# ????` \
     out.raw            `# output to out.raw`
