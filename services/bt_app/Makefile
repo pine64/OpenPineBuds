@@ -9,9 +9,9 @@ ifeq ($(VOICE_DATAPATH_TYPE),gsound)
 obj_cpp += $(patsubst $(cur_dir)%,%,$(wildcard $(cur_dir)/app_voice/app_$(VOICE_DATAPATH_TYPE)/*.cpp))
 endif
 
-obj_txt := $(patsubst %,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.txt))
+obj_txt := $(patsubst %,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.wav))
 
-obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o) $(obj_txt:.txt=.wav)
+obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o) $(obj_txt:.wav=.txt)
 
 obj-y += a2dp_codecs/
 
@@ -140,7 +140,7 @@ endif
 CFLAGS_app_bt_stream.o += -DAUDIO_OUTPUT_VOLUME_DEFAULT=$(AUDIO_OUTPUT_VOLUME_DEFAULT)
 
 ifeq ($(A2DP_LDAC_ON),1)
-ccflags-y += -Ithirdparty/audio_codec_lib/ldac/inc 
+ccflags-y += -Ithirdparty/audio_codec_lib/ldac/inc
 endif
 
 ifeq ($(RB_CODEC),1)

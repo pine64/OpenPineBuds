@@ -1,6 +1,7 @@
 #!/bin/sh
 txt_to_wav() {
   xxd -r -p $arg1 > out.raw
+  sbcinfo out.raw
   ffmpeg -y \
     -v info         `# verbosity - other options are "quiet", "error", "panic"` \
     -f sbc          `# accept SBC format` \
@@ -21,6 +22,7 @@ wav_to_txt() {
     -map_metadata -1   `# ????` \
     out.raw            `# output to out.raw`
 
+  sbcinfo out.raw
   xxd -i out.raw            `# output in C include file style` \
     | head -n -2              `# skip last two xxd outline lines (skip C formatting)` \
     | tail -n +2              `# start output on line 2 of xxd output (skip C formatting)` \
