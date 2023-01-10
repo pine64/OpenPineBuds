@@ -19,8 +19,8 @@ wav_to_txt() {
 echo "
 Sound format converter:
 Usage:
-  ./convert.sh [option] [input-file]
+  ./convert.sh [option] [input-file] [output-file]
 Options:
--T or --txt-to-wav   Converts the text file to a wav audio file (output.wav)
--W or --wav-to-txt Converts a wav file to a file readable by the pinebuds firmware (SOUND.txt)
+-T or --txt-to-wav   Converts the text file to a wav audio file
+-W or --wav-to-txt Converts a wav file to a file readable by the pinebuds firmware
 "
