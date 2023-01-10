@@ -277,6 +277,20 @@ cmd_as_o_S       = $(CC) $(a_flags) -c -o $@ $<
 $(obj)/%.o: $(src)/%.S FORCE
 	$(call if_changed_dep,as_o_S)
 
+
+# Convert sounds (.wav to .txt)
+# ---------------------------------------------------------------------------
+
+#quiet_cmd_as_s_S = CPP $(quiet_modtag) $@            TODO!
+#cmd_as_s_S       = $(CPP) $(a_cpp_flags) -o $@ $<    TODO!
+
+#$(obj)/%.s: $(src)/%.S FORCE    TODO! Reference, delete once implemented below
+#	$(call if_changed_dep,as_s_S)  TODO! Reference, delete once implemented below
+$(obj)/%.wav: ../../$(src)/%.txt FORCE
+	echo "\n\n\n     GOT A WAV TXT HERE: $< $@ \n\n"
+	../.././convert.sh -T $< $@
+#	$(call if_changed_dep,as_s_S)        TODO!
+
 targets += $(real-objs-y) $(real-objs-m) $(lib-y) $(lst_target)
 targets += $(MAKECMDGOALS) $(always)
 
@@ -315,7 +329,7 @@ archive-cmd = ( ( echo create $@ && \
 else
 # Command "/bin/echo -e" cannot work on Apple Mac machines, so we use "/usr/bin/printf" instead
 archive-cmd = ( /usr/bin/printf 'create $@\n\
-  addmod $(subst $(space),$(comma),$(strip $(filter-out %.a,$(1))))\n\
+  addmod $(subst $(space),$(comma),$(strip $(filter-out %.a %.wav,$(1))))\n\
   $(foreach o,$(filter %.a,$(1)),addlib $o\n)save\nend' | $(AR) -M )
 endif
 endif

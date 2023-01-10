@@ -9,7 +9,9 @@ ifeq ($(VOICE_DATAPATH_TYPE),gsound)
 obj_cpp += $(patsubst $(cur_dir)%,%,$(wildcard $(cur_dir)/app_voice/app_$(VOICE_DATAPATH_TYPE)/*.cpp))
 endif
 
-obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
+obj_txt := $(patsubst %,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.txt))
+
+obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o) $(obj_txt:.txt=.wav)
 
 obj-y += a2dp_codecs/
 
