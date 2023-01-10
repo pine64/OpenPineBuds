@@ -14,8 +14,8 @@ wav_to_txt() {
   rm ./out.raw
 }
 
-[ ${1} = "-T" ] || [ ${1} = "--txt-to-wav" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && txt_to_wav && exit
-[ ${1} = "-W" ] || [ ${1} = "--wav-to-txt" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) &&  wav_to_txt && exit
+[ "${1}" = "-T" ] || [ "${1}" = "--txt-to-wav" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && txt_to_wav && exit
+[ "${1}" = "-W" ] || [ "${1}" = "--wav-to-txt" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) &&  wav_to_txt && exit
 echo "
 Sound format converter:
 Usage:
