@@ -19,10 +19,13 @@ wav_to_txt() {
     -map_metadata -1   `# ????` \
     out.raw            `# output to out.raw`
 
-  xxd -i ./out.raw | head -n -2 \
-    | tail -n +2 | sed 's/ //g' \
-    | tr --delete '\n' \
-    | sed 's/,/\,\n/16; P; D' > $arg2
+  xxd -i ./out.raw            `# output in C include file style` \
+    | head -n -2              `# skip last two xxd outline lines (skip C formatting)` \
+    | tail -n +2              `# start output on line 2 of xxd output (skip C formatting)` \
+    | sed 's/ //g' \          `# remove spaces` \
+    | tr --delete '\n' \      `# remove newlines` \
+    | sed 's/,/\,\n/16; P; D' `# collect into lines with the right length` \
+    > $arg2
   rm ./out.raw
 }
 
