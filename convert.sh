@@ -24,8 +24,8 @@ wav_to_txt() {
   xxd -i ./out.raw            `# output in C include file style` \
     | head -n -2              `# skip last two xxd outline lines (skip C formatting)` \
     | tail -n +2              `# start output on line 2 of xxd output (skip C formatting)` \
-    | sed 's/ //g' \          `# remove spaces` \
-    | tr --delete '\n' \      `# remove newlines` \
+    | sed 's/ //g'            `# remove spaces` \
+    | tr --delete '\n'        `# remove newlines` \
     | sed 's/,/\,\n/16; P; D' `# collect into lines with the right length` \
     > $arg2
   rm ./out.raw
