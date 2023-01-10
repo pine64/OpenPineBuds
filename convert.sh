@@ -15,6 +15,7 @@ wav_to_txt() {
     -f sbc             `#output format: SBC` \
     -ar 16000          `# audio rate: 16 kHz` \
     -ac 1              `# audio channel: #1` \
+    -aq 16             `# audio quality: 16 (for SBC this means bitpool=16)` \
     -map_metadata -1   `# ????` \
     out.raw            `# output to out.raw`
 
