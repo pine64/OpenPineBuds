@@ -9,9 +9,9 @@ ifeq ($(VOICE_DATAPATH_TYPE),gsound)
 obj_cpp += $(patsubst $(cur_dir)%,%,$(wildcard $(cur_dir)/app_voice/app_$(VOICE_DATAPATH_TYPE)/*.cpp))
 endif
 
-obj_wav := $(patsubst $(cur_dir)%,%,$(wildcard $(cur_dir)/../../config/_default_cfg_src_/res/en/*.wav))
+obj_wav := $(patsubst $(cur_dir)%,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.wav))
 
-obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o) $(obj_wav:.wav=.txt)
+obj-y := $(obj_wav:.wav=.txt) $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
 
 obj-y += a2dp_codecs/
 
@@ -108,7 +108,8 @@ ccflags-y += \
 	-Iservices/bt_app/a2dp_codecs/include \
 	-Ithirdparty/tile/tile_target \
 	-Iservices/osif \
-    -Iservices/app_tws/inc
+    -Iservices/app_tws/inc \
+	-Iout/$(T)/config/_default_cfg_src_
 
 ifeq ($(GATT_OVER_BR_EDR),1)
 ccflags-y += -Iservices/ble_stack/hl/src/l2c/l2cm
