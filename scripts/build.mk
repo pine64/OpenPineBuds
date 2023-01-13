@@ -281,15 +281,9 @@ $(obj)/%.o: $(src)/%.S FORCE
 # Convert sounds (.wav to .txt)
 # ---------------------------------------------------------------------------
 
-#quiet_cmd_as_s_S = CPP $(quiet_modtag) $@            TODO!
-#cmd_as_s_S       = $(CPP) $(a_cpp_flags) -o $@ $<    TODO!
-
-#$(obj)/%.s: $(src)/%.S FORCE    TODO! Reference, delete once implemented below
-#	$(call if_changed_dep,as_s_S)  TODO! Reference, delete once implemented below
 %.txt: %.wav FORCE
-	echo "\n\n\n     GOT A WAV TXT HERE: $< $@ \n\n"
 	../.././convert.sh -W $< $@
-#	$(call if_changed_dep,as_s_S)        TODO!
+#	$(call if_changed_dep,as_s_S)        TODO! Reference, delete once implemented below
 
 targets += $(real-objs-y) $(real-objs-m) $(lib-y) $(lst_target)
 targets += $(MAKECMDGOALS) $(always)
