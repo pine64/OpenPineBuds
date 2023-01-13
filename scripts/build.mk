@@ -322,7 +322,7 @@ archive-cmd = $(AR) --create --debug_symbols $@ $(1)
 else
 ifeq ($(WIN_PLAT),y)
 archive-cmd = ( ( echo create $@ && \
-  echo addmod $(subst $(space),$(comma),$(strip $(filter-out %.a,$(1)))) && \
+  echo addmod $(subst $(space),$(comma),$(strip $(filter-out %.a %.txt,$(1)))) && \
   $(foreach o,$(filter %.a,$(1)),echo addlib $o && ) \
   echo save && \
   echo end ) | $(AR) -M )
