@@ -22,6 +22,11 @@
  * limitations under the License.
  */
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #if   defined ( __ICCARM__ )
   #pragma system_include         /* treat file as system include file for MISRA check */
 #elif defined (__clang__)

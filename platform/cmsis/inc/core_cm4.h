@@ -33,11 +33,18 @@
 
 #ifndef __ASSEMBLER__
 #include <stdint.h>
+
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #endif
 
 #ifdef __cplusplus
  extern "C" {
 #endif
+
 
 /**
   \page CMSIS_MISRA_Exceptions  MISRA-C:2004 Compliance Exceptions

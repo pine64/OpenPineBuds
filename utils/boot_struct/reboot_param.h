@@ -22,6 +22,11 @@ extern "C" {
 
 #include "stdint.h"
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 struct REBOOT_PARAM_T {
     uint32_t reserved[4];
 };

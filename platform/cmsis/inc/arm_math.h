@@ -263,9 +263,13 @@
  * @defgroup groupExamples Examples
  */
 
-
 #ifndef _ARM_MATH_H
 #define _ARM_MATH_H
+
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
 
 /* Compiler specific diagnostic adjustment */
 #if   defined ( __CC_ARM )

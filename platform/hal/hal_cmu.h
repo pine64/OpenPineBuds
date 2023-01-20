@@ -24,6 +24,11 @@ extern "C" {
 #include "stdint.h"
 #include CHIP_SPECIFIC_HDR(hal_cmu)
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #ifndef HAL_CMU_DEFAULT_CRYSTAL_FREQ
 #define HAL_CMU_DEFAULT_CRYSTAL_FREQ 26000000
 #endif

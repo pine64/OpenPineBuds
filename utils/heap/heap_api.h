@@ -8,6 +8,11 @@
 extern "C" {
 #endif
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #define SYSPOOL_PURE __attribute__((__const__))
 
 void syspool_init(void);

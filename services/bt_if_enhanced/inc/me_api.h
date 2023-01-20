@@ -23,6 +23,11 @@
 
 typedef uint8_t btif_event_type_t;
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #if defined(BTIF_HCI_HOST_FLOW_CONTROL) && defined(__IAG_BLE_INCLUDE__)
 #define BTIF_BTEVENT_CONNECT_CPMPLETE 1
 #endif /*  */

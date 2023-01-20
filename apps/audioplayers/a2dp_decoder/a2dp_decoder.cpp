@@ -14,6 +14,8 @@
  *
  ****************************************************************************/
 // Standard C Included Files
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
 #include "a2dp_decoder.h"
 #include "a2dp_decoder_internal.h"
 #include "app_audio.h"

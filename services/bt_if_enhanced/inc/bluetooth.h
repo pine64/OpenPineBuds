@@ -23,6 +23,11 @@
 extern "C" {
 #endif
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #ifndef BOOL_DEFINED
 typedef unsigned int BOOL;      /* IGNORESTYLE */
 #endif

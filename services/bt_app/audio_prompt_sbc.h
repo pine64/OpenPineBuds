@@ -15,6 +15,11 @@ extern "C" {
 #define PENDING_TO_STOP_SCO_STREAMING   1
 #define PENDING_TO_STOP_STREAM_INVALID  (0xFF)
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 typedef struct
 {
     uint8_t    channelCnt;
