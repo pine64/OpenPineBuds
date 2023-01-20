@@ -19,6 +19,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "plat_types.h"
 #include "me_api.h"
 #include "a2dp_api.h"
 #include "hfp_api.h"

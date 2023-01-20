@@ -17,6 +17,7 @@
 #define __FACTORY_SECTIONS_H__
 #include <stdbool.h>
 #include <stdint.h>
+#include "plat_types.h"
 
 #define ALIGN4 __attribute__((aligned(4)))
 #define nvrec_mini_version 1

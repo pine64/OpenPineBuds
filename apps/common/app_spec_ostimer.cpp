@@ -13,6 +13,11 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
+#define __STDC_LIMIT_MACROS
+#include <stdint.h>
+
+#include "cmsis_os.h"
+#include "stdint.h"
 #include "app_spec_ostimer.h"
 #include "cmsis_os.h"
 #include "hal_trace.h"

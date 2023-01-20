@@ -16,6 +16,7 @@
 #ifndef __APP_IBRT_AUTO_TEST_H__
 #define __APP_IBRT_AUTO_TEST_H__
 #include <stdint.h>
+#include "plat_types.h"
 
 typedef struct
 {

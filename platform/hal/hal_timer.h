@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-#include "hal_cmu.h"
 #include "plat_types.h"
+#include "hal_cmu.h"
 
 //=============================================================================
 // Slow Timer (Default Timer)

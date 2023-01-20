@@ -22,6 +22,8 @@ extern "C" {
 
 #include "plat_addr_map.h"
 #include "stdint.h"
+#include "plat_types.h"
+
 #include CHIP_SPECIFIC_HDR(hal_cmu)
 
 #ifndef HAL_CMU_DEFAULT_CRYSTAL_FREQ

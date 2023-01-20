@@ -16,7 +16,7 @@
 #ifndef __APP_IBRT_VOICE_REPORT_H__
 #define __APP_IBRT_VOICE_REPORT_H__
 #include <stdint.h>
-
+#include "plat_types.h"
 typedef struct {
   uint32_t aud_id;
   uint32_t aud_pram;
