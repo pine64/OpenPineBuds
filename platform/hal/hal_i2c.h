@@ -27,6 +27,11 @@ extern "C" {
 // For 10-bit address devices: OR the following mask with the real address
 #define HAL_I2C_10BITADDR_MASK              (1 << 15)
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 enum HAL_I2C_ACTION_AFTER_WRITE_T {
     HAL_I2C_STOP_AFTER_WRITE = 0,
     HAL_I2C_RESTART_AFTER_WRITE,

@@ -23,6 +23,11 @@
 //#define A2DP_DECODER_HISTORY_LOCTIME_SAVE      (1)
 //#define A2DP_DECODER_HISTORY_CHECK_SUM_SAVE    (1)
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 typedef uint16_t A2DP_AUDIO_CODEC_TYPE;
 
 #define A2DP_AUDIO_CODEC_TYPE_SBC           (1u<<0)

@@ -22,6 +22,11 @@ extern "C" {
 
 #ifdef CHIP_HAS_UART
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #include "plat_types.h"
 #include "stdbool.h"
 #include "stdint.h"

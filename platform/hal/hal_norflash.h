@@ -20,6 +20,11 @@
 extern "C" {
 #endif
 
+#ifndef __uint32_t_defined
+typedef unsigned int int32_t;
+#define __uint32_t_defined
+#endif
+
 #include "plat_types.h"
 #include "hal_cmu.h"
 

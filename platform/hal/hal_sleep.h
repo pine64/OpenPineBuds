@@ -20,6 +20,11 @@
 extern "C" {
 #endif
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 #include "plat_types.h"
 
 enum HAL_CPU_WAKE_LOCK_USER_T {

@@ -23,6 +23,11 @@ extern "C" {
 #include "a2dp_api.h"
 #include "hfp_api.h"
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+#define __uint32_t_defined
+#endif
+
 enum APP_BT_REQ_T {
     APP_BT_REQ_ACCESS_MODE_SET,
     APP_BT_REQ_AUTO_TEST,
