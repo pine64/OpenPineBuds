@@ -22,6 +22,7 @@ extern "C" {
 
 #include "stdint.h"
 #include "stdbool.h"
+#include "plat_types.h"
 
 #define HAL_DMA_CHAN_NONE               0xFF
 

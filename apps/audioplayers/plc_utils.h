@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "plat_types.h"
 
 typedef enum plc_type
 {

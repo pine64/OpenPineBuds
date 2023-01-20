@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-
+#include "plat_types.h"
 
 #define APP_BATTERY_LEVEL_MIN (0)
 

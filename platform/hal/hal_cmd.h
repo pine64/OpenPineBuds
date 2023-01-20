@@ -17,6 +17,7 @@
 #define __HAL_CMD_H__
 
 #include "stdint.h"
+#include "plat_types.h"
 
 // typedef enum {
 //         HAL_CMD_ERR_NONE = 0x00,

@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 #include "stdint.h"
+#include "plat_types.h"
 
 struct REBOOT_PARAM_T {
     uint32_t reserved[4];

@@ -20,11 +20,13 @@
 #include "bluetooth.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include "plat_types.h"
 
 typedef uint8_t btif_event_type_t;
 
 #if defined(BTIF_HCI_HOST_FLOW_CONTROL) && defined(__IAG_BLE_INCLUDE__)
 #define BTIF_BTEVENT_CONNECT_CPMPLETE 1
+
 #endif /*  */
 
 #define BTIF_BTEVENT_INQUIRY_RESULT 1
