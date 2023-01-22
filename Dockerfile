@@ -38,7 +38,7 @@ RUN apt-get update \
     && git config --global --add safe.directory /src \
     && mkdir -pv /src \
     && curl \
-        https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 | tar -xj -C /src/
+        https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-$(arch)-linux.tar.bz2 | tar -xj -C /src/
 
 ENV PATH="${PATH}:/src/gcc-arm-none-eabi-9-2019-q4-major/bin"
 COPY --from=rust_build /usr/src/bestool/bestool/target/release/bestool /usr/local/bin/bestool
