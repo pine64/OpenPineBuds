@@ -244,6 +244,21 @@ $(obj)/%.i: $(src)/%.cpp FORCE
 $(obj)/%.i: $(src)/%.cc FORCE
 	$(call if_changed_dep,cc_i_c++)
 
+# Convert sounds (.wav to .txt)
+# ---------------------------------------------------------------------------
+
+#%.snd.o: %.snd.cpp FORCE
+#	echo "CAUGHT SND O->CPP!"
+#	$(call if_changed_rule,cc_o_c++)
+#	$(call if_changed_dep,as_s_S)        TODO! Reference, delete once implemented below
+
+
+%.snd.cpp: %.wav FORCE
+	echo "CAUGHT SND CPP->WAV!"
+	../.././convert.sh -C $< $@
+#	$(call if_changed_dep,as_s_S)        TODO! Reference, delete once implemented below
+
+
 # C++ (.cpp) files
 # The C++ file is compiled and updated dependency information is generated.
 # (See cmd_cc_o_c++ + relevant part of rule_cc_o_c)
@@ -257,6 +272,7 @@ endef
 
 # Built-in and composite module parts
 $(obj)/%.o: $(src)/%.cpp FORCE
+	echo "$@"
 	$(call if_changed_rule,cc_o_c++)
 
 $(obj)/%.o: $(src)/%.cc FORCE
@@ -277,13 +293,6 @@ cmd_as_o_S       = $(CC) $(a_flags) -c -o $@ $<
 $(obj)/%.o: $(src)/%.S FORCE
 	$(call if_changed_dep,as_o_S)
 
-
-# Convert sounds (.wav to .txt)
-# ---------------------------------------------------------------------------
-
-%.txt: %.wav FORCE
-	../.././convert.sh -W $< $@
-#	$(call if_changed_dep,as_s_S)        TODO! Reference, delete once implemented below
 
 targets += $(real-objs-y) $(real-objs-m) $(lib-y) $(lst_target)
 targets += $(MAKECMDGOALS) $(always)
@@ -316,14 +325,14 @@ archive-cmd = $(AR) --create --debug_symbols $@ $(1)
 else
 ifeq ($(WIN_PLAT),y)
 archive-cmd = ( ( echo create $@ && \
-  echo addmod $(subst $(space),$(comma),$(strip $(filter-out %.a %.txt,$(1)))) && \
+  echo addmod $(subst $(space),$(comma),$(strip $(filter-out %.a %.txt %.cpp,$(1)))) && \
   $(foreach o,$(filter %.a,$(1)),echo addlib $o && ) \
   echo save && \
   echo end ) | $(AR) -M )
 else
 # Command "/bin/echo -e" cannot work on Apple Mac machines, so we use "/usr/bin/printf" instead
 archive-cmd = ( /usr/bin/printf 'create $@\n\
-  addmod $(subst $(space),$(comma),$(strip $(filter-out %.a %.txt,$(1))))\n\
+  addmod $(subst $(space),$(comma),$(strip $(filter-out %.a %.txt %.cpp,$(1))))\n\
   $(foreach o,$(filter %.a,$(1)),addlib $o\n)save\nend' | $(AR) -M )
 endif
 endif

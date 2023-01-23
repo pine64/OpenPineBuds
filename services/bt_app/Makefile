@@ -11,7 +11,7 @@ endif
 
 obj_wav := $(patsubst $(cur_dir)%,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.wav))
 
-obj-y := $(obj_wav:.wav=.txt) $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
+obj-y := $(obj_wav:.wav=.snd.o) $(obj_wav:.wav=.snd.cpp) $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
 
 obj-y += a2dp_codecs/
 

@@ -35,8 +35,34 @@ wav_to_txt() {
   rm out-$hash.sbc
 }
 
+wav_to_cpp() {
+  hash=$(echo $arg1 | md5sum | cut -d" " -f1)
+  filename=$(out-$hash.sbc)
+  varname=$(echo $arg1 | rev | cut -c5- | cut -d"/" -f1,2 | rev | tr '[:lower:]' '[:upper:]' | tr "/" _)
+  ffmpeg -y \
+    -v info            `# verbosity - other options are "quiet", "error", "panic"` \
+    -i $arg1           `#input file: $arg1` \
+    -f sbc             `#output format: SBC` \
+    -ar 16000          `# audio rate: 16 kHz` \
+    -ac 1              `# audio channel: #1` \
+    -aq 16             `# audio quality: 16 (for SBC this means bitpool=16)` \
+    -map_metadata -1   `# ????` \
+    $varname            `# output to something like EN_SOUND_POWER_ON`
+
+  echo "#include <stdint.h>\n" > $arg2
+
+  # sbcinfo out-$hash.sbc
+  xxd -i $varname            `# output in C include file style` \
+    >> $arg2
+
+  sed -i "s/unsigned char/uint8_t/g" $arg2
+  
+  #rm $filename
+}
+
 [ "${1}" = "-T" ] || [ "${1}" = "--txt-to-wav" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) && txt_to_wav && exit
 [ "${1}" = "-W" ] || [ "${1}" = "--wav-to-txt" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) &&  wav_to_txt && exit
+[ "${1}" = "-C" ] || [ "${1}" = "--wav-to-cpp" ] && shift 1 && args=$@ && arg1=$(echo $args | cut -d" " -f1) && arg2=$(echo $args | cut -d" " -f2) &&  wav_to_cpp && exit
 echo "
 Sound format converter:
 Usage:
