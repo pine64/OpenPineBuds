@@ -9,7 +9,9 @@ ifeq ($(VOICE_DATAPATH_TYPE),gsound)
 obj_cpp += $(patsubst $(cur_dir)%,%,$(wildcard $(cur_dir)/app_voice/app_$(VOICE_DATAPATH_TYPE)/*.cpp))
 endif
 
-obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
+obj_mp3 := $(patsubst $(cur_dir)%,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.mp3))
+
+obj-y := $(obj_mp3:.mp3=.snd.o) $(obj_mp3:.mp3=.snd.cpp) $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
 
 obj-y += a2dp_codecs/
 
@@ -106,7 +108,8 @@ ccflags-y += \
 	-Iservices/bt_app/a2dp_codecs/include \
 	-Ithirdparty/tile/tile_target \
 	-Iservices/osif \
-    -Iservices/app_tws/inc
+    -Iservices/app_tws/inc \
+	-Iout/$(T)/config/_default_cfg_src_
 
 ifeq ($(GATT_OVER_BR_EDR),1)
 ccflags-y += -Iservices/ble_stack/hl/src/l2c/l2cm
@@ -138,7 +141,7 @@ endif
 CFLAGS_app_bt_stream.o += -DAUDIO_OUTPUT_VOLUME_DEFAULT=$(AUDIO_OUTPUT_VOLUME_DEFAULT)
 
 ifeq ($(A2DP_LDAC_ON),1)
-ccflags-y += -Ithirdparty/audio_codec_lib/ldac/inc 
+ccflags-y += -Ithirdparty/audio_codec_lib/ldac/inc
 endif
 
 ifeq ($(RB_CODEC),1)
