@@ -75,5 +75,6 @@ The audio alerts are stored in:
 
 `config/_default_cfg_src_/res/en/`
 
-You can convert these .txt files to .wav files by using the script `convert.sh` with the -T flag, the resulting file will be named `output.wav`.
-If you want to change the alert to a custom sound use the -W flag on your wav file and then move the resulting `SOUND.txt` file to the place you want to replace (eg. `config/_default_cfg_src_/res/en/SOUND_POWER_ON.txt`)
+If you want to change the alert to a custom sound, just replace the sound file you'd like to change
+(ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) with your own MP3 with the same name
+and recompile with `./build.sh`!
