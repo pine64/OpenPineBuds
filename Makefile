@@ -1044,16 +1044,16 @@ ALL_SOURCE = $(shell find . \( -type f \( -name '*.c' -o -name '*.cpp' \) \) )
 style:
 	@for src in $(ALL_SOURCE) $(ALL_INCLUDES); do \
 		echo "Formatting $$src..." ; \
-		clang-format -style=llvm -i "$$src" ; \
+		clang-format -i "$$src" ; \
 	done
 	@echo "Done"
 
 check-style:
 	@for src in $(ALL_SOURCE) $(ALL_INCLUDES) ; do \
-		var=`clang-format -style=llvm "$$src" | diff "$$src" - | wc -l` ; \
+		var=`clang-format "$$src" | diff "$$src" - | wc -l` ; \
 		if [ $$var -ne 0 ] ; then \
 			echo "$$src does not respect the coding style (diff: $$var lines)" ; \
-			clang-format -style=llvm "$$src" | diff "$$src" -; \
+			clang-format "$$src" | diff "$$src" -; \
 			exit 1 ; \
 		fi ; \
 	done
