@@ -1037,7 +1037,32 @@ endif
 
 PHONY += FORCE
 FORCE: ;
+### Formatting
+ALL_SOURCE = $(shell find . \( -type f \( -name '*.c' -o -name '*.cpp' \) \) )
+
+
+style:
+	@for src in $(ALL_SOURCE) $(ALL_INCLUDES); do \
+		echo "Formatting $$src..." ; \
+		clang-format -style=llvm -i "$$src" ; \
+	done
+	@echo "Done"
+
+check-style:
+	@for src in $(ALL_SOURCE) $(ALL_INCLUDES) ; do \
+		var=`clang-format -style=llvm "$$src" | diff "$$src" - | wc -l` ; \
+		if [ $$var -ne 0 ] ; then \
+			echo "$$src does not respect the coding style (diff: $$var lines)" ; \
+			clang-format -style=llvm "$$src" | diff "$$src" -; \
+			exit 1 ; \
+		fi ; \
+	done
+	@echo "Style check passed"
+  
+
+PHONY += style check-style
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.
 .PHONY: $(PHONY)
+
