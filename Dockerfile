@@ -11,7 +11,6 @@ RUN apt-get update \
     && apt-get install -y \
     bc \
     build-essential \
-    clang-format \ 
     curl \
     git  \
     libudev-dev \
@@ -32,6 +31,7 @@ RUN apt-get update \
     bzip2 \
     curl \
     ffmpeg \
+    clang-format \ 
     git \
     make \
     tar \
