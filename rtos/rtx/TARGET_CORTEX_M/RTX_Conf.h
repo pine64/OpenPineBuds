@@ -31,18 +31,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
+#include "rt_TypeDef.h"
 
 /* Error Codes */
-#define OS_ERR_STK_OVF          1U
-#define OS_ERR_FIFO_OVF         2U
-#define OS_ERR_MBX_OVF          3U
-#define OS_ERR_TIMER_OVF        4U
+#define OS_ERR_STK_OVF 1U
+#define OS_ERR_FIFO_OVF 2U
+#define OS_ERR_MBX_OVF 3U
+#define OS_ERR_TIMER_OVF 4U
 
 /* Definitions */
-#define BOX_ALIGN_8                   0x80000000
-#define _declare_box(pool,size,cnt)   U32 pool[(((size)+3)/4)*(cnt) + 3]
-#define _declare_box8(pool,size,cnt)  U64 pool[(((size)+7)/8)*(cnt) + 2]
-#define _init_box8(pool,size,bsize)   _init_box (pool,size,(bsize) | BOX_ALIGN_8)
+#define BOX_ALIGN_8 0x80000000
+#define _declare_box(pool, size, cnt) U32 pool[(((size) + 3) / 4) * (cnt) + 3]
+#define _declare_box8(pool, size, cnt) U64 pool[(((size) + 7) / 8) * (cnt) + 2]
+#define _init_box8(pool, size, bsize)                                          \
+  _init_box(pool, size, (bsize) | BOX_ALIGN_8)
 
 /* Variables */
 extern U32 idle_task_stack[];
@@ -52,21 +54,21 @@ extern U32 task_rtime[];
 
 /* Constants */
 extern U16 const os_maxtaskrun;
-extern U8  const os_flags;
+extern U8 const os_flags;
 extern U32 const os_rrobin;
 extern U32 const os_clockrate;
 extern U32 const os_timernum;
 extern U16 const idle_task_stack_size;
 
-extern U8  const os_fifo_size;
+extern U8 const os_fifo_size;
 
 /* Functions */
-extern U32  os_get_trv      (void);
-extern void os_idle_demon   (void);
-extern int  os_tick_init    (void);
-extern void os_tick_irqack  (void);
-extern void os_tmr_call     (U16  info);
-extern void os_error        (U32 err_code);
+extern U32 os_get_trv(void);
+extern void os_idle_demon(void);
+extern int os_tick_init(void);
+extern void os_tick_irqack(void);
+extern void os_tmr_call(U16 info);
+extern void os_error(U32 err_code);
 
 /*----------------------------------------------------------------------------
  * end of file

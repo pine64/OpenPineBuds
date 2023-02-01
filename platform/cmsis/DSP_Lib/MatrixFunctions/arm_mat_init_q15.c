@@ -39,19 +39,16 @@
 
 /**
   @brief         Q15 matrix initialization.
-  @param[in,out] S         points to an instance of the floating-point matrix structure
+  @param[in,out] S         points to an instance of the floating-point matrix
+  structure
   @param[in]     nRows     number of rows in the matrix
   @param[in]     nColumns  number of columns in the matrix
   @param[in]     pData     points to the matrix data array
   @return        none
  */
 
-void arm_mat_init_q15(
-  arm_matrix_instance_q15 * S,
-  uint16_t nRows,
-  uint16_t nColumns,
-  q15_t * pData)
-{
+void arm_mat_init_q15(arm_matrix_instance_q15 *S, uint16_t nRows,
+                      uint16_t nColumns, q15_t *pData) {
   /* Assign Number of Rows */
   S->numRows = nRows;
 

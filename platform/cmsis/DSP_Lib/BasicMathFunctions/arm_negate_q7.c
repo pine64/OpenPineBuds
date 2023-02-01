@@ -46,46 +46,42 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   The Q7 value -1 (0x80) is saturated to the maximum allowable positive value 0x7F.
+                   The Q7 value -1 (0x80) is saturated to the maximum allowable
+  positive value 0x7F.
  */
 
-void arm_negate_q7(
-  const q7_t * pSrc,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q7_t in;                                       /* Temporary input variable */
+void arm_negate_q7(const q7_t *pSrc, q7_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
+  q7_t in;         /* Temporary input variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
-#if defined (ARM_MATH_DSP)
-  q31_t in1;                                    /* Temporary input variable */
+#if defined(ARM_MATH_DSP)
+  q31_t in1; /* Temporary input variable */
 #endif
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = -A */
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     /* Negate and store result in destination buffer (4 samples at a time). */
-    in1 = read_q7x4_ia ((q7_t **) &pSrc);
-    write_q7x4_ia (&pDst, __QSUB8(0, in1));
+    in1 = read_q7x4_ia((q7_t **)&pSrc);
+    write_q7x4_ia(&pDst, __QSUB8(0, in1));
 #else
     in = *pSrc++;
-    *pDst++ = (in == (q7_t) 0x80) ? (q7_t) 0x7f : -in;
+    *pDst++ = (in == (q7_t)0x80) ? (q7_t)0x7f : -in;
 
     in = *pSrc++;
-    *pDst++ = (in == (q7_t) 0x80) ? (q7_t) 0x7f : -in;
+    *pDst++ = (in == (q7_t)0x80) ? (q7_t)0x7f : -in;
 
     in = *pSrc++;
-    *pDst++ = (in == (q7_t) 0x80) ? (q7_t) 0x7f : -in;
+    *pDst++ = (in == (q7_t)0x80) ? (q7_t)0x7f : -in;
 
     in = *pSrc++;
-    *pDst++ = (in == (q7_t) 0x80) ? (q7_t) 0x7f : -in;
+    *pDst++ = (in == (q7_t)0x80) ? (q7_t)0x7f : -in;
 #endif
 
     /* Decrement loop counter */
@@ -102,23 +98,21 @@ void arm_negate_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = -A */
 
     /* Negate and store result in destination buffer. */
     in = *pSrc++;
 
-#if defined (ARM_MATH_DSP)
-    *pDst++ = (q7_t) __QSUB(0, in);
+#if defined(ARM_MATH_DSP)
+    *pDst++ = (q7_t)__QSUB(0, in);
 #else
-    *pDst++ = (in == (q7_t) 0x80) ? (q7_t) 0x7f : -in;
+    *pDst++ = (in == (q7_t)0x80) ? (q7_t)0x7f : -in;
 #endif
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

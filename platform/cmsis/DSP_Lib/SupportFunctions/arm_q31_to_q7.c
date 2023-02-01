@@ -51,32 +51,27 @@
   </pre>
  */
 
-void arm_q31_to_q7(
-  const q31_t * pSrc,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const q31_t *pIn = pSrc;                             /* Source pointer */
+void arm_q31_to_q7(const q31_t *pSrc, q7_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;         /* Loop counter */
+  const q31_t *pIn = pSrc; /* Source pointer */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   q7_t out1, out2, out3, out4;
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (q7_t) (A >> 24) */
 
     /* Convert from q31 to q7 and store result in destination buffer */
 
-    out1 = (q7_t) (*pIn++ >> 24);
-    out2 = (q7_t) (*pIn++ >> 24);
-    out3 = (q7_t) (*pIn++ >> 24);
-    out4 = (q7_t) (*pIn++ >> 24);
-    write_q7x4_ia (&pDst, __PACKq7(out1, out2, out3, out4));
+    out1 = (q7_t)(*pIn++ >> 24);
+    out2 = (q7_t)(*pIn++ >> 24);
+    out3 = (q7_t)(*pIn++ >> 24);
+    out4 = (q7_t)(*pIn++ >> 24);
+    write_q7x4_ia(&pDst, __PACKq7(out1, out2, out3, out4));
 
     /* Decrement loop counter */
     blkCnt--;
@@ -92,17 +87,15 @@ void arm_q31_to_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (q7_t) (A >> 24) */
 
     /* Convert from q31 to q7 and store result in destination buffer */
-    *pDst++ = (q7_t) (*pIn++ >> 24);
+    *pDst++ = (q7_t)(*pIn++ >> 24);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

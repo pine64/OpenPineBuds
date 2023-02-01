@@ -26,8 +26,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @ingroup groupController
@@ -45,17 +45,14 @@
   @param[out]    pCosVal  points to processed cosine output
   @return        none
 
-  The Q31 input value is in the range [-1 0.999999] and is mapped to a degree value in the range [-180 179].
+  The Q31 input value is in the range [-1 0.999999] and is mapped to a degree
+  value in the range [-180 179].
  */
 
-void arm_sin_cos_q31(
-  q31_t theta,
-  q31_t * pSinVal,
-  q31_t * pCosVal)
-{
-  q31_t fract;                                     /* Temporary input, output variables */
-  uint16_t indexS, indexC;                         /* Index variable */
-  q31_t f1, f2, d1, d2;                            /* Two nearest output values */
+void arm_sin_cos_q31(q31_t theta, q31_t *pSinVal, q31_t *pCosVal) {
+  q31_t fract;             /* Temporary input, output variables */
+  uint16_t indexS, indexC; /* Index variable */
+  q31_t f1, f2, d1, d2;    /* Two nearest output values */
   q31_t Dn, Df;
   q63_t temp;
 
@@ -67,12 +64,13 @@ void arm_sin_cos_q31(
   fract = (theta - (indexS << CONTROLLER_Q31_SHIFT)) << 8;
 
   /* Read two nearest values of input value from the cos & sin tables */
-  f1 =  sinTable_q31[indexC  ];
-  f2 =  sinTable_q31[indexC+1];
-  d1 = -sinTable_q31[indexS  ];
-  d2 = -sinTable_q31[indexS+1];
+  f1 = sinTable_q31[indexC];
+  f2 = sinTable_q31[indexC + 1];
+  d1 = -sinTable_q31[indexS];
+  d2 = -sinTable_q31[indexS + 1];
 
-  Dn = 0x1921FB5; /* delta between the two points (fixed), in this case 2*pi/FAST_MATH_TABLE_SIZE */
+  Dn = 0x1921FB5; /* delta between the two points (fixed), in this case
+                     2*pi/FAST_MATH_TABLE_SIZE */
   Df = f2 - f1;   /* delta between the values of the functions */
 
   temp = Dn * ((q63_t)d1 + d2);
@@ -87,10 +85,10 @@ void arm_sin_cos_q31(
   *pCosVal = clip_q63_to_q31((temp >> 31) + (q63_t)f1);
 
   /* Read two nearest values of input value from the cos & sin tables */
-  f1 = sinTable_q31[indexS ];
-  f2 = sinTable_q31[indexS+1];
-  d1 = sinTable_q31[indexC ];
-  d2 = sinTable_q31[indexC+1];
+  f1 = sinTable_q31[indexS];
+  f2 = sinTable_q31[indexS + 1];
+  d1 = sinTable_q31[indexC];
+  d2 = sinTable_q31[indexC + 1];
 
   Df = f2 - f1; // delta between the values of the functions
   temp = Dn * ((q63_t)d1 + d2);

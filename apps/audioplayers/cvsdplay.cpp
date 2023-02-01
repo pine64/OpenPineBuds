@@ -17,23 +17,22 @@
 #include "mbed.h"
 #endif
 // Standard C Included Files
-#include <string.h>
 #include <math.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #ifdef MBED
 //#include "rtos.h"
 #endif
 #ifdef MBED
 #include "SDFileSystem.h"
 #endif
+#include "app_audio.h"
 #include "cqueue.h"
-#include "hal_uart.h"
 #include "hal_timer.h"
 #include "hal_trace.h"
-#include "app_audio.h"
-
+#include "hal_uart.h"
 
 // BT
 
@@ -44,16 +43,15 @@ osMutexDef(g_voicecvsd_queue_mutex);
 
 /* cvsd queue */
 #define VOICECVSD_TEMP_BUFFER_SIZE 128
-#define VOICECVSD_QUEUE_SIZE (VOICECVSD_TEMP_BUFFER_SIZE*20)
+#define VOICECVSD_QUEUE_SIZE (VOICECVSD_TEMP_BUFFER_SIZE * 20)
 CQueue voicecvsd_queue;
 
 static enum APP_AUDIO_CACHE_T voicecvsd_cache_status = APP_AUDIO_CACHE_QTY;
 
-#define LOCK_VOICECVSD_QUEUE() \
-    osMutexWait(g_voicecvsd_queue_mutex_id, osWaitForever)
+#define LOCK_VOICECVSD_QUEUE()                                                 \
+  osMutexWait(g_voicecvsd_queue_mutex_id, osWaitForever)
 
-#define UNLOCK_VOICECVSD_QUEUE() \
-    osMutexRelease(g_voicecvsd_queue_mutex_id)
+#define UNLOCK_VOICECVSD_QUEUE() osMutexRelease(g_voicecvsd_queue_mutex_id)
 
 void xLOCK_VOICECVSD_QUEUE(void)
 {

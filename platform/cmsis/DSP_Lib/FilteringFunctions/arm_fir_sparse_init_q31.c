@@ -39,7 +39,8 @@
 
 /**
   @brief         Initialization function for the Q31 sparse FIR filter.
-  @param[in,out] S          points to an instance of the Q31 sparse FIR structure
+  @param[in,out] S          points to an instance of the Q31 sparse FIR
+  structure
   @param[in]     numTaps    number of nonzero coefficients in the filter
   @param[in]     pCoeffs    points to the array of filter coefficients
   @param[in]     pState     points to the state buffer
@@ -49,22 +50,18 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> holds the filter coefficients and has length <code>numTaps</code>.
-                   <code>pState</code> holds the filter's state variables and must be of length
-                   <code>maxDelay + blockSize</code>, where <code>maxDelay</code>
-                   is the maximum number of delay line values.
-                   <code>blockSize</code> is the number of words processed by <code>arm_fir_sparse_q31()</code> function.
+                   <code>pCoeffs</code> holds the filter coefficients and has
+  length <code>numTaps</code>. <code>pState</code> holds the filter's state
+  variables and must be of length <code>maxDelay + blockSize</code>, where
+  <code>maxDelay</code> is the maximum number of delay line values.
+                   <code>blockSize</code> is the number of words processed by
+  <code>arm_fir_sparse_q31()</code> function.
  */
 
-void arm_fir_sparse_init_q31(
-        arm_fir_sparse_instance_q31 * S,
-        uint16_t numTaps,
-  const q31_t * pCoeffs,
-        q31_t * pState,
-        int32_t * pTapDelay,
-        uint16_t maxDelay,
-        uint32_t blockSize)
-{
+void arm_fir_sparse_init_q31(arm_fir_sparse_instance_q31 *S, uint16_t numTaps,
+                             const q31_t *pCoeffs, q31_t *pState,
+                             int32_t *pTapDelay, uint16_t maxDelay,
+                             uint32_t blockSize) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 

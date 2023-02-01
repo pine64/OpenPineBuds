@@ -39,7 +39,8 @@
   The vectors are multiplied element-by-element and then summed.
 
   <pre>
-      sum = pSrcA[0]*pSrcB[0] + pSrcA[1]*pSrcB[1] + ... + pSrcA[blockSize-1]*pSrcB[blockSize-1]
+      sum = pSrcA[0]*pSrcB[0] + pSrcA[1]*pSrcB[1] + ... +
+  pSrcA[blockSize-1]*pSrcB[blockSize-1]
   </pre>
 
   There are separate functions for floating-point, Q7, Q15, and Q31 data types.
@@ -59,23 +60,19 @@
   @return        none
  */
 
-void arm_dot_prod_f32(
-  const float32_t * pSrcA,
-  const float32_t * pSrcB,
-        uint32_t blockSize,
-        float32_t * result)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t sum = 0.0f;                          /* Temporary return variable */
+void arm_dot_prod_f32(const float32_t *pSrcA, const float32_t *pSrcB,
+                      uint32_t blockSize, float32_t *result) {
+  uint32_t blkCnt;      /* Loop counter */
+  float32_t sum = 0.0f; /* Temporary return variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
-    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]* B[blockSize-1] */
+  while (blkCnt > 0U) {
+    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]*
+     * B[blockSize-1] */
 
     /* Calculate dot product and store result in a temporary buffer. */
     sum += (*pSrcA++) * (*pSrcB++);
@@ -100,9 +97,9 @@ void arm_dot_prod_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
-    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]* B[blockSize-1] */
+  while (blkCnt > 0U) {
+    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]*
+     * B[blockSize-1] */
 
     /* Calculate dot product and store result in a temporary buffer. */
     sum += (*pSrcA++) * (*pSrcB++);

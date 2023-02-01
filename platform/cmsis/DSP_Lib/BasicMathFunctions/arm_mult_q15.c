@@ -47,68 +47,64 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q15 range [0x8000 0x7FFF] are saturated.
+                   Results outside of the allowable Q15 range [0x8000 0x7FFF]
+  are saturated.
  */
 
-void arm_mult_q15(
-  const q15_t * pSrcA,
-  const q15_t * pSrcB,
-        q15_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_mult_q15(const q15_t *pSrcA, const q15_t *pSrcB, q15_t *pDst,
+                  uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
-#if defined (ARM_MATH_DSP)
-  q31_t inA1, inA2, inB1, inB2;                  /* Temporary input variables */
-  q15_t out1, out2, out3, out4;                  /* Temporary output variables */
-  q31_t mul1, mul2, mul3, mul4;                  /* Temporary variables */
+#if defined(ARM_MATH_DSP)
+  q31_t inA1, inA2, inB1, inB2; /* Temporary input variables */
+  q15_t out1, out2, out3, out4; /* Temporary output variables */
+  q31_t mul1, mul2, mul3, mul4; /* Temporary variables */
 #endif
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * B */
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     /* read 2 samples at a time from sourceA */
-    inA1 = read_q15x2_ia ((q15_t **) &pSrcA);
+    inA1 = read_q15x2_ia((q15_t **)&pSrcA);
     /* read 2 samples at a time from sourceB */
-    inB1 = read_q15x2_ia ((q15_t **) &pSrcB);
+    inB1 = read_q15x2_ia((q15_t **)&pSrcB);
     /* read 2 samples at a time from sourceA */
-    inA2 = read_q15x2_ia ((q15_t **) &pSrcA);
+    inA2 = read_q15x2_ia((q15_t **)&pSrcA);
     /* read 2 samples at a time from sourceB */
-    inB2 = read_q15x2_ia ((q15_t **) &pSrcB);
+    inB2 = read_q15x2_ia((q15_t **)&pSrcB);
 
     /* multiply mul = sourceA * sourceB */
-    mul1 = (q31_t) ((q15_t) (inA1 >> 16) * (q15_t) (inB1 >> 16));
-    mul2 = (q31_t) ((q15_t) (inA1      ) * (q15_t) (inB1      ));
-    mul3 = (q31_t) ((q15_t) (inA2 >> 16) * (q15_t) (inB2 >> 16));
-    mul4 = (q31_t) ((q15_t) (inA2      ) * (q15_t) (inB2      ));
+    mul1 = (q31_t)((q15_t)(inA1 >> 16) * (q15_t)(inB1 >> 16));
+    mul2 = (q31_t)((q15_t)(inA1) * (q15_t)(inB1));
+    mul3 = (q31_t)((q15_t)(inA2 >> 16) * (q15_t)(inB2 >> 16));
+    mul4 = (q31_t)((q15_t)(inA2) * (q15_t)(inB2));
 
     /* saturate result to 16 bit */
-    out1 = (q15_t) __SSAT(mul1 >> 15, 16);
-    out2 = (q15_t) __SSAT(mul2 >> 15, 16);
-    out3 = (q15_t) __SSAT(mul3 >> 15, 16);
-    out4 = (q15_t) __SSAT(mul4 >> 15, 16);
+    out1 = (q15_t)__SSAT(mul1 >> 15, 16);
+    out2 = (q15_t)__SSAT(mul2 >> 15, 16);
+    out3 = (q15_t)__SSAT(mul3 >> 15, 16);
+    out4 = (q15_t)__SSAT(mul4 >> 15, 16);
 
     /* store result to destination */
 #ifndef ARM_MATH_BIG_ENDIAN
-    write_q15x2_ia (&pDst, __PKHBT(out2, out1, 16));
-    write_q15x2_ia (&pDst, __PKHBT(out4, out3, 16));
+    write_q15x2_ia(&pDst, __PKHBT(out2, out1, 16));
+    write_q15x2_ia(&pDst, __PKHBT(out4, out3, 16));
 #else
-    write_q15x2_ia (&pDst, __PKHBT(out1, out2, 16));
-    write_q15x2_ia (&pDst, __PKHBT(out3, out4, 16));
+    write_q15x2_ia(&pDst, __PKHBT(out1, out2, 16));
+    write_q15x2_ia(&pDst, __PKHBT(out3, out4, 16));
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
 #else
-    *pDst++ = (q15_t) __SSAT((((q31_t) (*pSrcA++) * (*pSrcB++)) >> 15), 16);
-    *pDst++ = (q15_t) __SSAT((((q31_t) (*pSrcA++) * (*pSrcB++)) >> 15), 16);
-    *pDst++ = (q15_t) __SSAT((((q31_t) (*pSrcA++) * (*pSrcB++)) >> 15), 16);
-    *pDst++ = (q15_t) __SSAT((((q31_t) (*pSrcA++) * (*pSrcB++)) >> 15), 16);
+    *pDst++ = (q15_t)__SSAT((((q31_t)(*pSrcA++) * (*pSrcB++)) >> 15), 16);
+    *pDst++ = (q15_t)__SSAT((((q31_t)(*pSrcA++) * (*pSrcB++)) >> 15), 16);
+    *pDst++ = (q15_t)__SSAT((((q31_t)(*pSrcA++) * (*pSrcB++)) >> 15), 16);
+    *pDst++ = (q15_t)__SSAT((((q31_t)(*pSrcA++) * (*pSrcB++)) >> 15), 16);
 #endif
 
     /* Decrement loop counter */
@@ -125,17 +121,15 @@ void arm_mult_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * B */
 
     /* Multiply inputs and store result in destination buffer. */
-    *pDst++ = (q15_t) __SSAT((((q31_t) (*pSrcA++) * (*pSrcB++)) >> 15), 16);
+    *pDst++ = (q15_t)__SSAT((((q31_t)(*pSrcA++) * (*pSrcB++)) >> 15), 16);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

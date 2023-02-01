@@ -13,27 +13,20 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
+#include "export_fn_rom.h"
 #include "sha256.h"
 #include "stddef.h"
-#include "export_fn_rom.h"
 
-void SHA256_init(SHA256_CTX* ctx)
-{
-    __export_fn_rom.SHA256_init(ctx);
+void SHA256_init(SHA256_CTX *ctx) { __export_fn_rom.SHA256_init(ctx); }
+
+void SHA256_update(SHA256_CTX *ctx, const void *data, uint32_t len) {
+  __export_fn_rom.SHA256_update(ctx, data, len);
 }
 
-void SHA256_update(SHA256_CTX* ctx, const void* data, uint32_t len)
-{
-    __export_fn_rom.SHA256_update(ctx, data, len);
+const uint8_t *SHA256_final(SHA256_CTX *ctx) {
+  return __export_fn_rom.SHA256_final(ctx);
 }
 
-const uint8_t* SHA256_final(SHA256_CTX* ctx)
-{
-    return __export_fn_rom.SHA256_final(ctx);
+const uint8_t *SHA256_hash(const void *data, uint32_t len, uint8_t *digest) {
+  return __export_fn_rom.SHA256_hash(data, len, digest);
 }
-
-const uint8_t* SHA256_hash(const void* data, uint32_t len, uint8_t* digest)
-{
-    return __export_fn_rom.SHA256_hash(data, len, digest);
-}
-

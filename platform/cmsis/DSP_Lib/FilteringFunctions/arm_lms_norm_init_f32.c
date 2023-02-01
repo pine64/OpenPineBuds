@@ -38,8 +38,10 @@
  */
 
 /**
-  @brief         Initialization function for floating-point normalized LMS filter.
-  @param[in]     S         points to an instance of the floating-point LMS filter structure
+  @brief         Initialization function for floating-point normalized LMS
+  filter.
+  @param[in]     S         points to an instance of the floating-point LMS
+  filter structure
   @param[in]     numTaps   number of filter coefficients
   @param[in]     pCoeffs   points to coefficient buffer
   @param[in]     pState    points to state buffer
@@ -48,23 +50,20 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> points to the array of filter coefficients stored in time reversed order:
-  <pre>
-     {b[numTaps-1], b[numTaps-2], b[N-2], ..., b[1], b[0]}
+                   <code>pCoeffs</code> points to the array of filter
+  coefficients stored in time reversed order: <pre> {b[numTaps-1], b[numTaps-2],
+  b[N-2], ..., b[1], b[0]}
   </pre>
-                   The initial filter coefficients serve as a starting point for the adaptive filter.
-                   <code>pState</code> points to an array of length <code>numTaps+blockSize-1</code> samples,
-                   where <code>blockSize</code> is the number of input samples processed by each call to <code>arm_lms_norm_f32()</code>.
+                   The initial filter coefficients serve as a starting point for
+  the adaptive filter. <code>pState</code> points to an array of length
+  <code>numTaps+blockSize-1</code> samples, where <code>blockSize</code> is the
+  number of input samples processed by each call to
+  <code>arm_lms_norm_f32()</code>.
  */
 
-void arm_lms_norm_init_f32(
-        arm_lms_norm_instance_f32 * S,
-        uint16_t numTaps,
-        float32_t * pCoeffs,
-        float32_t * pState,
-        float32_t mu,
-        uint32_t blockSize)
-{
+void arm_lms_norm_init_f32(arm_lms_norm_instance_f32 *S, uint16_t numTaps,
+                           float32_t *pCoeffs, float32_t *pState, float32_t mu,
+                           uint32_t blockSize) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 

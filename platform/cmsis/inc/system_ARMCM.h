@@ -15,14 +15,14 @@
  ****************************************************************************/
 #ifndef __SYSTEM_ARMCM_H__
 #define __SYSTEM_ARMCM_H__
-
+#include "cmsis_compiler.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "stdbool.h"
 
-void SystemInit (void);
+void SystemInit(void);
 
 #ifdef UNALIGNED_ACCESS
 
@@ -45,4 +45,3 @@ uint32_t get_cpu_id(void);
 #endif
 
 #endif
-

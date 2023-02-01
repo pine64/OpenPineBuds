@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
  * Title:        arm_shift_q31.c
- * Description:  Shifts the elements of a Q31 vector by a specified number of bits
+ * Description:  Shifts the elements of a Q31 vector by a specified number of
+ * bits
  *
  * $Date:        18. March 2019
  * $Revision:    V1.6.0
@@ -42,8 +43,9 @@
       pDst[n] = pSrc[n] << shift,   0 <= n < blockSize.
   </pre>
 
-  If <code>shift</code> is positive then the elements of the vector are shifted to the left.
-  If <code>shift</code> is negative then the elements of the vector are shifted to the right.
+  If <code>shift</code> is positive then the elements of the vector are shifted
+  to the left. If <code>shift</code> is negative then the elements of the vector
+  are shifted to the right.
 
   The functions support in-place computation allowing the source and destination
   pointers to reference the same memory buffer.
@@ -57,37 +59,33 @@
 /**
   @brief         Shifts the elements of a Q31 vector a specified number of bits.
   @param[in]     pSrc       points to the input vector
-  @param[in]     shiftBits  number of bits to shift.  A positive value shifts left; a negative value shifts right.
+  @param[in]     shiftBits  number of bits to shift.  A positive value shifts
+  left; a negative value shifts right.
   @param[out]    pDst       points to the output vector
   @param[in]     blockSize  number of samples in the vector
   @return        none
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] are saturated.
+                   Results outside of the allowable Q31 range [0x80000000
+  0x7FFFFFFF] are saturated.
  */
 
-void arm_shift_q31(
-  const q31_t * pSrc,
-        int8_t shiftBits,
-        q31_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        uint8_t sign = (shiftBits & 0x80);             /* Sign of shiftBits */
+void arm_shift_q31(const q31_t *pSrc, int8_t shiftBits, q31_t *pDst,
+                   uint32_t blockSize) {
+  uint32_t blkCnt;                   /* Loop counter */
+  uint8_t sign = (shiftBits & 0x80); /* Sign of shiftBits */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
-  q31_t in, out;                                 /* Temporary variables */
+  q31_t in, out; /* Temporary variables */
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
   /* If the shift value is positive then do right shift else left shift */
-  if (sign == 0U)
-  {
-    while (blkCnt > 0U)
-    {
+  if (sign == 0U) {
+    while (blkCnt > 0U) {
       /* C = A << shiftBits */
 
       /* Shift input and store result in destination buffer. */
@@ -118,11 +116,8 @@ void arm_shift_q31(
       /* Decrement loop counter */
       blkCnt--;
     }
-  }
-  else
-  {
-    while (blkCnt > 0U)
-    {
+  } else {
+    while (blkCnt > 0U) {
       /* C = A >> shiftBits */
 
       /* Shift input and store results in destination buffer. */
@@ -147,23 +142,18 @@ void arm_shift_q31(
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
   /* If the shift value is positive then do right shift else left shift */
-  if (sign == 0U)
-  {
-    while (blkCnt > 0U)
-    {
+  if (sign == 0U) {
+    while (blkCnt > 0U) {
       /* C = A << shiftBits */
 
       /* Shift input and store result in destination buffer. */
-      *pDst++ = clip_q63_to_q31((q63_t) *pSrc++ << shiftBits);
+      *pDst++ = clip_q63_to_q31((q63_t)*pSrc++ << shiftBits);
 
       /* Decrement loop counter */
       blkCnt--;
     }
-  }
-  else
-  {
-    while (blkCnt > 0U)
-    {
+  } else {
+    while (blkCnt > 0U) {
       /* C = A >> shiftBits */
 
       /* Shift input and store result in destination buffer. */
@@ -173,7 +163,6 @@ void arm_shift_q31(
       blkCnt--;
     }
   }
-
 }
 
 /**

@@ -41,21 +41,20 @@
   @brief     Initialization function for the Q15 IIR lattice filter.
   @param[in] S          points to an instance of the Q15 IIR lattice structure
   @param[in] numStages  number of stages in the filter
-  @param[in] pkCoeffs   points to reflection coefficient buffer.  The array is of length numStages
-  @param[in] pvCoeffs   points to ladder coefficient buffer.  The array is of length numStages+1
-  @param[in] pState     points to state buffer.  The array is of length numStages+blockSize
+  @param[in] pkCoeffs   points to reflection coefficient buffer.  The array is
+  of length numStages
+  @param[in] pvCoeffs   points to ladder coefficient buffer.  The array is of
+  length numStages+1
+  @param[in] pState     points to state buffer.  The array is of length
+  numStages+blockSize
   @param[in] blockSize  number of samples to process
   @return        none
  */
 
-void arm_iir_lattice_init_q15(
-  arm_iir_lattice_instance_q15 * S,
-  uint16_t numStages,
-  q15_t * pkCoeffs,
-  q15_t * pvCoeffs,
-  q15_t * pState,
-  uint32_t blockSize)
-{
+void arm_iir_lattice_init_q15(arm_iir_lattice_instance_q15 *S,
+                              uint16_t numStages, q15_t *pkCoeffs,
+                              q15_t *pvCoeffs, q15_t *pState,
+                              uint32_t blockSize) {
   /* Assign filter taps */
   S->numStages = numStages;
 

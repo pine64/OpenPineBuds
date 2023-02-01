@@ -46,40 +46,36 @@
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The intermediate multiplications are in 1.31 x 1.31 = 2.62 format and these
-                   are truncated to 2.48 format by discarding the lower 14 bits.
-                   The 2.48 result is then added without saturation to a 64-bit accumulator in 16.48 format.
-                   There are 15 guard bits in the accumulator and there is no risk of overflow as long as
-                   the length of the vectors is less than 2^16 elements.
-                   The return result is in 16.48 format.
+                   The intermediate multiplications are in 1.31 x 1.31 = 2.62
+  format and these are truncated to 2.48 format by discarding the lower 14 bits.
+                   The 2.48 result is then added without saturation to a 64-bit
+  accumulator in 16.48 format. There are 15 guard bits in the accumulator and
+  there is no risk of overflow as long as the length of the vectors is less than
+  2^16 elements. The return result is in 16.48 format.
  */
 
-void arm_dot_prod_q31(
-  const q31_t * pSrcA,
-  const q31_t * pSrcB,
-        uint32_t blockSize,
-        q63_t * result)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q63_t sum = 0;                                 /* Temporary return variable */
+void arm_dot_prod_q31(const q31_t *pSrcA, const q31_t *pSrcB,
+                      uint32_t blockSize, q63_t *result) {
+  uint32_t blkCnt; /* Loop counter */
+  q63_t sum = 0;   /* Temporary return variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
-    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]* B[blockSize-1] */
+  while (blkCnt > 0U) {
+    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]*
+     * B[blockSize-1] */
 
     /* Calculate dot product and store result in a temporary buffer. */
-    sum += ((q63_t) *pSrcA++ * *pSrcB++) >> 14U;
+    sum += ((q63_t)*pSrcA++ * *pSrcB++) >> 14U;
 
-    sum += ((q63_t) *pSrcA++ * *pSrcB++) >> 14U;
+    sum += ((q63_t)*pSrcA++ * *pSrcB++) >> 14U;
 
-    sum += ((q63_t) *pSrcA++ * *pSrcB++) >> 14U;
+    sum += ((q63_t)*pSrcA++ * *pSrcB++) >> 14U;
 
-    sum += ((q63_t) *pSrcA++ * *pSrcB++) >> 14U;
+    sum += ((q63_t)*pSrcA++ * *pSrcB++) >> 14U;
 
     /* Decrement loop counter */
     blkCnt--;
@@ -95,12 +91,12 @@ void arm_dot_prod_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
-    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]* B[blockSize-1] */
+  while (blkCnt > 0U) {
+    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]*
+     * B[blockSize-1] */
 
     /* Calculate dot product and store result in a temporary buffer. */
-    sum += ((q63_t) *pSrcA++ * *pSrcB++) >> 14U;
+    sum += ((q63_t)*pSrcA++ * *pSrcB++) >> 14U;
 
     /* Decrement loop counter */
     blkCnt--;

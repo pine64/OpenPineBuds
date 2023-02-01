@@ -59,20 +59,16 @@
   @return        none
  */
 
-void arm_negate_f32(
-  const float32_t * pSrc,
-        float32_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_negate_f32(const float32_t *pSrc, float32_t *pDst,
+                    uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = -A */
 
     /* Negate and store result in destination buffer. */
@@ -98,8 +94,7 @@ void arm_negate_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = -A */
 
     /* Negate and store result in destination buffer. */
@@ -108,7 +103,6 @@ void arm_negate_f32(
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

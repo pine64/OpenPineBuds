@@ -36,12 +36,14 @@
   @defgroup variance  Variance
 
   Calculates the variance of the elements in the input vector.
-  The underlying algorithm used is the direct method sometimes referred to as the two-pass method:
+  The underlying algorithm used is the direct method sometimes referred to as
+  the two-pass method:
 
   <pre>
       Result = sum(element - meanOfElements)^2) / numElement - 1
 
-      meanOfElements = ( pSrc[0] * pSrc[0] + pSrc[1] * pSrc[1] + ... + pSrc[blockSize-1] ) / blockSize
+      meanOfElements = ( pSrc[0] * pSrc[0] + pSrc[1] * pSrc[1] + ... +
+  pSrc[blockSize-1] ) / blockSize
   </pre>
 
   There are separate functions for floating point, Q31, and Q15 data types.
@@ -60,37 +62,31 @@
   @return        none
  */
 
-void arm_var_f32(
-  const float32_t * pSrc,
-        uint32_t blockSize,
-        float32_t * pResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t sum = 0.0f;                          /* Temporary result storage */
-        float32_t fSum = 0.0f;
-        float32_t fMean, fValue;
-  const float32_t * pInput = pSrc;
+void arm_var_f32(const float32_t *pSrc, uint32_t blockSize,
+                 float32_t *pResult) {
+  uint32_t blkCnt;      /* Loop counter */
+  float32_t sum = 0.0f; /* Temporary result storage */
+  float32_t fSum = 0.0f;
+  float32_t fMean, fValue;
+  const float32_t *pInput = pSrc;
 
-  if (blockSize <= 1U)
-  {
+  if (blockSize <= 1U) {
     *pResult = 0;
     return;
   }
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
 
     sum += *pInput++;
     sum += *pInput++;
     sum += *pInput++;
     sum += *pInput++;
-
 
     /* Decrement loop counter */
     blkCnt--;
@@ -106,8 +102,7 @@ void arm_var_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
 
     sum += *pInput++;
@@ -117,17 +112,16 @@ void arm_var_f32(
   }
 
   /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) / blockSize  */
-  fMean = sum / (float32_t) blockSize;
+  fMean = sum / (float32_t)blockSize;
 
   pInput = pSrc;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     fValue = *pInput++ - fMean;
     fSum += fValue * fValue;
 
@@ -154,8 +148,7 @@ void arm_var_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     fValue = *pInput++ - fMean;
     fSum += fValue * fValue;
 

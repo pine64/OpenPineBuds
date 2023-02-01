@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
  * Title:        arm_rms_f32.c
- * Description:  Root mean square value of the elements of a floating-point vector
+ * Description:  Root mean square value of the elements of a floating-point
+ * vector
  *
  * $Date:        18. March 2019
  * $Revision:    V1.6.0
@@ -39,7 +40,8 @@
   The underlying algorithm is used:
 
   <pre>
-      Result = sqrt(((pSrc[0] * pSrc[0] + pSrc[1] * pSrc[1] + ... + pSrc[blockSize-1] * pSrc[blockSize-1]) / blockSize));
+      Result = sqrt(((pSrc[0] * pSrc[0] + pSrc[1] * pSrc[1] + ... +
+  pSrc[blockSize-1] * pSrc[blockSize-1]) / blockSize));
   </pre>
 
   There are separate functions for floating point, Q31, and Q15 data types.
@@ -58,22 +60,18 @@
   @return        none
  */
 
-void arm_rms_f32(
-  const float32_t * pSrc,
-        uint32_t blockSize,
-        float32_t * pResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t sum = 0.0f;                          /* Temporary result storage */
-        float32_t in;                                  /* Temporary variable to store input value */
+void arm_rms_f32(const float32_t *pSrc, uint32_t blockSize,
+                 float32_t *pResult) {
+  uint32_t blkCnt;      /* Loop counter */
+  float32_t sum = 0.0f; /* Temporary result storage */
+  float32_t in;         /* Temporary variable to store input value */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A[0] * A[0] + A[1] * A[1] + ... + A[blockSize-1] * A[blockSize-1] */
 
     in = *pSrc++;
@@ -103,20 +101,19 @@ void arm_rms_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A[0] * A[0] + A[1] * A[1] + ... + A[blockSize-1] * A[blockSize-1] */
 
     in = *pSrc++;
     /* Compute sum of squares and store result in a temporary variable. */
-    sum += ( in * in);
+    sum += (in * in);
 
     /* Decrement loop counter */
     blkCnt--;
   }
 
   /* Compute Rms and store result in destination */
-  arm_sqrt_f32(sum / (float32_t) blockSize, pResult);
+  arm_sqrt_f32(sum / (float32_t)blockSize, pResult);
 }
 
 /**

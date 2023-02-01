@@ -26,8 +26,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @ingroup groupFastMath
@@ -44,8 +44,8 @@
   [0 +0.9999] mapping to [0 2*pi).  The fixed-point range is chosen so that a
   value of 2*pi wraps around to 0.
 
-  The implementation is based on table lookup using 256 values together with linear interpolation.
-  The steps used are:
+  The implementation is based on table lookup using 256 values together with
+  linear interpolation. The steps used are:
    -# Calculation of the nearest integer table index
    -# Compute the fractional portion (fract) of the table index.
    -# The final result equals <code>(1.0f-fract)*a + fract*b;</code>
@@ -63,17 +63,16 @@
  */
 
 /**
-  @brief         Fast approximation to the trigonometric sine function for floating-point data.
+  @brief         Fast approximation to the trigonometric sine function for
+  floating-point data.
   @param[in]     x  input value in radians.
   @return        sin(x)
  */
 
-float32_t arm_sin_f32(
-  float32_t x)
-{
-  float32_t sinVal, fract, in;                   /* Temporary input, output variables */
-  uint16_t index;                                /* Index variable */
-  float32_t a, b;                                /* Two nearest output values */
+float32_t arm_sin_f32(float32_t x) {
+  float32_t sinVal, fract, in; /* Temporary input, output variables */
+  uint16_t index;              /* Index variable */
+  float32_t a, b;              /* Two nearest output values */
   int32_t n;
   float32_t findex;
 
@@ -82,16 +81,15 @@ float32_t arm_sin_f32(
   in = x * 0.159154943092f;
 
   /* Calculation of floor value of input */
-  n = (int32_t) in;
+  n = (int32_t)in;
 
   /* Make negative values towards -infinity */
-  if (in < 0.0f)
-  {
+  if (in < 0.0f) {
     n--;
   }
 
   /* Map input value to [0 1] */
-  in = in - (float32_t) n;
+  in = in - (float32_t)n;
 
   /* Calculation of index of the table */
   findex = (float32_t)FAST_MATH_TABLE_SIZE * in;
@@ -104,11 +102,11 @@ float32_t arm_sin_f32(
   }
 
   /* fractional value calculation */
-  fract = findex - (float32_t) index;
+  fract = findex - (float32_t)index;
 
   /* Read two nearest values of input value from the sin table */
   a = sinTable_f32[index];
-  b = sinTable_f32[index+1];
+  b = sinTable_f32[index + 1];
 
   /* Linear interpolation process */
   sinVal = (1.0f - fract) * a + fract * b;

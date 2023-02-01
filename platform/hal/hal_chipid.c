@@ -18,33 +18,29 @@
 
 enum HAL_CHIP_METAL_ID_T BOOT_BSS_LOC metal_id;
 
-uint32_t WEAK BOOT_TEXT_FLASH_LOC read_hw_metal_id(void)
-{
-    return HAL_CHIP_METAL_ID_0;
+uint32_t WEAK BOOT_TEXT_FLASH_LOC read_hw_metal_id(void) {
+  return HAL_CHIP_METAL_ID_0;
 }
 
-void BOOT_TEXT_FLASH_LOC hal_chipid_init(void)
-{
-    metal_id = read_hw_metal_id();
+void BOOT_TEXT_FLASH_LOC hal_chipid_init(void) {
+  metal_id = read_hw_metal_id();
 }
 
-enum HAL_CHIP_METAL_ID_T BOOT_TEXT_SRAM_LOC hal_get_chip_metal_id(void)
-{
+enum HAL_CHIP_METAL_ID_T BOOT_TEXT_SRAM_LOC hal_get_chip_metal_id(void) {
 #ifdef FPGA
-    return HAL_CHIP_METAL_ID_15;
+  return HAL_CHIP_METAL_ID_15;
 #else
-    return metal_id;
+  return metal_id;
 #endif
 }
 
-enum HAL_BT_CHIP_SERIES_T hal_get_bt_chip_series(void)
-{
+enum HAL_BT_CHIP_SERIES_T hal_get_bt_chip_series(void) {
 #if (defined(CHIP_BEST1000)) || defined(CHIP_BEST2000)
-    return HAL_BT_CHIP_SERIES_2000;
+  return HAL_BT_CHIP_SERIES_2000;
 #elif defined(CHIP_BEST2500)
-    return HAL_BT_CHIP_SERIES_2500;
-#else// (defined(CHIP_BEST2300) || defined(CHIP_BEST2300P) || defined(CHIP_BEST1400) || defined(CHIP_BEST1402))
-    return HAL_BT_CHIP_SERIES_2300;
+  return HAL_BT_CHIP_SERIES_2500;
+#else // (defined(CHIP_BEST2300) || defined(CHIP_BEST2300P) ||
+      // defined(CHIP_BEST1400) || defined(CHIP_BEST1402))
+  return HAL_BT_CHIP_SERIES_2300;
 #endif
 }
-

@@ -46,54 +46,50 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   The Q31 value -1 (0x80000000) is saturated to the maximum allowable positive value 0x7FFFFFFF.
+                   The Q31 value -1 (0x80000000) is saturated to the maximum
+  allowable positive value 0x7FFFFFFF.
  */
 
-void arm_cmplx_conj_q31(
-  const q31_t * pSrc,
-        q31_t * pDst,
-        uint32_t numSamples)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q31_t in;                                      /* Temporary input variable */
+void arm_cmplx_conj_q31(const q31_t *pSrc, q31_t *pDst, uint32_t numSamples) {
+  uint32_t blkCnt; /* Loop counter */
+  q31_t in;        /* Temporary input variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = numSamples >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C[0] + jC[1] = A[0]+ j(-1)A[1] */
 
     /* Calculate Complex Conjugate and store result in destination buffer. */
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QSUB(0, in);
 #else
     *pDst++ = (in == INT32_MIN) ? INT32_MAX : -in;
 #endif
 
-    *pDst++ =  *pSrc++;
-    in =  *pSrc++;
-#if defined (ARM_MATH_DSP)
+    *pDst++ = *pSrc++;
+    in = *pSrc++;
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QSUB(0, in);
 #else
     *pDst++ = (in == INT32_MIN) ? INT32_MAX : -in;
 #endif
 
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QSUB(0, in);
 #else
     *pDst++ = (in == INT32_MIN) ? INT32_MAX : -in;
 #endif
 
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QSUB(0, in);
 #else
     *pDst++ = (in == INT32_MIN) ? INT32_MAX : -in;
@@ -113,14 +109,13 @@ void arm_cmplx_conj_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C[0] + jC[1] = A[0]+ j(-1)A[1] */
 
     /* Calculate Complex Conjugate and store result in destination buffer. */
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QSUB(0, in);
 #else
     *pDst++ = (in == INT32_MIN) ? INT32_MAX : -in;
@@ -129,7 +124,6 @@ void arm_cmplx_conj_q31(
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

@@ -32,12 +32,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
+#include "rt_List.h"
 #include "RTX_Config.h"
 #include "rt_System.h"
-#include "rt_List.h"
 #include "rt_Task.h"
 #include "rt_Time.h"
+#include "rt_TypeDef.h"
 #ifdef __CORTEX_A9
 #include "rt_HAL_CA.h"
 #else
@@ -49,19 +49,17 @@
  *---------------------------------------------------------------------------*/
 
 /* List head of chained ready tasks */
-struct OS_XCB  os_rdy;
+struct OS_XCB os_rdy;
 /* List head of chained delay tasks */
-struct OS_XCB  os_dly;
-
+struct OS_XCB os_dly;
 
 /*----------------------------------------------------------------------------
  *      Functions
  *---------------------------------------------------------------------------*/
 
-
 /*--------------------------- rt_put_prio -----------------------------------*/
 
-void rt_put_prio (P_XCB p_CB, P_TCB p_task) {
+void rt_put_prio(P_XCB p_CB, P_TCB p_task) {
   /* Put task identified with "p_task" into list ordered by priority.       */
   /* "p_CB" points to head of list; list has always an element at end with  */
   /* a priority less than "p_task->prio".                                   */
@@ -87,16 +85,14 @@ void rt_put_prio (P_XCB p_CB, P_TCB p_task) {
       p_CB2->p_rlnk = p_task;
     }
     p_task->p_rlnk = (P_TCB)p_CB;
-  }
-  else {
+  } else {
     p_task->p_rlnk = NULL;
   }
 }
 
-
 /*--------------------------- rt_get_first ----------------------------------*/
 
-P_TCB rt_get_first (P_XCB p_CB) {
+P_TCB rt_get_first(P_XCB p_CB) {
   /* Get task at head of list: it is the task with highest priority. */
   /* "p_CB" points to head of list. */
   P_TCB p_first;
@@ -109,17 +105,15 @@ P_TCB rt_get_first (P_XCB p_CB) {
       p_first->p_lnk = NULL;
     }
     p_first->p_rlnk = NULL;
-  }
-  else {
+  } else {
     p_first->p_lnk = NULL;
   }
   return (p_first);
 }
 
-
 /*--------------------------- rt_put_rdy_first ------------------------------*/
 
-void rt_put_rdy_first (P_TCB p_task) {
+void rt_put_rdy_first(P_TCB p_task) {
   /* Put task identified with "p_task" at the head of the ready list. The   */
   /* task must have at least a priority equal to highest priority in list.  */
   p_task->p_lnk = os_rdy.p_lnk;
@@ -127,10 +121,9 @@ void rt_put_rdy_first (P_TCB p_task) {
   os_rdy.p_lnk = p_task;
 }
 
-
 /*--------------------------- rt_get_same_rdy_prio --------------------------*/
 
-P_TCB rt_get_same_rdy_prio (void) {
+P_TCB rt_get_same_rdy_prio(void) {
   /* Remove a task of same priority from ready list if any exists. Other-   */
   /* wise return NULL.                                                      */
   P_TCB p_first;
@@ -143,10 +136,9 @@ P_TCB rt_get_same_rdy_prio (void) {
   return (NULL);
 }
 
-
 /*--------------------------- rt_resort_prio --------------------------------*/
 
-void rt_resort_prio (P_TCB p_task) {
+void rt_resort_prio(P_TCB p_task) {
   /* Re-sort ordered lists after the priority of 'p_task' has changed.      */
   P_TCB p_CB;
 
@@ -156,26 +148,25 @@ void rt_resort_prio (P_TCB p_task) {
       p_CB = (P_TCB)&os_rdy;
       goto res;
     }
-  }
-  else {
+  } else {
     p_CB = p_task->p_rlnk;
     while (p_CB->cb_type == TCB) {
       /* Find a header of this task chain list. */
       p_CB = p_CB->p_rlnk;
     }
-res:rt_rmv_list (p_task);
-    rt_put_prio ((P_XCB)p_CB, p_task);
+  res:
+    rt_rmv_list(p_task);
+    rt_put_prio((P_XCB)p_CB, p_task);
   }
 }
 
-
 /*--------------------------- rt_put_dly ------------------------------------*/
 
-void rt_put_dly (P_TCB p_task, U16 delay) {
+void rt_put_dly(P_TCB p_task, U16 delay) {
   /* Put a task identified with "p_task" into chained delay wait list using */
   /* a delay value of "delay".                                              */
   P_TCB p;
-  U32 delta,idelay = delay;
+  U32 delta, idelay = delay;
 
   p = (P_TCB)&os_dly;
   if (p->p_dlnk == NULL) {
@@ -187,7 +178,8 @@ void rt_put_dly (P_TCB p_task, U16 delay) {
   while (delta < idelay) {
     if (p->p_dlnk == NULL) {
       /* End of list found */
-last: p_task->p_dlnk = NULL;
+    last:
+      p_task->p_dlnk = NULL;
       p->p_dlnk = p_task;
       p_task->p_blnk = p;
       p->delta_time = (U16)(idelay - delta);
@@ -208,10 +200,9 @@ last: p_task->p_dlnk = NULL;
   p->delta_time -= p_task->delta_time;
 }
 
-
 /*--------------------------- rt_dec_dly ------------------------------------*/
 
-void rt_dec_dly (void) {
+void rt_dec_dly(void) {
   /* Decrement delta time of list head: remove tasks having a value of zero.*/
   P_TCB p_rdy;
 
@@ -231,26 +222,25 @@ void rt_dec_dly (void) {
       }
       p_rdy->p_rlnk = NULL;
     }
-    rt_put_prio (&os_rdy, p_rdy);
+    rt_put_prio(&os_rdy, p_rdy);
     os_dly.delta_time = p_rdy->delta_time;
     if (p_rdy->state == WAIT_ITV) {
       /* Calculate the next time for interval wait. */
       p_rdy->delta_time = p_rdy->interval_time + (U16)os_time;
     }
-    p_rdy->state   = READY;
+    p_rdy->state = READY;
     os_dly.p_dlnk = p_rdy->p_dlnk;
     if (p_rdy->p_dlnk != NULL) {
-      p_rdy->p_dlnk->p_blnk =  (P_TCB)&os_dly;
+      p_rdy->p_dlnk->p_blnk = (P_TCB)&os_dly;
       p_rdy->p_dlnk = NULL;
     }
     p_rdy->p_blnk = NULL;
   }
 }
 
-
 /*--------------------------- rt_rmv_list -----------------------------------*/
 
-void rt_rmv_list (P_TCB p_task) {
+void rt_rmv_list(P_TCB p_task) {
   /* Remove task identified with "p_task" from ready, semaphore or mailbox  */
   /* waiting list if enqueued.                                              */
   P_TCB p_b;
@@ -275,10 +265,9 @@ void rt_rmv_list (P_TCB p_task) {
   }
 }
 
-
 /*--------------------------- rt_rmv_dly ------------------------------------*/
 
-void rt_rmv_dly (P_TCB p_task) {
+void rt_rmv_dly(P_TCB p_task) {
   /* Remove task identified with "p_task" from delay list if enqueued.      */
   P_TCB p_b;
 
@@ -291,8 +280,7 @@ void rt_rmv_dly (P_TCB p_task) {
       p_b->delta_time += p_task->delta_time;
       p_task->p_dlnk->p_blnk = p_b;
       p_task->p_dlnk = NULL;
-    }
-    else {
+    } else {
       /* 'p_task' is at the end of list */
       p_b->delta_time = 0;
     }
@@ -300,25 +288,21 @@ void rt_rmv_dly (P_TCB p_task) {
   }
 }
 
-
 /*--------------------------- rt_psq_enq ------------------------------------*/
 
-void rt_psq_enq (OS_ID entry, U32 arg) {
+void rt_psq_enq(OS_ID entry, U32 arg) {
   /* Insert post service request "entry" into ps-queue. */
   U32 idx;
 
-  idx = rt_inc_qi (os_psq->size, &os_psq->count, &os_psq->first);
+  idx = rt_inc_qi(os_psq->size, &os_psq->count, &os_psq->first);
   if (idx < os_psq->size) {
-    os_psq->q[idx].id  = entry;
+    os_psq->q[idx].id = entry;
     os_psq->q[idx].arg = arg;
-  }
-  else {
-    os_error (OS_ERR_FIFO_OVF);
+  } else {
+    os_error(OS_ERR_FIFO_OVF);
   }
 }
-
 
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

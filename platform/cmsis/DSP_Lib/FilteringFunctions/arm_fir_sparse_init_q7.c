@@ -49,23 +49,19 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> holds the filter coefficients and has length <code>numTaps</code>.
-                   <code>pState</code> holds the filter's state variables and must be of length
-                   <code>maxDelay + blockSize</code>, where <code>maxDelay</code>
-                   is the maximum number of delay line values.
+                   <code>pCoeffs</code> holds the filter coefficients and has
+  length <code>numTaps</code>. <code>pState</code> holds the filter's state
+  variables and must be of length <code>maxDelay + blockSize</code>, where
+  <code>maxDelay</code> is the maximum number of delay line values.
                    <code>blockSize</code> is the
-                   number of samples processed by the <code>arm_fir_sparse_q7()</code> function.
+                   number of samples processed by the
+  <code>arm_fir_sparse_q7()</code> function.
  */
 
-void arm_fir_sparse_init_q7(
-        arm_fir_sparse_instance_q7 * S,
-        uint16_t numTaps,
-  const q7_t * pCoeffs,
-        q7_t * pState,
-        int32_t * pTapDelay,
-        uint16_t maxDelay,
-        uint32_t blockSize)
-{
+void arm_fir_sparse_init_q7(arm_fir_sparse_instance_q7 *S, uint16_t numTaps,
+                            const q7_t *pCoeffs, q7_t *pState,
+                            int32_t *pTapDelay, uint16_t maxDelay,
+                            uint32_t blockSize) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 

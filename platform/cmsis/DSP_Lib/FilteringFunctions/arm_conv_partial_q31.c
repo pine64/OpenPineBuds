@@ -43,67 +43,59 @@
   @param[in]     srcALen    length of the first input sequence
   @param[in]     pSrcB      points to the second input sequence
   @param[in]     srcBLen    length of the second input sequence
-  @param[out]    pDst       points to the location where the output result is written
+  @param[out]    pDst       points to the location where the output result is
+  written
   @param[in]     firstIndex is the first output sample to start with
   @param[in]     numPoints  is the number of output points to be computed
   @return        execution status
                    - \ref ARM_MATH_SUCCESS        : Operation successful
-                   - \ref ARM_MATH_ARGUMENT_ERROR : requested subset is not in the range [0 srcALen+srcBLen-2]
+                   - \ref ARM_MATH_ARGUMENT_ERROR : requested subset is not in
+  the range [0 srcALen+srcBLen-2]
 
   @remark
-                   Refer to \ref arm_conv_partial_fast_q31() for a faster but less precise implementation of this function.
+                   Refer to \ref arm_conv_partial_fast_q31() for a faster but
+  less precise implementation of this function.
  */
 
-arm_status arm_conv_partial_q31(
-  const q31_t * pSrcA,
-        uint32_t srcALen,
-  const q31_t * pSrcB,
-        uint32_t srcBLen,
-        q31_t * pDst,
-        uint32_t firstIndex,
-        uint32_t numPoints)
-{
+arm_status arm_conv_partial_q31(const q31_t *pSrcA, uint32_t srcALen,
+                                const q31_t *pSrcB, uint32_t srcBLen,
+                                q31_t *pDst, uint32_t firstIndex,
+                                uint32_t numPoints) {
 
 #if (1)
-//#if !defined(ARM_MATH_CM0_FAMILY)
+  //#if !defined(ARM_MATH_CM0_FAMILY)
 
-  const q31_t *pIn1;                                   /* InputA pointer */
-  const q31_t *pIn2;                                   /* InputB pointer */
-        q31_t *pOut = pDst;                            /* Output pointer */
-  const q31_t *px;                                     /* Intermediate inputA pointer */
-  const q31_t *py;                                     /* Intermediate inputB pointer */
-  const q31_t *pSrc1, *pSrc2;                          /* Intermediate pointers */
-        q63_t sum;                                     /* Accumulator */
-        uint32_t j, k, count, blkCnt, check;
-        int32_t blockSize1, blockSize2, blockSize3;    /* Loop counters */
-        arm_status status;                             /* Status of Partial convolution */
+  const q31_t *pIn1;          /* InputA pointer */
+  const q31_t *pIn2;          /* InputB pointer */
+  q31_t *pOut = pDst;         /* Output pointer */
+  const q31_t *px;            /* Intermediate inputA pointer */
+  const q31_t *py;            /* Intermediate inputB pointer */
+  const q31_t *pSrc1, *pSrc2; /* Intermediate pointers */
+  q63_t sum;                  /* Accumulator */
+  uint32_t j, k, count, blkCnt, check;
+  int32_t blockSize1, blockSize2, blockSize3; /* Loop counters */
+  arm_status status; /* Status of Partial convolution */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        q63_t acc0, acc1, acc2;                        /* Accumulator */
-        q31_t x0, x1, x2, c0;                          /* Temporary variables */
+#if defined(ARM_MATH_LOOPUNROLL)
+  q63_t acc0, acc1, acc2; /* Accumulator */
+  q31_t x0, x1, x2, c0;   /* Temporary variables */
 #endif
 
   /* Check for range of output samples to be calculated */
-  if ((firstIndex + numPoints) > ((srcALen + (srcBLen - 1U))))
-  {
+  if ((firstIndex + numPoints) > ((srcALen + (srcBLen - 1U)))) {
     /* Set status as ARM_MATH_ARGUMENT_ERROR */
     status = ARM_MATH_ARGUMENT_ERROR;
-  }
-  else
-  {
+  } else {
     /* The algorithm implementation is based on the lengths of the inputs. */
     /* srcB is always made to slide across srcA. */
     /* So srcBLen is always considered as shorter or equal to srcALen */
-    if (srcALen >= srcBLen)
-    {
+    if (srcALen >= srcBLen) {
       /* Initialization of inputA pointer */
       pIn1 = pSrcA;
 
       /* Initialization of inputB pointer */
       pIn2 = pSrcB;
-    }
-    else
-    {
+    } else {
       /* Initialization of inputA pointer */
       pIn1 = pSrcB;
 
@@ -119,21 +111,30 @@ arm_status arm_conv_partial_q31(
     /* Conditions to check which loopCounter holds
      * the first and last indices of the output samples to be calculated. */
     check = firstIndex + numPoints;
-    blockSize3 = ((int32_t)check > (int32_t)srcALen) ? (int32_t)check - (int32_t)srcALen : 0;
-    blockSize3 = ((int32_t)firstIndex > (int32_t)srcALen - 1) ? blockSize3 - (int32_t)firstIndex + (int32_t)srcALen : blockSize3;
-    blockSize1 = ((int32_t) srcBLen - 1) - (int32_t) firstIndex;
-    blockSize1 = (blockSize1 > 0) ? ((check > (srcBLen - 1U)) ? blockSize1 : (int32_t) numPoints) : 0;
-    blockSize2 = (int32_t) check - ((blockSize3 + blockSize1) + (int32_t) firstIndex);
+    blockSize3 = ((int32_t)check > (int32_t)srcALen)
+                     ? (int32_t)check - (int32_t)srcALen
+                     : 0;
+    blockSize3 = ((int32_t)firstIndex > (int32_t)srcALen - 1)
+                     ? blockSize3 - (int32_t)firstIndex + (int32_t)srcALen
+                     : blockSize3;
+    blockSize1 = ((int32_t)srcBLen - 1) - (int32_t)firstIndex;
+    blockSize1 =
+        (blockSize1 > 0)
+            ? ((check > (srcBLen - 1U)) ? blockSize1 : (int32_t)numPoints)
+            : 0;
+    blockSize2 =
+        (int32_t)check - ((blockSize3 + blockSize1) + (int32_t)firstIndex);
     blockSize2 = (blockSize2 > 0) ? blockSize2 : 0;
 
-    /* conv(x,y) at n = x[n] * y[0] + x[n-1] * y[1] + x[n-2] * y[2] + ...+ x[n-N+1] * y[N -1] */
+    /* conv(x,y) at n = x[n] * y[0] + x[n-1] * y[1] + x[n-2] * y[2] + ...+
+     * x[n-N+1] * y[N -1] */
     /* The function is internally
-     * divided into three stages according to the number of multiplications that has to be
-     * taken place between inputA samples and inputB samples. In the first stage of the
-     * algorithm, the multiplications increase by one for every iteration.
-     * In the second stage of the algorithm, srcBLen number of multiplications are done.
-     * In the third stage of the algorithm, the multiplications decrease by one
-     * for every iteration. */
+     * divided into three stages according to the number of multiplications that
+     * has to be taken place between inputA samples and inputB samples. In the
+     * first stage of the algorithm, the multiplications increase by one for
+     * every iteration. In the second stage of the algorithm, srcBLen number of
+     * multiplications are done. In the third stage of the algorithm, the
+     * multiplications decrease by one for every iteration. */
 
     /* Set the output pointer to point to the firstIndex
      * of the output sample to be calculated. */
@@ -146,7 +147,8 @@ arm_status arm_conv_partial_q31(
     /* sum = x[0] * y[0]
      * sum = x[0] * y[1] + x[1] * y[0]
      * ....
-     * sum = x[0] * y[srcBlen - 1] + x[1] * y[srcBlen - 2] +...+ x[srcBLen - 1] * y[0]
+     * sum = x[0] * y[srcBlen - 1] + x[1] * y[srcBlen - 2] +...+ x[srcBLen - 1]
+     * * y[0]
      */
 
     /* In this stage the MAC operations are increased by 1 for every iteration.
@@ -167,29 +169,27 @@ arm_status arm_conv_partial_q31(
      * ----------------------*/
 
     /* The first stage starts here */
-    while (blockSize1 > 0U)
-    {
+    while (blockSize1 > 0U) {
       /* Accumulator is made zero for every iteration */
       sum = 0;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
       /* Loop unrolling: Compute 4 outputs at a time */
       k = count >> 2U;
 
-      while (k > 0U)
-      {
+      while (k > 0U) {
         /* x[0] * y[srcBLen - 1] */
-        sum += (q63_t) *px++ * (*py--);
+        sum += (q63_t)*px++ * (*py--);
 
         /* x[1] * y[srcBLen - 2] */
-        sum += (q63_t) *px++ * (*py--);
+        sum += (q63_t)*px++ * (*py--);
 
         /* x[2] * y[srcBLen - 3] */
-        sum += (q63_t) *px++ * (*py--);
+        sum += (q63_t)*px++ * (*py--);
 
         /* x[3] * y[srcBLen - 4] */
-        sum += (q63_t) *px++ * (*py--);
+        sum += (q63_t)*px++ * (*py--);
 
         /* Decrement loop counter */
         k--;
@@ -205,17 +205,16 @@ arm_status arm_conv_partial_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-      while (k > 0U)
-      {
+      while (k > 0U) {
         /* Perform the multiply-accumulate */
-        sum += (q63_t) *px++ * (*py--);
+        sum += (q63_t)*px++ * (*py--);
 
         /* Decrement loop counter */
         k--;
       }
 
       /* Store the result in the accumulator in the destination buffer. */
-      *pOut++ = (q31_t) (sum >> 31);
+      *pOut++ = (q31_t)(sum >> 31);
 
       /* Update the inputA and inputB pointers for next MAC calculation */
       py = ++pSrc2;
@@ -235,16 +234,14 @@ arm_status arm_conv_partial_q31(
     /* sum = x[0] * y[srcBLen-1] + x[1] * y[srcBLen-2] +...+ x[srcBLen-1] * y[0]
      * sum = x[1] * y[srcBLen-1] + x[2] * y[srcBLen-2] +...+ x[srcBLen] * y[0]
      * ....
-     * sum = x[srcALen-srcBLen-2] * y[srcBLen-1] + x[srcALen] * y[srcBLen-2] +...+ x[srcALen-1] * y[0]
+     * sum = x[srcALen-srcBLen-2] * y[srcBLen-1] + x[srcALen] * y[srcBLen-2]
+     * +...+ x[srcALen-1] * y[0]
      */
 
     /* Working pointer of inputA */
-    if ((int32_t)firstIndex - (int32_t)srcBLen + 1 > 0)
-    {
+    if ((int32_t)firstIndex - (int32_t)srcBLen + 1 > 0) {
       pSrc1 = pIn1 + firstIndex - srcBLen + 1;
-    }
-    else
-    {
+    } else {
       pSrc1 = pIn1;
     }
     px = pSrc1;
@@ -260,18 +257,16 @@ arm_status arm_conv_partial_q31(
      * Stage2 process
      * ------------------*/
 
-    /* Stage2 depends on srcBLen as in this stage srcBLen number of MACS are performed.
-     * So, to loop unroll over blockSize2,
+    /* Stage2 depends on srcBLen as in this stage srcBLen number of MACS are
+     * performed. So, to loop unroll over blockSize2,
      * srcBLen should be greater than or equal to 4 */
-    if (srcBLen >= 4U)
-    {
-#if defined (ARM_MATH_LOOPUNROLL)
+    if (srcBLen >= 4U) {
+#if defined(ARM_MATH_LOOPUNROLL)
 
       /* Loop unroll over blkCnt */
       blkCnt = blockSize2 / 3;
 
-      while (blkCnt > 0U)
-      {
+      while (blkCnt > 0U) {
         /* Set all accumulators to zero */
         acc0 = 0;
         acc1 = 0;
@@ -284,10 +279,11 @@ arm_status arm_conv_partial_q31(
         /* Apply loop unrolling and compute 3 MACs simultaneously. */
         k = srcBLen / 3;
 
-        /* First part of the processing with loop unrolling.  Compute 3 MACs at a time.
-         ** a second loop below computes MACs for the remaining 1 to 2 samples. */
-        do
-        {
+        /* First part of the processing with loop unrolling.  Compute 3 MACs at
+         *a time.
+         ** a second loop below computes MACs for the remaining 1 to 2 samples.
+         */
+        do {
           /* Read y[srcBLen - 1] sample */
           c0 = *(py);
 
@@ -296,11 +292,11 @@ arm_status arm_conv_partial_q31(
 
           /* Perform the multiply-accumulate */
           /* acc0 +=  x[0] * y[srcBLen - 1] */
-          acc0 += (q63_t) x0 * c0;
+          acc0 += (q63_t)x0 * c0;
           /* acc1 +=  x[1] * y[srcBLen - 1] */
-          acc1 += (q63_t) x1 * c0;
+          acc1 += (q63_t)x1 * c0;
           /* acc2 +=  x[2] * y[srcBLen - 1] */
-          acc2 += (q63_t) x2 * c0;
+          acc2 += (q63_t)x2 * c0;
 
           /* Read y[srcBLen - 2] sample */
           c0 = *(py - 1U);
@@ -310,11 +306,11 @@ arm_status arm_conv_partial_q31(
 
           /* Perform the multiply-accumulate */
           /* acc0 +=  x[1] * y[srcBLen - 2] */
-          acc0 += (q63_t) x1 * c0;
+          acc0 += (q63_t)x1 * c0;
           /* acc1 +=  x[2] * y[srcBLen - 2] */
-          acc1 += (q63_t) x2 * c0;
+          acc1 += (q63_t)x2 * c0;
           /* acc2 +=  x[3] * y[srcBLen - 2] */
-          acc2 += (q63_t) x0 * c0;
+          acc2 += (q63_t)x0 * c0;
 
           /* Read y[srcBLen - 3] sample */
           c0 = *(py - 2U);
@@ -324,12 +320,11 @@ arm_status arm_conv_partial_q31(
 
           /* Perform the multiply-accumulate */
           /* acc0 +=  x[2] * y[srcBLen - 3] */
-          acc0 += (q63_t) x2 * c0;
+          acc0 += (q63_t)x2 * c0;
           /* acc1 +=  x[3] * y[srcBLen - 2] */
-          acc1 += (q63_t) x0 * c0;
+          acc1 += (q63_t)x0 * c0;
           /* acc2 +=  x[4] * y[srcBLen - 2] */
-          acc2 += (q63_t) x1 * c0;
-
+          acc2 += (q63_t)x1 * c0;
 
           px += 3U;
 
@@ -337,12 +332,12 @@ arm_status arm_conv_partial_q31(
 
         } while (--k);
 
-        /* If the srcBLen is not a multiple of 3, compute any remaining MACs here.
+        /* If the srcBLen is not a multiple of 3, compute any remaining MACs
+         *here.
          ** No loop unrolling is used. */
         k = srcBLen - (3 * (srcBLen / 3));
 
-        while (k > 0U)
-        {
+        while (k > 0U) {
           /* Read y[srcBLen - 5] sample */
           c0 = *py--;
           /* Read x[7] sample */
@@ -350,11 +345,11 @@ arm_status arm_conv_partial_q31(
 
           /* Perform the multiply-accumulates */
           /* acc0 +=  x[4] * y[srcBLen - 5] */
-          acc0 += (q63_t) x0 * c0;
+          acc0 += (q63_t)x0 * c0;
           /* acc1 +=  x[5] * y[srcBLen - 5] */
-          acc1 += (q63_t) x1 * c0;
+          acc1 += (q63_t)x1 * c0;
           /* acc2 +=  x[6] * y[srcBLen - 5] */
-          acc2 += (q63_t) x2 * c0;
+          acc2 += (q63_t)x2 * c0;
 
           /* Reuse the present samples for the next MAC */
           x0 = x1;
@@ -365,9 +360,9 @@ arm_status arm_conv_partial_q31(
         }
 
         /* Store the result in the accumulator in the destination buffer. */
-        *pOut++ = (q31_t) (acc0 >> 31);
-        *pOut++ = (q31_t) (acc1 >> 31);
-        *pOut++ = (q31_t) (acc2 >> 31);
+        *pOut++ = (q31_t)(acc0 >> 31);
+        *pOut++ = (q31_t)(acc1 >> 31);
+        *pOut++ = (q31_t)(acc2 >> 31);
 
         /* Increment the pointer pIn1 index, count by 3 */
         count += 3U;
@@ -390,23 +385,21 @@ arm_status arm_conv_partial_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-      while (blkCnt > 0U)
-      {
+      while (blkCnt > 0U) {
         /* Accumulator is made zero for every iteration */
         sum = 0;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
         /* Loop unrolling: Compute 4 outputs at a time */
         k = srcBLen >> 2U;
 
-        while (k > 0U)
-        {
+        while (k > 0U) {
           /* Perform the multiply-accumulates */
-          sum += (q63_t) *px++ * (*py--);
-          sum += (q63_t) *px++ * (*py--);
-          sum += (q63_t) *px++ * (*py--);
-          sum += (q63_t) *px++ * (*py--);
+          sum += (q63_t)*px++ * (*py--);
+          sum += (q63_t)*px++ * (*py--);
+          sum += (q63_t)*px++ * (*py--);
+          sum += (q63_t)*px++ * (*py--);
 
           /* Decrement loop counter */
           k--;
@@ -422,17 +415,16 @@ arm_status arm_conv_partial_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-        while (k > 0U)
-        {
+        while (k > 0U) {
           /* Perform the multiply-accumulate */
-          sum += (q63_t) *px++ * *py--;
+          sum += (q63_t)*px++ * *py--;
 
           /* Decrement loop counter */
           k--;
         }
 
         /* Store the result in the accumulator in the destination buffer. */
-        *pOut++ = (q31_t) (sum >> 31);
+        *pOut++ = (q31_t)(sum >> 31);
 
         /* Increment MAC count */
         count++;
@@ -444,32 +436,28 @@ arm_status arm_conv_partial_q31(
         /* Decrement loop counter */
         blkCnt--;
       }
-    }
-    else
-    {
+    } else {
       /* If the srcBLen is not a multiple of 4,
        * the blockSize2 loop cannot be unrolled by 4 */
-      blkCnt = (uint32_t) blockSize2;
+      blkCnt = (uint32_t)blockSize2;
 
-      while (blkCnt > 0U)
-      {
+      while (blkCnt > 0U) {
         /* Accumulator is made zero for every iteration */
         sum = 0;
 
         /* srcBLen number of MACS should be performed */
         k = srcBLen;
 
-        while (k > 0U)
-        {
+        while (k > 0U) {
           /* Perform the multiply-accumulate */
-          sum += (q63_t) *px++ * *py--;
+          sum += (q63_t)*px++ * *py--;
 
           /* Decrement loop counter */
           k--;
         }
 
         /* Store the result in the accumulator in the destination buffer. */
-        *pOut++ = (q31_t) (sum >> 31);
+        *pOut++ = (q31_t)(sum >> 31);
 
         /* Increment the MAC count */
         count++;
@@ -483,13 +471,14 @@ arm_status arm_conv_partial_q31(
       }
     }
 
-
     /* --------------------------
      * Initializations of stage3
      * -------------------------*/
 
-    /* sum += x[srcALen-srcBLen+1] * y[srcBLen-1] + x[srcALen-srcBLen+2] * y[srcBLen-2] +...+ x[srcALen-1] * y[1]
-     * sum += x[srcALen-srcBLen+2] * y[srcBLen-1] + x[srcALen-srcBLen+3] * y[srcBLen-2] +...+ x[srcALen-1] * y[2]
+    /* sum += x[srcALen-srcBLen+1] * y[srcBLen-1] + x[srcALen-srcBLen+2] *
+     * y[srcBLen-2] +...+ x[srcALen-1] * y[1] sum += x[srcALen-srcBLen+2] *
+     * y[srcBLen-1] + x[srcALen-srcBLen+3] * y[srcBLen-2] +...+ x[srcALen-1] *
+     * y[2]
      * ....
      * sum +=  x[srcALen-2] * y[srcBLen-1] + x[srcALen-1] * y[srcBLen-2]
      * sum +=  x[srcALen-1] * y[srcBLen-1]
@@ -511,29 +500,27 @@ arm_status arm_conv_partial_q31(
      * Stage3 process
      * ------------------*/
 
-    while (blockSize3 > 0U)
-    {
+    while (blockSize3 > 0U) {
       /* Accumulator is made zero for every iteration */
       sum = 0;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
       /* Loop unrolling: Compute 4 outputs at a time */
       k = count >> 2U;
 
-      while (k > 0U)
-      {
+      while (k > 0U) {
         /* sum += x[srcALen - srcBLen + 1] * y[srcBLen - 1] */
-        sum += (q63_t) *px++ * *py--;
+        sum += (q63_t)*px++ * *py--;
 
         /* sum += x[srcALen - srcBLen + 2] * y[srcBLen - 2] */
-        sum += (q63_t) *px++ * *py--;
+        sum += (q63_t)*px++ * *py--;
 
         /* sum += x[srcALen - srcBLen + 3] * y[srcBLen - 3] */
-        sum += (q63_t) *px++ * *py--;
+        sum += (q63_t)*px++ * *py--;
 
         /* sum += x[srcALen - srcBLen + 4] * y[srcBLen - 4] */
-        sum += (q63_t) *px++ * *py--;
+        sum += (q63_t)*px++ * *py--;
 
         /* Decrement loop counter */
         k--;
@@ -549,18 +536,17 @@ arm_status arm_conv_partial_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-      while (k > 0U)
-      {
+      while (k > 0U) {
         /* Perform the multiply-accumulate */
         /* sum +=  x[srcALen-1] * y[srcBLen-1] */
-        sum += (q63_t) *px++ * *py--;
+        sum += (q63_t)*px++ * *py--;
 
         /* Decrement loop counter */
         k--;
       }
 
       /* Store the result in the accumulator in the destination buffer. */
-      *pOut++ = (q31_t) (sum >> 31);
+      *pOut++ = (q31_t)(sum >> 31);
 
       /* Update the inputA and inputB pointers for next MAC calculation */
       px = ++pSrc1;
@@ -581,41 +567,35 @@ arm_status arm_conv_partial_q31(
   return (status);
 
 #else
-/* alternate version for CM0_FAMILY */
+  /* alternate version for CM0_FAMILY */
 
-  const q31_t *pIn1 = pSrcA;                           /* InputA pointer */
-  const q31_t *pIn2 = pSrcB;                           /* InputB pointer */
-        q63_t sum;                                     /* Accumulator */
-        uint32_t i, j;                                 /* Loop counters */
-        arm_status status;                             /* Status of Partial convolution */
+  const q31_t *pIn1 = pSrcA; /* InputA pointer */
+  const q31_t *pIn2 = pSrcB; /* InputB pointer */
+  q63_t sum;                 /* Accumulator */
+  uint32_t i, j;             /* Loop counters */
+  arm_status status;         /* Status of Partial convolution */
 
   /* Check for range of output samples to be calculated */
-  if ((firstIndex + numPoints) > ((srcALen + (srcBLen - 1U))))
-  {
+  if ((firstIndex + numPoints) > ((srcALen + (srcBLen - 1U)))) {
     /* Set status as ARM_MATH_ARGUMENT_ERROR */
     status = ARM_MATH_ARGUMENT_ERROR;
-  }
-  else
-  {
+  } else {
     /* Loop to calculate convolution for output length number of values */
-    for (i = firstIndex; i <= (firstIndex + numPoints - 1); i++)
-    {
+    for (i = firstIndex; i <= (firstIndex + numPoints - 1); i++) {
       /* Initialize sum with zero to carry on MAC operations */
       sum = 0;
 
       /* Loop to perform MAC operations according to convolution equation */
-      for (j = 0U; j <= i; j++)
-      {
+      for (j = 0U; j <= i; j++) {
         /* Check the array limitations */
-        if (((i - j) < srcBLen) && (j < srcALen))
-        {
+        if (((i - j) < srcBLen) && (j < srcALen)) {
           /* z[i] += x[i-j] * y[j] */
-          sum += ((q63_t) pIn1[j] * pIn2[i - j]);
+          sum += ((q63_t)pIn1[j] * pIn2[i - j]);
         }
       }
 
       /* Store the output in the destination buffer */
-      pDst[i] = (q31_t) (sum >> 31U);
+      pDst[i] = (q31_t)(sum >> 31U);
     }
 
     /* Set status as ARM_MATH_SUCCESS */
@@ -626,7 +606,6 @@ arm_status arm_conv_partial_q31(
   return (status);
 
 #endif /* #if !defined(ARM_MATH_CM0_FAMILY) */
-
 }
 
 /**

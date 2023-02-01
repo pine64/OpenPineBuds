@@ -42,7 +42,8 @@
  */
 
 /**
-  @brief         Converts the elements of the Q7 vector to floating-point vector.
+  @brief         Converts the elements of the Q7 vector to floating-point
+ vector.
   @param[in]     pSrc       points to the Q7 input vector
   @param[out]    pDst       points to the floating-point output vector
   @param[in]     blockSize  number of samples in each vector
@@ -55,28 +56,23 @@
   </pre>
  */
 
-void arm_q7_to_float(
-  const q7_t * pSrc,
-        float32_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const q7_t *pIn = pSrc;                              /* Source pointer */
+void arm_q7_to_float(const q7_t *pSrc, float32_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;        /* Loop counter */
+  const q7_t *pIn = pSrc; /* Source pointer */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (float32_t) A / 128 */
 
     /* Convert from q7 to float and store result in destination buffer */
-    *pDst++ = ((float32_t) * pIn++ / 128.0f);
-    *pDst++ = ((float32_t) * pIn++ / 128.0f);
-    *pDst++ = ((float32_t) * pIn++ / 128.0f);
-    *pDst++ = ((float32_t) * pIn++ / 128.0f);
+    *pDst++ = ((float32_t)*pIn++ / 128.0f);
+    *pDst++ = ((float32_t)*pIn++ / 128.0f);
+    *pDst++ = ((float32_t)*pIn++ / 128.0f);
+    *pDst++ = ((float32_t)*pIn++ / 128.0f);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -92,17 +88,15 @@ void arm_q7_to_float(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (float32_t) A / 128 */
 
     /* Convert from q7 to float and store result in destination buffer */
-    *pDst++ = ((float32_t) * pIn++ / 128.0f);
+    *pDst++ = ((float32_t)*pIn++ / 128.0f);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

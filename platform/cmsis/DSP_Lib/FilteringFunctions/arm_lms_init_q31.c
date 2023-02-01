@@ -39,7 +39,8 @@
 
 /**
   @brief         Initialization function for Q31 LMS filter.
-  @param[in]     S          points to an instance of the Q31 LMS filter structure
+  @param[in]     S          points to an instance of the Q31 LMS filter
+  structure
   @param[in]     numTaps    number of filter coefficients
   @param[in]     pCoeffs    points to coefficient buffer
   @param[in]     pState     points to state buffer
@@ -49,25 +50,19 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> points to the array of filter coefficients stored in time reversed order:
-  <pre>
-     {b[numTaps-1], b[numTaps-2], b[N-2], ..., b[1], b[0]}
+                   <code>pCoeffs</code> points to the array of filter
+  coefficients stored in time reversed order: <pre> {b[numTaps-1], b[numTaps-2],
+  b[N-2], ..., b[1], b[0]}
   </pre>
-                   The initial filter coefficients serve as a starting point for the adaptive filter.
-                   <code>pState</code> points to an array of length <code>numTaps+blockSize-1</code> samples,
-                   where <code>blockSize</code> is the number of input samples processed by each call to
-                   <code>arm_lms_q31()</code>.
+                   The initial filter coefficients serve as a starting point for
+  the adaptive filter. <code>pState</code> points to an array of length
+  <code>numTaps+blockSize-1</code> samples, where <code>blockSize</code> is the
+  number of input samples processed by each call to <code>arm_lms_q31()</code>.
  */
 
-void arm_lms_init_q31(
-  arm_lms_instance_q31 * S,
-  uint16_t numTaps,
-  q31_t * pCoeffs,
-  q31_t * pState,
-  q31_t mu,
-  uint32_t blockSize,
-  uint32_t postShift)
-{
+void arm_lms_init_q31(arm_lms_instance_q31 *S, uint16_t numTaps, q31_t *pCoeffs,
+                      q31_t *pState, q31_t mu, uint32_t blockSize,
+                      uint32_t postShift) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 

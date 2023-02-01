@@ -32,9 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
 #include "rt_Memory.h"
-
+#include "rt_TypeDef.h"
 
 /* Functions */
 
@@ -44,10 +43,11 @@
 //     size:    Size of memory pool in bytes
 //   Return:    0 - OK, 1 - Error
 
-int rt_init_mem (void *pool, U32 size) {
+int rt_init_mem(void *pool, U32 size) {
   MEMP *ptr;
 
-  if ((pool == NULL) || (size < sizeof(MEMP))) return (1);
+  if ((pool == NULL) || (size < sizeof(MEMP)))
+    return (1);
 
   ptr = (MEMP *)pool;
   ptr->next = (MEMP *)((U32)pool + size - sizeof(MEMP *));
@@ -63,11 +63,12 @@ int rt_init_mem (void *pool, U32 size) {
 //     size:    Size of memory in bytes to allocate
 //   Return:    Pointer to allocated memory
 
-void *rt_alloc_mem (void *pool, U32 size) {
+void *rt_alloc_mem(void *pool, U32 size) {
   MEMP *p, *p_search, *p_new;
-  U32   hole_size;
+  U32 hole_size;
 
-  if ((pool == NULL) || (size == 0)) return NULL;
+  if ((pool == NULL) || (size == 0))
+    return NULL;
 
   /* Add header offset to 'size' */
   size += sizeof(MEMP);
@@ -76,10 +77,11 @@ void *rt_alloc_mem (void *pool, U32 size) {
 
   p_search = (MEMP *)pool;
   while (1) {
-    hole_size  = (U32)p_search->next - (U32)p_search;
+    hole_size = (U32)p_search->next - (U32)p_search;
     hole_size -= p_search->len;
     /* Check if hole size is big enough */
-    if (hole_size >= size) break;
+    if (hole_size >= size)
+      break;
     p_search = p_search->next;
     if (p_search->next == NULL) {
       /* Failed, we are at the end of the list */
@@ -93,9 +95,9 @@ void *rt_alloc_mem (void *pool, U32 size) {
     p = (MEMP *)(((U32)p_search) + sizeof(MEMP));
   } else {
     /* Insert new list element into the memory list */
-    p_new       = (MEMP *)((U32)p_search + p_search->len);
+    p_new = (MEMP *)((U32)p_search + p_search->len);
     p_new->next = p_search->next;
-    p_new->len  = size;
+    p_new->len = size;
     p_search->next = p_new;
     p = (MEMP *)(((U32)p_new) + sizeof(MEMP));
   }
@@ -109,10 +111,11 @@ void *rt_alloc_mem (void *pool, U32 size) {
 //     mem:     Pointer to memory to free
 //   Return:    0 - OK, 1 - Error
 
-int rt_free_mem (void *pool, void *mem) {
+int rt_free_mem(void *pool, void *mem) {
   MEMP *p_search, *p_prev, *p_return;
 
-  if ((pool == NULL) || (mem == NULL)) return (1);
+  if ((pool == NULL) || (mem == NULL))
+    return (1);
 
   p_return = (MEMP *)((U32)mem - sizeof(MEMP));
 
@@ -120,7 +123,7 @@ int rt_free_mem (void *pool, void *mem) {
   p_prev = NULL;
   p_search = (MEMP *)pool;
   while (p_search != p_return) {
-    p_prev   = p_search;
+    p_prev = p_search;
     p_search = p_search->next;
     if (p_search == NULL) {
       /* Valid Memory block not found */

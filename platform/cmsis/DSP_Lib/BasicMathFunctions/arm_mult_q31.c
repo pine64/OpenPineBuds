@@ -47,41 +47,37 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q31 range[0x80000000 0x7FFFFFFF] are saturated.
+                   Results outside of the allowable Q31 range[0x80000000
+  0x7FFFFFFF] are saturated.
  */
 
-void arm_mult_q31(
-  const q31_t * pSrcA,
-  const q31_t * pSrcB,
-        q31_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q31_t out;                                     /* Temporary output variable */
+void arm_mult_q31(const q31_t *pSrcA, const q31_t *pSrcB, q31_t *pDst,
+                  uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
+  q31_t out;       /* Temporary output variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * B */
 
     /* Multiply inputs and store result in destination buffer. */
-    out = ((q63_t) *pSrcA++ * *pSrcB++) >> 32;
+    out = ((q63_t)*pSrcA++ * *pSrcB++) >> 32;
     out = __SSAT(out, 31);
     *pDst++ = out << 1U;
 
-    out = ((q63_t) *pSrcA++ * *pSrcB++) >> 32;
+    out = ((q63_t)*pSrcA++ * *pSrcB++) >> 32;
     out = __SSAT(out, 31);
     *pDst++ = out << 1U;
 
-    out = ((q63_t) *pSrcA++ * *pSrcB++) >> 32;
+    out = ((q63_t)*pSrcA++ * *pSrcB++) >> 32;
     out = __SSAT(out, 31);
     *pDst++ = out << 1U;
 
-    out = ((q63_t) *pSrcA++ * *pSrcB++) >> 32;
+    out = ((q63_t)*pSrcA++ * *pSrcB++) >> 32;
     out = __SSAT(out, 31);
     *pDst++ = out << 1U;
 
@@ -99,19 +95,17 @@ void arm_mult_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * B */
 
     /* Multiply inputs and store result in destination buffer. */
-    out = ((q63_t) *pSrcA++ * *pSrcB++) >> 32;
+    out = ((q63_t)*pSrcA++ * *pSrcB++) >> 32;
     out = __SSAT(out, 31);
     *pDst++ = out << 1U;
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

@@ -26,8 +26,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @ingroup groupFastMath
@@ -40,22 +40,20 @@
 
 /**
   @brief         Q31 square root function.
-  @param[in]     in    input value.  The range of the input value is [0 +1) or 0x00000000 to 0x7FFFFFFF
+  @param[in]     in    input value.  The range of the input value is [0 +1) or
+  0x00000000 to 0x7FFFFFFF
   @param[out]    pOut  points to square root of input value
   @return        execution status
                    - \ref ARM_MATH_SUCCESS        : input value is positive
-                   - \ref ARM_MATH_ARGUMENT_ERROR : input value is negative; *pOut is set to 0
+                   - \ref ARM_MATH_ARGUMENT_ERROR : input value is negative;
+  *pOut is set to 0
  */
 
-arm_status arm_sqrt_q31(
-  q31_t in,
-  q31_t * pOut)
-{
+arm_status arm_sqrt_q31(q31_t in, q31_t *pOut) {
   q31_t bits_val1;
   q31_t number, temp1, var1, signBits1, half;
   float32_t temp_float1;
-  union
-  {
+  union {
     q31_t fracval;
     float32_t floatval;
   } tempconv;
@@ -63,17 +61,13 @@ arm_status arm_sqrt_q31(
   number = in;
 
   /* If the input is a positive number then compute the signBits. */
-  if (number > 0)
-  {
+  if (number > 0) {
     signBits1 = __CLZ(number) - 1;
 
     /* Shift by the number of signBits1 */
-    if ((signBits1 % 2) == 0)
-    {
+    if ((signBits1 % 2) == 0) {
       number = number << signBits1;
-    }
-    else
-    {
+    } else {
       number = number << (signBits1 - 1);
     }
 
@@ -88,51 +82,54 @@ arm_status arm_sqrt_q31(
     tempconv.floatval = temp_float1;
     bits_val1 = tempconv.fracval;
     /* Subtract the shifted value from the magic number to give intial guess */
-    bits_val1 = 0x5f3759df - (bits_val1 >> 1);  /* gives initial guess */
+    bits_val1 = 0x5f3759df - (bits_val1 >> 1); /* gives initial guess */
     /* Store as float */
     tempconv.fracval = bits_val1;
     temp_float1 = tempconv.floatval;
     /* Convert to integer format */
-    var1 = (q31_t) (temp_float1 * 1073741824);
+    var1 = (q31_t)(temp_float1 * 1073741824);
 
     /* 1st iteration */
-    var1 = ((q31_t) ((q63_t) var1 * (0x30000000 -
-                                     ((q31_t)
-                                      ((((q31_t)
-                                         (((q63_t) var1 * var1) >> 31)) *
-                                        (q63_t) half) >> 31))) >> 31)) << 2;
+    var1 = ((q31_t)((q63_t)var1 *
+                        (0x30000000 -
+                         ((q31_t)((((q31_t)(((q63_t)var1 * var1) >> 31)) *
+                                   (q63_t)half) >>
+                                  31))) >>
+                    31))
+           << 2;
     /* 2nd iteration */
-    var1 = ((q31_t) ((q63_t) var1 * (0x30000000 -
-                                     ((q31_t)
-                                      ((((q31_t)
-                                         (((q63_t) var1 * var1) >> 31)) *
-                                        (q63_t) half) >> 31))) >> 31)) << 2;
+    var1 = ((q31_t)((q63_t)var1 *
+                        (0x30000000 -
+                         ((q31_t)((((q31_t)(((q63_t)var1 * var1) >> 31)) *
+                                   (q63_t)half) >>
+                                  31))) >>
+                    31))
+           << 2;
     /* 3rd iteration */
-    var1 = ((q31_t) ((q63_t) var1 * (0x30000000 -
-                                     ((q31_t)
-                                      ((((q31_t)
-                                         (((q63_t) var1 * var1) >> 31)) *
-                                        (q63_t) half) >> 31))) >> 31)) << 2;
+    var1 = ((q31_t)((q63_t)var1 *
+                        (0x30000000 -
+                         ((q31_t)((((q31_t)(((q63_t)var1 * var1) >> 31)) *
+                                   (q63_t)half) >>
+                                  31))) >>
+                    31))
+           << 2;
 
     /* Multiply the inverse square root with the original value */
-    var1 = ((q31_t) (((q63_t) temp1 * var1) >> 31)) << 1;
+    var1 = ((q31_t)(((q63_t)temp1 * var1) >> 31)) << 1;
 
     /* Shift the output down accordingly */
-    if ((signBits1 % 2) == 0)
-    {
+    if ((signBits1 % 2) == 0) {
       var1 = var1 >> (signBits1 / 2);
-    }
-    else
-    {
+    } else {
       var1 = var1 >> ((signBits1 - 1) / 2);
     }
     *pOut = var1;
 
     return (ARM_MATH_SUCCESS);
   }
-  /* If the number is a negative number then store zero as its square root value */
-  else
-  {
+  /* If the number is a negative number then store zero as its square root value
+   */
+  else {
     *pOut = 0;
 
     return (ARM_MATH_ARGUMENT_ERROR);

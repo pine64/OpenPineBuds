@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
  * Title:        arm_biquad_cascade_df1_q15.c
- * Description:  Processing function for the Q15 Biquad cascade DirectFormI(DF1) filter
+ * Description:  Processing function for the Q15 Biquad cascade DirectFormI(DF1)
+ * filter
  *
  * $Date:        18. March 2019
  * $Revision:    V1.6.0
@@ -39,80 +40,81 @@
 
 /**
   @brief         Processing function for the Q15 Biquad cascade filter.
-  @param[in]     S         points to an instance of the Q15 Biquad cascade structure
+  @param[in]     S         points to an instance of the Q15 Biquad cascade
+  structure
   @param[in]     pSrc      points to the block of input data
-  @param[out]    pDst      points to the location where the output result is written
+  @param[out]    pDst      points to the location where the output result is
+  written
   @param[in]     blockSize number of samples to process
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The function is implemented using a 64-bit internal accumulator.
-                   Both coefficients and state variables are represented in 1.15 format and multiplications yield a 2.30 result.
-                   The 2.30 intermediate results are accumulated in a 64-bit accumulator in 34.30 format.
-                   There is no risk of internal overflow with this approach and the full precision of intermediate multiplications is preserved.
-                   The accumulator is then shifted by <code>postShift</code> bits to truncate the result to 1.15 format by discarding the low 16 bits.
-                   Finally, the result is saturated to 1.15 format.
+                   The function is implemented using a 64-bit internal
+  accumulator. Both coefficients and state variables are represented in 1.15
+  format and multiplications yield a 2.30 result. The 2.30 intermediate results
+  are accumulated in a 64-bit accumulator in 34.30 format. There is no risk of
+  internal overflow with this approach and the full precision of intermediate
+  multiplications is preserved. The accumulator is then shifted by
+  <code>postShift</code> bits to truncate the result to 1.15 format by
+  discarding the low 16 bits. Finally, the result is saturated to 1.15 format.
   @remark
-                   Refer to \ref arm_biquad_cascade_df1_fast_q15() for a faster but less precise implementation of this filter.
+                   Refer to \ref arm_biquad_cascade_df1_fast_q15() for a faster
+  but less precise implementation of this filter.
  */
 
-void arm_biquad_cascade_df1_q15(
-  const arm_biquad_casd_df1_inst_q15 * S,
-  const q15_t * pSrc,
-        q15_t * pDst,
-        uint32_t blockSize)
-{
+void arm_biquad_cascade_df1_q15(const arm_biquad_casd_df1_inst_q15 *S,
+                                const q15_t *pSrc, q15_t *pDst,
+                                uint32_t blockSize) {
 
+#if defined(ARM_MATH_DSP)
 
-#if defined (ARM_MATH_DSP)
+  const q15_t *pIn = pSrc;   /* Source pointer */
+  q15_t *pOut = pDst;        /* Destination pointer */
+  q31_t in;                  /* Temporary variable to hold input value */
+  q31_t out;                 /* Temporary variable to hold output value */
+  q31_t b0;                  /* Temporary variable to hold bo value */
+  q31_t b1, a1;              /* Filter coefficients */
+  q31_t state_in, state_out; /* Filter state variables */
+  q31_t acc_l, acc_h;
+  q63_t acc;                                       /* Accumulator */
+  q15_t *pState = S->pState;                       /* State pointer */
+  const q15_t *pCoeffs = S->pCoeffs;               /* Coefficient pointer */
+  int32_t lShift = (15 - (int32_t)S->postShift);   /* Post shift */
+  uint32_t sample, stage = (uint32_t)S->numStages; /* Stage loop counter */
+  int32_t uShift = (32 - lShift);
 
-  const q15_t *pIn = pSrc;                             /* Source pointer */
-        q15_t *pOut = pDst;                            /* Destination pointer */
-        q31_t in;                                      /* Temporary variable to hold input value */
-        q31_t out;                                     /* Temporary variable to hold output value */
-        q31_t b0;                                      /* Temporary variable to hold bo value */
-        q31_t b1, a1;                                  /* Filter coefficients */
-        q31_t state_in, state_out;                     /* Filter state variables */
-        q31_t acc_l, acc_h;
-        q63_t acc;                                     /* Accumulator */
-        q15_t *pState = S->pState;                     /* State pointer */
-  const q15_t *pCoeffs = S->pCoeffs;                   /* Coefficient pointer */
-        int32_t lShift = (15 - (int32_t) S->postShift);       /* Post shift */
-        uint32_t sample, stage = (uint32_t) S->numStages;     /* Stage loop counter */
-        int32_t uShift = (32 - lShift);
-
-  do
-  {
+  do {
     /* Read the b0 and 0 coefficients using SIMD  */
-    b0 = read_q15x2_ia ((q15_t **) &pCoeffs);
+    b0 = read_q15x2_ia((q15_t **)&pCoeffs);
 
     /* Read the b1 and b2 coefficients using SIMD */
-    b1 = read_q15x2_ia ((q15_t **) &pCoeffs);
+    b1 = read_q15x2_ia((q15_t **)&pCoeffs);
 
     /* Read the a1 and a2 coefficients using SIMD */
-    a1 = read_q15x2_ia ((q15_t **) &pCoeffs);
+    a1 = read_q15x2_ia((q15_t **)&pCoeffs);
 
     /* Read the input state values from the state buffer:  x[n-1], x[n-2] */
-    state_in = read_q15x2_ia (&pState);
+    state_in = read_q15x2_ia(&pState);
 
     /* Read the output state values from the state buffer:  y[n-1], y[n-2] */
-    state_out = read_q15x2_da (&pState);
+    state_out = read_q15x2_da(&pState);
 
     /* Apply loop unrolling and compute 2 output values simultaneously. */
     /*      The variable acc hold output values that are being computed:
      *
-     *    acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 * y[n-2]
-     *    acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 * y[n-2]
+     *    acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 *
+     * y[n-2] acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 *
+     * y[n-2]
      */
     sample = blockSize >> 1U;
 
-    /* First part of the processing with loop unrolling.  Compute 2 outputs at a time.
+    /* First part of the processing with loop unrolling.  Compute 2 outputs at a
+     *time.
      ** a second loop below computes the remaining 1 sample. */
-    while (sample > 0U)
-    {
+    while (sample > 0U) {
 
       /* Read the input */
-      in = read_q15x2_ia ((q15_t **) &pIn);
+      in = read_q15x2_ia((q15_t **)&pIn);
 
       /* out =  b0 * x[n] + 0 * 0 */
       out = __SMUAD(b0, in);
@@ -122,7 +124,8 @@ void arm_biquad_cascade_df1_q15(
       /* acc +=  a1 * y[n-1] +  a2 * y[n-2] */
       acc = __SMLALD(a1, state_out, acc);
 
-      /* The result is converted from 3.29 to 1.31 if postShift = 1, and then saturation is applied */
+      /* The result is converted from 3.29 to 1.31 if postShift = 1, and then
+       * saturation is applied */
       /* Calc lower part of acc */
       acc_l = acc & 0xffffffff;
 
@@ -130,7 +133,7 @@ void arm_biquad_cascade_df1_q15(
       acc_h = (acc >> 32) & 0xffffffff;
 
       /* Apply shift for lower part of acc and upper part of acc */
-      out = (uint32_t) acc_l >> lShift | acc_h << uShift;
+      out = (uint32_t)acc_l >> lShift | acc_h << uShift;
 
       out = __SSAT(out, 16);
 
@@ -143,11 +146,11 @@ void arm_biquad_cascade_df1_q15(
       /* x[n-N], x[n-N-1] are packed together to make state_in of type q31 */
       /* y[n-N], y[n-N-1] are packed together to make state_out of type q31 */
 
-#ifndef  ARM_MATH_BIG_ENDIAN
-      state_in  = __PKHBT(in, state_in, 16);
+#ifndef ARM_MATH_BIG_ENDIAN
+      state_in = __PKHBT(in, state_in, 16);
       state_out = __PKHBT(out, state_out, 16);
 #else
-      state_in  = __PKHBT(state_in >> 16, (in >> 16), 16);
+      state_in = __PKHBT(state_in >> 16, (in >> 16), 16);
       state_out = __PKHBT(state_out >> 16, (out), 16);
 #endif /* #ifndef  ARM_MATH_BIG_ENDIAN */
 
@@ -158,7 +161,8 @@ void arm_biquad_cascade_df1_q15(
       /* acc +=  a1 * y[n-1] + a2 * y[n-2] */
       acc = __SMLALD(a1, state_out, acc);
 
-      /* The result is converted from 3.29 to 1.31 if postShift = 1, and then saturation is applied */
+      /* The result is converted from 3.29 to 1.31 if postShift = 1, and then
+       * saturation is applied */
       /* Calc lower part of acc */
       acc_l = acc & 0xffffffff;
 
@@ -166,15 +170,15 @@ void arm_biquad_cascade_df1_q15(
       acc_h = (acc >> 32) & 0xffffffff;
 
       /* Apply shift for lower part of acc and upper part of acc */
-      out = (uint32_t) acc_l >> lShift | acc_h << uShift;
+      out = (uint32_t)acc_l >> lShift | acc_h << uShift;
 
       out = __SSAT(out, 16);
 
       /* Store the output in the destination buffer. */
-#ifndef  ARM_MATH_BIG_ENDIAN
-      write_q15x2_ia (&pOut, __PKHBT(state_out, out, 16));
+#ifndef ARM_MATH_BIG_ENDIAN
+      write_q15x2_ia(&pOut, __PKHBT(state_out, out, 16));
 #else
-      write_q15x2_ia (&pOut, __PKHBT(out, state_out >> 16, 16));
+      write_q15x2_ia(&pOut, __PKHBT(out, state_out >> 16, 16));
 #endif /* #ifndef  ARM_MATH_BIG_ENDIAN */
 
       /* Every time after the output is computed state should be updated. */
@@ -185,11 +189,11 @@ void arm_biquad_cascade_df1_q15(
       /* Yn1 = acc */
       /* x[n-N], x[n-N-1] are packed together to make state_in of type q31 */
       /* y[n-N], y[n-N-1] are packed together to make state_out of type q31 */
-#ifndef  ARM_MATH_BIG_ENDIAN
-      state_in  = __PKHBT(in >> 16, state_in, 16);
+#ifndef ARM_MATH_BIG_ENDIAN
+      state_in = __PKHBT(in >> 16, state_in, 16);
       state_out = __PKHBT(out, state_out, 16);
 #else
-      state_in  = __PKHBT(state_in >> 16, in, 16);
+      state_in = __PKHBT(state_in >> 16, in, 16);
       state_out = __PKHBT(state_out >> 16, out, 16);
 #endif /* #ifndef  ARM_MATH_BIG_ENDIAN */
 
@@ -197,16 +201,16 @@ void arm_biquad_cascade_df1_q15(
       sample--;
     }
 
-    /* If the blockSize is not a multiple of 2, compute any remaining output samples here.
+    /* If the blockSize is not a multiple of 2, compute any remaining output
+     *samples here.
      ** No loop unrolling is used. */
 
-    if ((blockSize & 0x1U) != 0U)
-    {
+    if ((blockSize & 0x1U) != 0U) {
       /* Read the input */
       in = *pIn++;
 
       /* out =  b0 * x[n] + 0 * 0 */
-#ifndef  ARM_MATH_BIG_ENDIAN
+#ifndef ARM_MATH_BIG_ENDIAN
       out = __SMUAD(b0, in);
 #else
       out = __SMUADX(b0, in);
@@ -217,7 +221,8 @@ void arm_biquad_cascade_df1_q15(
       /* acc +=  a1 * y[n-1] + a2 * y[n-2] */
       acc = __SMLALD(a1, state_out, acc);
 
-      /* The result is converted from 3.29 to 1.31 if postShift = 1, and then saturation is applied */
+      /* The result is converted from 3.29 to 1.31 if postShift = 1, and then
+       * saturation is applied */
       /* Calc lower part of acc */
       acc_l = acc & 0xffffffff;
 
@@ -225,12 +230,12 @@ void arm_biquad_cascade_df1_q15(
       acc_h = (acc >> 32) & 0xffffffff;
 
       /* Apply shift for lower part of acc and upper part of acc */
-      out = (uint32_t) acc_l >> lShift | acc_h << uShift;
+      out = (uint32_t)acc_l >> lShift | acc_h << uShift;
 
       out = __SSAT(out, 16);
 
       /* Store the output in the destination buffer. */
-      *pOut++ = (q15_t) out;
+      *pOut++ = (q15_t)out;
 
       /* Every time after the output is computed state should be updated. */
       /* The states should be updated as:  */
@@ -240,7 +245,7 @@ void arm_biquad_cascade_df1_q15(
       /* Yn1 = acc */
       /* x[n-N], x[n-N-1] are packed together to make state_in of type q31 */
       /* y[n-N], y[n-N-1] are packed together to make state_out of type q31 */
-#ifndef  ARM_MATH_BIG_ENDIAN
+#ifndef ARM_MATH_BIG_ENDIAN
       state_in = __PKHBT(in, state_in, 16);
       state_out = __PKHBT(out, state_out, 16);
 #else
@@ -257,8 +262,8 @@ void arm_biquad_cascade_df1_q15(
     pOut = pDst;
 
     /* Store the updated state variables back into the state array */
-    write_q15x2_ia (&pState, state_in);
-    write_q15x2_ia (&pState, state_out);
+    write_q15x2_ia(&pState, state_in);
+    write_q15x2_ia(&pState, state_out);
 
     /* Decrement loop counter */
     stage--;
@@ -267,22 +272,21 @@ void arm_biquad_cascade_df1_q15(
 
 #else
 
-  const q15_t *pIn = pSrc;                             /* Source pointer */
-        q15_t *pOut = pDst;                            /* Destination pointer */
-        q15_t b0, b1, b2, a1, a2;                      /* Filter coefficients */
-        q15_t Xn1, Xn2, Yn1, Yn2;                      /* Filter state variables */
-        q15_t Xn;                                      /* temporary input */
-        q63_t acc;                                     /* Accumulator */
-        int32_t shift = (15 - (int32_t) S->postShift); /* Post shift */
-        q15_t *pState = S->pState;                     /* State pointer */
-  const q15_t *pCoeffs = S->pCoeffs;                   /* Coefficient pointer */
-        uint32_t sample, stage = (uint32_t) S->numStages;     /* Stage loop counter */
+  const q15_t *pIn = pSrc;                         /* Source pointer */
+  q15_t *pOut = pDst;                              /* Destination pointer */
+  q15_t b0, b1, b2, a1, a2;                        /* Filter coefficients */
+  q15_t Xn1, Xn2, Yn1, Yn2;                        /* Filter state variables */
+  q15_t Xn;                                        /* temporary input */
+  q63_t acc;                                       /* Accumulator */
+  int32_t shift = (15 - (int32_t)S->postShift);    /* Post shift */
+  q15_t *pState = S->pState;                       /* State pointer */
+  const q15_t *pCoeffs = S->pCoeffs;               /* Coefficient pointer */
+  uint32_t sample, stage = (uint32_t)S->numStages; /* Stage loop counter */
 
-  do
-  {
+  do {
     /* Reading the coefficients */
     b0 = *pCoeffs++;
-    pCoeffs++;  // skip the 0 coefficient
+    pCoeffs++; // skip the 0 coefficient
     b1 = *pCoeffs++;
     b2 = *pCoeffs++;
     a1 = *pCoeffs++;
@@ -295,28 +299,29 @@ void arm_biquad_cascade_df1_q15(
     Yn2 = pState[3];
 
     /* The variables acc holds the output value that is computed:
-     *    acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 * y[n-2]
+     *    acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 *
+     * y[n-2]
      */
 
     sample = blockSize;
 
-    while (sample > 0U)
-    {
+    while (sample > 0U) {
       /* Read the input */
       Xn = *pIn++;
 
-      /* acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 * y[n-2] */
+      /* acc =  b0 * x[n] + b1 * x[n-1] + b2 * x[n-2] + a1 * y[n-1] + a2 *
+       * y[n-2] */
       /* acc =  b0 * x[n] */
-      acc = (q31_t) b0 *Xn;
+      acc = (q31_t)b0 * Xn;
 
       /* acc +=  b1 * x[n-1] */
-      acc += (q31_t) b1 *Xn1;
+      acc += (q31_t)b1 * Xn1;
       /* acc +=  b[2] * x[n-2] */
-      acc += (q31_t) b2 *Xn2;
+      acc += (q31_t)b2 * Xn2;
       /* acc +=  a1 * y[n-1] */
-      acc += (q31_t) a1 *Yn1;
+      acc += (q31_t)a1 * Yn1;
       /* acc +=  a2 * y[n-2] */
-      acc += (q31_t) a2 *Yn2;
+      acc += (q31_t)a2 * Yn2;
 
       /* The result is converted to 1.31  */
       acc = __SSAT((acc >> shift), 16);
@@ -330,10 +335,10 @@ void arm_biquad_cascade_df1_q15(
       Xn2 = Xn1;
       Xn1 = Xn;
       Yn2 = Yn1;
-      Yn1 = (q15_t) acc;
+      Yn1 = (q15_t)acc;
 
       /* Store the output in the destination buffer. */
-      *pOut++ = (q15_t) acc;
+      *pOut++ = (q15_t)acc;
 
       /* decrement the loop counter */
       sample--;
@@ -355,7 +360,6 @@ void arm_biquad_cascade_df1_q15(
   } while (--stage);
 
 #endif /* #if defined (ARM_MATH_DSP) */
-
 }
 
 /**

@@ -14,7 +14,6 @@
  *
  ****************************************************************************/
 
-
 /**
  ****************************************************************************************
  * @addtogroup ANCCTASK
@@ -117,11 +116,10 @@ static int ancc_enable_req_handler(ke_msg_id_t const msgid,
   // Get connection index
   uint8_t conidx = param->conidx;
   uint8_t state = ke_state_get(dest_id);
-  TRACE(3,"ANCSC %s Entry. state=%d, conidx=%d",
-      __func__, state, conidx);
+  TRACE(3, "ANCSC %s Entry. state=%d, conidx=%d", __func__, state, conidx);
 
   if ((state == ANCC_IDLE) && (ancc_env->env[conidx] == NULL)) {
-    TRACE(1,"ANCSC %s passed state check", __func__);
+    TRACE(1, "ANCSC %s passed state check", __func__);
     // allocate environment variable for task instance
     ancc_env->env[conidx] = (struct ancc_cnx_env *)ke_malloc(
         sizeof(struct ancc_cnx_env), KE_MEM_ATT_DB);
@@ -170,9 +168,9 @@ static int ancc_read_cmd_handler(ke_msg_id_t const msgid,
                                  ke_task_id_t const src_id) {
 
   uint8_t conidx = KE_IDX_GET(dest_id);
-  TRACE(6,"ANCSC %s Entry. conidex %d hdl=0x%4.4x, op=%d, len=%d, off=%d", __func__,
-        conidx, param->req.simple.handle, param->operation, param->req.simple.length,
-        param->req.simple.offset);
+  TRACE(6, "ANCSC %s Entry. conidex %d hdl=0x%4.4x, op=%d, len=%d, off=%d",
+        __func__, conidx, param->req.simple.handle, param->operation,
+        param->req.simple.length, param->req.simple.offset);
 
   // Get the address of the environment
   struct ancc_env_tag *ancc_env = PRF_ENV_GET(ANCC, ancc);
@@ -197,16 +195,16 @@ static int gattc_read_ind_handler(ke_msg_id_t const msgid,
                                   ke_task_id_t const src_id) {
   // Get the address of the environment
   struct amsc_env_tag *amsc_env = PRF_ENV_GET(ANCC, amsc);
-  TRACE(3,"ANCSC %s param->handle=0x%x param->length=%d", __func__, param->handle,
-        param->length);
-  
+  TRACE(3, "ANCSC %s param->handle=0x%x param->length=%d", __func__,
+        param->handle, param->length);
+
   if (amsc_env != NULL) {
     uint8_t conidx = KE_IDX_GET(src_id);
-    struct gattc_read_cfm *cfm =
-        KE_MSG_ALLOC_DYN(GATTC_READ_CFM, 
-        				 KE_BUILD_ID(prf_get_task_from_id(TASK_ID_ANCSP), conidx),
-                         dest_id, gattc_read_cfm, param->length);
-    cfm->status = 0;  // read_ind has no status???
+    struct gattc_read_cfm *cfm = KE_MSG_ALLOC_DYN(
+        GATTC_READ_CFM,
+        KE_BUILD_ID(prf_get_task_from_id(TASK_ID_ANCSP), conidx), dest_id,
+        gattc_read_cfm, param->length);
+    cfm->status = 0; // read_ind has no status???
     cfm->handle = param->handle;
     cfm->length = param->length;
     memcpy(cfm->value, param->value, param->length);
@@ -229,7 +227,7 @@ static int ancc_write_cmd_handler(ke_msg_id_t const msgid,
                                   struct gattc_write_cmd *param,
                                   ke_task_id_t const dest_id,
                                   ke_task_id_t const src_id) {
-  TRACE(4,"ANCSC %s Entry. hdl=0x%4.4x, op=%d, len=%d", __func__,
+  TRACE(4, "ANCSC %s Entry. hdl=0x%4.4x, op=%d, len=%d", __func__,
         param->handle, param->operation, param->length);
 
   uint8_t conidx = KE_IDX_GET(dest_id);
@@ -240,9 +238,9 @@ static int ancc_write_cmd_handler(ke_msg_id_t const msgid,
   if (ancc_env != NULL) {
     ancc_env->last_write_handle[conidx] = param->handle;
     // TODO(jkessinger): Use ke_msg_forward.
-    struct gattc_write_cmd *wr_char = KE_MSG_ALLOC_DYN(
-        GATTC_WRITE_CMD, KE_BUILD_ID(TASK_GATTC, conidx),
-        dest_id, gattc_write_cmd, param->length);
+    struct gattc_write_cmd *wr_char =
+        KE_MSG_ALLOC_DYN(GATTC_WRITE_CMD, KE_BUILD_ID(TASK_GATTC, conidx),
+                         dest_id, gattc_write_cmd, param->length);
     memcpy(wr_char, param, sizeof(struct gattc_write_cmd) + param->length);
     // Send the message
     ke_msg_send(wr_char);
@@ -272,14 +270,18 @@ __STATIC int gattc_sdp_svc_ind_handler(ke_msg_id_t const msgid,
                                        ke_task_id_t const src_id) {
   uint8_t state = ke_state_get(dest_id);
 
-  TRACE(4,"ANCSC %s Entry. end_hdl=0x%4.4x, start_hdl=0x%4.4x, att.att_type=%d",
-      __func__, ind->end_hdl, ind->start_hdl, ind->info[0].att.att_type);
-  TRACE(3,"ANCSC att_char.prop=%d, att_char.handle=0x%4.4x, att_char.att_type=%d",
-      ind->info[0].att_char.prop, ind->info[0].att_char.handle,
-      ind->info[0].att_char.att_type);
-  TRACE(4,"ANCSC inc_svc.att_type=%d, inc_svc.end_hdl=0x%4.4x, inc_svc.start_hdl=0x%4.4x, state=%d",
-      ind->info[0].att_type, ind->info[0].inc_svc.att_type,
-      ind->info[0].inc_svc.start_hdl, state);
+  TRACE(4,
+        "ANCSC %s Entry. end_hdl=0x%4.4x, start_hdl=0x%4.4x, att.att_type=%d",
+        __func__, ind->end_hdl, ind->start_hdl, ind->info[0].att.att_type);
+  TRACE(3,
+        "ANCSC att_char.prop=%d, att_char.handle=0x%4.4x, att_char.att_type=%d",
+        ind->info[0].att_char.prop, ind->info[0].att_char.handle,
+        ind->info[0].att_char.att_type);
+  TRACE(4,
+        "ANCSC inc_svc.att_type=%d, inc_svc.end_hdl=0x%4.4x, "
+        "inc_svc.start_hdl=0x%4.4x, state=%d",
+        ind->info[0].att_type, ind->info[0].inc_svc.att_type,
+        ind->info[0].inc_svc.start_hdl, state);
 
   if (state == ANCC_DISCOVERING) {
     uint8_t conidx = KE_IDX_GET(src_id);
@@ -290,7 +292,7 @@ __STATIC int gattc_sdp_svc_ind_handler(ke_msg_id_t const msgid,
     ASSERT_INFO(ancc_env->env[conidx] != NULL, dest_id, src_id);
 
     if (ancc_env->env[conidx]->nb_svc == 0) {
-      TRACE(0,"ANCSC retrieving characteristics and descriptors.");
+      TRACE(0, "ANCSC retrieving characteristics and descriptors.");
       // Retrieve ANC characteristics and descriptors
       prf_extract_svc_info_128(ind, ANCC_CHAR_MAX, &ancc_anc_char[0],
                                &ancc_env->env[conidx]->anc.chars[0],
@@ -325,15 +327,15 @@ static int gattc_cmp_evt_handler(ke_msg_id_t const msgid,
   // Get the address of the environment
   struct ancc_env_tag *ancc_env = PRF_ENV_GET(ANCC, ancc);
   uint8_t conidx = KE_IDX_GET(dest_id);
-  TRACE(5,"ANCSC %s entry. op=%d, seq=%d, status=%d, conidx=%d",
-      __func__, param->operation, param->seq_num, param->status, conidx);
+  TRACE(5, "ANCSC %s entry. op=%d, seq=%d, status=%d, conidx=%d", __func__,
+        param->operation, param->seq_num, param->status, conidx);
   // Status
   uint8_t status;
 
   if (ancc_env->env[conidx] != NULL) {
     uint8_t state = ke_state_get(dest_id);
 
-    TRACE(2,"ANCSC %s state=%d", __func__, state);
+    TRACE(2, "ANCSC %s state=%d", __func__, state);
     if (state == ANCC_DISCOVERING) {
       status = param->status;
 
@@ -364,19 +366,21 @@ static int gattc_cmp_evt_handler(ke_msg_id_t const msgid,
 
       ancc_enable_rsp_send(ancc_env, conidx, status);
 #if (ANCS_PROXY_ENABLE)
-      TRACE(4,"ANCSC %s NSChar=0x%4.4x, NSVal=0x%4.4x, NSCfg=0x%4.4x", __func__,
+      TRACE(
+          4, "ANCSC %s NSChar=0x%4.4x, NSVal=0x%4.4x, NSCfg=0x%4.4x", __func__,
           ancc_env->env[conidx]->anc.chars[ANCC_CHAR_NTF_SRC].char_hdl,
           ancc_env->env[conidx]->anc.chars[ANCC_CHAR_NTF_SRC].val_hdl,
           ancc_env->env[conidx]->anc.descs[ANCC_DESC_NTF_SRC_CL_CFG].desc_hdl);
-      TRACE(4,"ANCSC %s DSChar=0x%4.4x DSVal=0x%4.4x, DSCfg=0x%4.4x", __func__,
+      TRACE(
+          4, "ANCSC %s DSChar=0x%4.4x DSVal=0x%4.4x, DSCfg=0x%4.4x", __func__,
           ancc_env->env[conidx]->anc.chars[ANCC_CHAR_DATA_SRC].char_hdl,
           ancc_env->env[conidx]->anc.chars[ANCC_CHAR_DATA_SRC].val_hdl,
           ancc_env->env[conidx]->anc.descs[ANCC_DESC_DATA_SRC_CL_CFG].desc_hdl);
-      TRACE(3,"ANCSC %s CPChar=0x%4.4x, CPVal=0x%4.4x", __func__,
+      TRACE(3, "ANCSC %s CPChar=0x%4.4x, CPVal=0x%4.4x", __func__,
             ancc_env->env[conidx]->anc.chars[ANCC_CHAR_CTRL_PT].char_hdl,
             ancc_env->env[conidx]->anc.chars[ANCC_CHAR_CTRL_PT].val_hdl);
-      ancs_proxy_set_ready_flag(conidx,
-          ancc_env->env[conidx]->anc.chars[ANCC_CHAR_NTF_SRC].char_hdl,
+      ancs_proxy_set_ready_flag(
+          conidx, ancc_env->env[conidx]->anc.chars[ANCC_CHAR_NTF_SRC].char_hdl,
           ancc_env->env[conidx]->anc.chars[ANCC_CHAR_NTF_SRC].val_hdl,
           ancc_env->env[conidx]->anc.descs[ANCC_DESC_NTF_SRC_CL_CFG].desc_hdl,
           ancc_env->env[conidx]->anc.chars[ANCC_CHAR_DATA_SRC].char_hdl,
@@ -388,37 +392,37 @@ static int gattc_cmp_evt_handler(ke_msg_id_t const msgid,
 #endif
     } else {
       switch (param->operation) {
-        case GATTC_READ: {
-          TRACE(2,"ANCSC %s read complete status=%d", __func__,
-                param->status);
-          break;
-        }
-        case GATTC_WRITE: {
-          struct gattc_write_cfm *cfm =
-              KE_MSG_ALLOC(GATTC_WRITE_CFM, 
-              			   KE_BUILD_ID(prf_get_task_from_id(TASK_ID_ANCSP), conidx),
-                           dest_id, gattc_write_cfm);
-          cfm->handle = ancc_env->last_write_handle[conidx];
-          ancc_env->last_write_handle[conidx] = ATT_INVALID_HANDLE;
-          cfm->status = param->status;
-          ke_msg_send(cfm);
-          break;
-        }
-        case GATTC_WRITE_NO_RESPONSE:
-          // There's currently no need to notify the proxy task that this completed.
-          break;
-        case GATTC_NOTIFY:
-        case GATTC_INDICATE:
-          // Nothing to do. Notification sent.
-        case GATTC_REGISTER:
-        case GATTC_UNREGISTER:
-        case GATTC_SDP_DISC_SVC:
-          // Do nothing
-          break;
+      case GATTC_READ: {
+        TRACE(2, "ANCSC %s read complete status=%d", __func__, param->status);
+        break;
+      }
+      case GATTC_WRITE: {
+        struct gattc_write_cfm *cfm = KE_MSG_ALLOC(
+            GATTC_WRITE_CFM,
+            KE_BUILD_ID(prf_get_task_from_id(TASK_ID_ANCSP), conidx), dest_id,
+            gattc_write_cfm);
+        cfm->handle = ancc_env->last_write_handle[conidx];
+        ancc_env->last_write_handle[conidx] = ATT_INVALID_HANDLE;
+        cfm->status = param->status;
+        ke_msg_send(cfm);
+        break;
+      }
+      case GATTC_WRITE_NO_RESPONSE:
+        // There's currently no need to notify the proxy task that this
+        // completed.
+        break;
+      case GATTC_NOTIFY:
+      case GATTC_INDICATE:
+        // Nothing to do. Notification sent.
+      case GATTC_REGISTER:
+      case GATTC_UNREGISTER:
+      case GATTC_SDP_DISC_SVC:
+        // Do nothing
+        break;
 
-        default:
-          ASSERT_ERR(0);
-          break;
+      default:
+        ASSERT_ERR(0);
+        break;
       }
     }
   }
@@ -441,12 +445,12 @@ static int gattc_event_ind_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id) {
   BLE_FUNC_ENTER();
-  TRACE(5,"ANCSC %s Entry. handle=0x%x, len=%d, type=%d, val[0]=0x%x",
+  TRACE(5, "ANCSC %s Entry. handle=0x%x, len=%d, type=%d, val[0]=0x%x",
         __func__, param->handle, param->length, param->type, param->value[0]);
   uint8_t conidx = KE_IDX_GET(src_id);
   struct gattc_send_evt_cmd *cmd;
   cmd =
-      KE_MSG_ALLOC_DYN(ANCS_PROXY_IND_EVT, 
+      KE_MSG_ALLOC_DYN(ANCS_PROXY_IND_EVT,
                        KE_BUILD_ID(prf_get_task_from_id(TASK_ID_ANCSP), conidx),
                        dest_id, gattc_send_evt_cmd, param->length);
   cmd->handle = param->handle;
@@ -476,7 +480,7 @@ KE_MSG_HANDLER_TAB(ancc){
 };
 
 void ancc_task_init(struct ke_task_desc *task_desc) {
-  TRACE(1,"ANCSC %s Entry.", __func__);
+  TRACE(1, "ANCSC %s Entry.", __func__);
   // Get the address of the environment
   struct ancc_env_tag *ancc_env = PRF_ENV_GET(ANCC, ancc);
 
@@ -486,6 +490,6 @@ void ancc_task_init(struct ke_task_desc *task_desc) {
   task_desc->idx_max = ANCC_IDX_MAX;
 }
 
-#endif  //(BLE_ANC_CLIENT)
+#endif //(BLE_ANC_CLIENT)
 
 /// @} ANCCTASK

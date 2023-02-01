@@ -47,22 +47,19 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> points to the array of filter coefficients stored in time reversed order:
-  <pre>
-      {b[numTaps-1], b[numTaps-2], b[N-2], ..., b[1], b[0]}
+                   <code>pCoeffs</code> points to the array of filter
+  coefficients stored in time reversed order: <pre> {b[numTaps-1], b[numTaps-2],
+  b[N-2], ..., b[1], b[0]}
   </pre>
   @par
                    <code>pState</code> points to the array of state variables.
-                   <code>pState</code> is of length <code>numTaps+blockSize-1</code> samples, where <code>blockSize</code> is the number of input samples processed by each call to <code>arm_fir_q7()</code>.
+                   <code>pState</code> is of length
+  <code>numTaps+blockSize-1</code> samples, where <code>blockSize</code> is the
+  number of input samples processed by each call to <code>arm_fir_q7()</code>.
  */
 
-void arm_fir_init_q7(
-        arm_fir_instance_q7 * S,
-        uint16_t numTaps,
-  const q7_t * pCoeffs,
-        q7_t * pState,
-        uint32_t blockSize)
-{
+void arm_fir_init_q7(arm_fir_instance_q7 *S, uint16_t numTaps,
+                     const q7_t *pCoeffs, q7_t *pState, uint32_t blockSize) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 

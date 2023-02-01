@@ -17,8 +17,7 @@
 #include "crc32.h"
 #include "export_fn_rom.h"
 
-unsigned long crc32(unsigned long crc, const unsigned char *buf, unsigned int len)
-{
-    return __export_fn_rom.crc32(crc, buf, len);
+unsigned long crc32(unsigned long crc, const unsigned char *buf,
+                    unsigned int len) {
+  return __export_fn_rom.crc32(crc, buf, len);
 }
-

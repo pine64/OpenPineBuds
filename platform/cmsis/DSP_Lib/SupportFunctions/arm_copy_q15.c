@@ -45,25 +45,20 @@
   @return        none
  */
 
-void arm_copy_q15(
-  const q15_t * pSrc,
-        q15_t * pDst,
-        uint32_t blockSize)
-{
-  uint32_t blkCnt;                               /* Loop counter */
+void arm_copy_q15(const q15_t *pSrc, q15_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A */
 
     /* read 2 times 2 samples at a time */
-    write_q15x2_ia (&pDst, read_q15x2_ia ((q15_t **) &pSrc));
-    write_q15x2_ia (&pDst, read_q15x2_ia ((q15_t **) &pSrc));
+    write_q15x2_ia(&pDst, read_q15x2_ia((q15_t **)&pSrc));
+    write_q15x2_ia(&pDst, read_q15x2_ia((q15_t **)&pSrc));
 
     /* Decrement loop counter */
     blkCnt--;
@@ -79,8 +74,7 @@ void arm_copy_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A */
 
     /* Copy and store result in destination buffer */

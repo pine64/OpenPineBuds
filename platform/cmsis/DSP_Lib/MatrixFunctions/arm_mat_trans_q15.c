@@ -46,57 +46,51 @@
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
  */
 
-arm_status arm_mat_trans_q15(
-  const arm_matrix_instance_q15 * pSrc,
-        arm_matrix_instance_q15 * pDst)
-{
-        q15_t *pIn = pSrc->pData;                      /* input data matrix pointer */
-        q15_t *pOut = pDst->pData;                     /* output data matrix pointer */
-        uint16_t nRows = pSrc->numRows;                /* number of rows */
-        uint16_t nCols = pSrc->numCols;                /* number of columns */
-        uint32_t col, row = nRows, i = 0U;             /* Loop counters */
-        arm_status status;                             /* status of matrix transpose */
+arm_status arm_mat_trans_q15(const arm_matrix_instance_q15 *pSrc,
+                             arm_matrix_instance_q15 *pDst) {
+  q15_t *pIn = pSrc->pData;          /* input data matrix pointer */
+  q15_t *pOut = pDst->pData;         /* output data matrix pointer */
+  uint16_t nRows = pSrc->numRows;    /* number of rows */
+  uint16_t nCols = pSrc->numCols;    /* number of columns */
+  uint32_t col, row = nRows, i = 0U; /* Loop counters */
+  arm_status status;                 /* status of matrix transpose */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        q31_t in;                                      /* variable to hold temporary output  */
+#if defined(ARM_MATH_LOOPUNROLL)
+  q31_t in; /* variable to hold temporary output  */
 #endif
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
-  if ((pSrc->numRows != pDst->numCols) ||
-      (pSrc->numCols != pDst->numRows)   )
-  {
+  if ((pSrc->numRows != pDst->numCols) || (pSrc->numCols != pDst->numRows)) {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
-  }
-  else
+  } else
 
 #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
   {
     /* Matrix transpose by exchanging the rows with columns */
     /* row loop */
-    do
-    {
+    do {
       /* Pointer pOut is set to starting address of column being processed */
       pOut = pDst->pData + i;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
       /* Loop unrolling: Compute 4 outputs at a time */
       col = nCols >> 2U;
 
-      while (col > 0U)        /* column loop */
+      while (col > 0U) /* column loop */
       {
         /* Read two elements from row */
-        in = read_q15x2_ia ((q15_t **) &pIn);
+        in = read_q15x2_ia((q15_t **)&pIn);
 
         /* Unpack and store one element in  destination */
 #ifndef ARM_MATH_BIG_ENDIAN
-        *pOut = (q15_t) in;
+        *pOut = (q15_t)in;
 #else
-        *pOut = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
+        *pOut = (q15_t)((in & (q31_t)0xffff0000) >> 16);
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
         /* Update pointer pOut to point to next row of transposed matrix */
@@ -104,22 +98,22 @@ arm_status arm_mat_trans_q15(
 
         /* Unpack and store second element in destination */
 #ifndef ARM_MATH_BIG_ENDIAN
-        *pOut = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
+        *pOut = (q15_t)((in & (q31_t)0xffff0000) >> 16);
 #else
-        *pOut = (q15_t) in;
+        *pOut = (q15_t)in;
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
         /* Update  pointer pOut to point to next row of transposed matrix */
         pOut += nRows;
 
         /* Read two elements from row */
-        in = read_q15x2_ia ((q15_t **) &pIn);
+        in = read_q15x2_ia((q15_t **)&pIn);
 
         /* Unpack and store one element in destination */
 #ifndef ARM_MATH_BIG_ENDIAN
-        *pOut = (q15_t) in;
+        *pOut = (q15_t)in;
 #else
-        *pOut = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
+        *pOut = (q15_t)((in & (q31_t)0xffff0000) >> 16);
 
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
@@ -128,9 +122,9 @@ arm_status arm_mat_trans_q15(
 
         /* Unpack and store second element in destination */
 #ifndef ARM_MATH_BIG_ENDIAN
-        *pOut = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
+        *pOut = (q15_t)((in & (q31_t)0xffff0000) >> 16);
 #else
-        *pOut = (q15_t) in;
+        *pOut = (q15_t)in;
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
         /* Update pointer pOut to point to next row of transposed matrix */
@@ -150,8 +144,7 @@ arm_status arm_mat_trans_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-      while (col > 0U)
-      {
+      while (col > 0U) {
         /* Read and store input element in destination */
         *pOut = *pIn++;
 
@@ -167,7 +160,7 @@ arm_status arm_mat_trans_q15(
       /* Decrement row loop counter */
       row--;
 
-    } while (row > 0U);          /* row loop end */
+    } while (row > 0U); /* row loop end */
 
     /* Set status as ARM_MATH_SUCCESS */
     status = ARM_MATH_SUCCESS;

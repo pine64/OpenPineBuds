@@ -1,21 +1,22 @@
 /***************************************************************************
-*
-*Copyright 2015-2019 BES.
-*All rights reserved. All unpublished rights reserved.
-*
-*No part of this work may be used or reproduced in any form or by any
-*means, or stored in a database or retrieval system, without prior written
-*permission of BES.
-*
-*Use of this work is governed by a license granted by BES.
-*This work contains confidential and proprietary information of
-*BES. which is protected by copyright, trade secret,
-*trademark and other intellectual property rights.
-*
-****************************************************************************/
+ *
+ *Copyright 2015-2019 BES.
+ *All rights reserved. All unpublished rights reserved.
+ *
+ *No part of this work may be used or reproduced in any form or by any
+ *means, or stored in a database or retrieval system, without prior written
+ *permission of BES.
+ *
+ *Use of this work is governed by a license granted by BES.
+ *This work contains confidential and proprietary information of
+ *BES. which is protected by copyright, trade secret,
+ *trademark and other intellectual property rights.
+ *
+ ****************************************************************************/
 
 #ifndef __APP_TWS_IF_H__
 #define __APP_TWS_IF_H__
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,49 +29,49 @@ extern "C" {
 
 /******************************type defination******************************/
 typedef enum {
-    EAR_SIDE_UNKNOWN = 0,
-    EAR_SIDE_LEFT    = 1,
-    EAR_SIDE_RIGHT   = 2,
-    EAR_SIDE_NUM,
+  EAR_SIDE_UNKNOWN = 0,
+  EAR_SIDE_LEFT = 1,
+  EAR_SIDE_RIGHT = 2,
+  EAR_SIDE_NUM,
 } APP_TWS_SIDE_T;
 
 enum {
-    DISCONNECTED = 0,
-    CONNECTED    = 1,
+  DISCONNECTED = 0,
+  CONNECTED = 1,
 
-    CONNECTION_STATE_NUM,
+  CONNECTION_STATE_NUM,
 };
 
 typedef enum {
-    TWS_SYNC_USER_BLE_INFO      = 0,
-    TWS_SYNC_USER_OTA           = 1,
-    TWS_SYNC_USER_AI_CONNECTION = 2,
-    TWS_SYNC_USER_GFPS_INFO     = 3,
-    TWS_SYNC_USER_AI_INFO       = 4,
-    TWS_SYNC_USER_AI_MANAGER    = 5,
-    TWS_SYNC_USER_DIP           = 6,
+  TWS_SYNC_USER_BLE_INFO = 0,
+  TWS_SYNC_USER_OTA = 1,
+  TWS_SYNC_USER_AI_CONNECTION = 2,
+  TWS_SYNC_USER_GFPS_INFO = 3,
+  TWS_SYNC_USER_AI_INFO = 4,
+  TWS_SYNC_USER_AI_MANAGER = 5,
+  TWS_SYNC_USER_DIP = 6,
 
-    TWS_SYNC_USER_NUM,
+  TWS_SYNC_USER_NUM,
 } TWS_SYNC_USER_E;
 
 typedef void (*TWS_SYNC_INFO_PREPARE_FUNC_T)(uint8_t *buf, uint16_t *len);
 typedef void (*TWS_INFO_SYNC_FUNC_T)(uint8_t *buf, uint16_t len);
 typedef struct {
-    TWS_SYNC_INFO_PREPARE_FUNC_T sync_info_prepare_handler;
-    TWS_INFO_SYNC_FUNC_T sync_info_received_handler;
-    TWS_SYNC_INFO_PREPARE_FUNC_T sync_info_prepare_rsp_handler;
-    TWS_INFO_SYNC_FUNC_T sync_info_rsp_received_handler;
-    TWS_INFO_SYNC_FUNC_T sync_info_rsp_timeout_handler;
+  TWS_SYNC_INFO_PREPARE_FUNC_T sync_info_prepare_handler;
+  TWS_INFO_SYNC_FUNC_T sync_info_received_handler;
+  TWS_SYNC_INFO_PREPARE_FUNC_T sync_info_prepare_rsp_handler;
+  TWS_INFO_SYNC_FUNC_T sync_info_rsp_received_handler;
+  TWS_INFO_SYNC_FUNC_T sync_info_rsp_timeout_handler;
 } TWS_SYNC_USER_T;
 
 typedef struct {
-    TWS_SYNC_USER_T syncUser[TWS_SYNC_USER_NUM];
+  TWS_SYNC_USER_T syncUser[TWS_SYNC_USER_NUM];
 } TWS_ENV_T;
 
 typedef struct {
-    TWS_SYNC_USER_E userId;
-    uint8_t info[TWS_SYNC_BUF_SIZE-1];
-}TWS_SYNC_DATA_T;
+  TWS_SYNC_USER_E userId;
+  uint8_t info[TWS_SYNC_BUF_SIZE - 1];
+} TWS_SYNC_DATA_T;
 
 /****************************function declearation**************************/
 /*---------------------------------------------------------------------------
@@ -151,7 +152,8 @@ void app_tws_if_tws_role_updated_handler(uint8_t newRole);
  * Return:
  *    void
  */
-void app_tws_if_sync_info_received_handler(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
+void app_tws_if_sync_info_received_handler(uint16_t rsp_seq, uint8_t *p_buff,
+                                           uint16_t length);
 
 /*---------------------------------------------------------------------------
  *            app_tws_if_common_info_rsp_recieved_handler
@@ -168,7 +170,9 @@ void app_tws_if_sync_info_received_handler(uint16_t rsp_seq, uint8_t *p_buff, ui
  * Return:
  *    void
  */
-void app_tws_if_sync_info_rsp_received_handler(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
+void app_tws_if_sync_info_rsp_received_handler(uint16_t rsp_seq,
+                                               uint8_t *p_buff,
+                                               uint16_t length);
 
 /*---------------------------------------------------------------------------
  *            app_tws_if_sync_info_rsp_timeout_handler
@@ -185,7 +189,8 @@ void app_tws_if_sync_info_rsp_received_handler(uint16_t rsp_seq, uint8_t *p_buff
  * Return:
  *    void
  */
-void app_tws_if_sync_info_rsp_timeout_handler(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
+void app_tws_if_sync_info_rsp_timeout_handler(uint16_t rsp_seq, uint8_t *p_buff,
+                                              uint16_t length);
 
 /*---------------------------------------------------------------------------
  *            app_tws_if_mobile_connected_handler
@@ -429,17 +434,27 @@ void app_tws_if_deregister_sync_user(uint8_t id);
 void app_tws_if_sync_info(TWS_SYNC_USER_E id);
 
 void app_tws_if_ai_send_cmd_to_peer(uint8_t *p_buff, uint16_t length);
-void app_tws_if_ai_rev_peer_cmd_hanlder(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
+void app_tws_if_ai_rev_peer_cmd_hanlder(uint16_t rsp_seq, uint8_t *p_buff,
+                                        uint16_t length);
 void app_tws_if_ai_send_cmd_with_rsp_to_peer(uint8_t *p_buff, uint16_t length);
-void app_tws_if_ai_send_cmd_rsp_to_peer(uint8_t *p_buff, uint16_t rsp_seq, uint16_t length);
-void app_tws_if_ai_rev_peer_cmd_with_rsp_hanlder(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
-void app_tws_if_ai_rev_cmd_rsp_from_peer_hanlder(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
-void app_tws_if_ai_rev_cmd_rsp_timeout_hanlder(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
+void app_tws_if_ai_send_cmd_rsp_to_peer(uint8_t *p_buff, uint16_t rsp_seq,
+                                        uint16_t length);
+void app_tws_if_ai_rev_peer_cmd_with_rsp_hanlder(uint16_t rsp_seq,
+                                                 uint8_t *p_buff,
+                                                 uint16_t length);
+void app_tws_if_ai_rev_cmd_rsp_from_peer_hanlder(uint16_t rsp_seq,
+                                                 uint8_t *p_buff,
+                                                 uint16_t length);
+void app_tws_if_ai_rev_cmd_rsp_timeout_hanlder(uint16_t rsp_seq,
+                                               uint8_t *p_buff,
+                                               uint16_t length);
 
 #ifdef GFPS_ENABLED
 void app_ibrt_share_fastpair_info(uint8_t *p_buff, uint16_t length);
 void app_tws_send_fastpair_info_to_slave(void);
-void app_ibrt_shared_fastpair_info_received_handler(uint16_t rsp_seq, uint8_t *p_buff, uint16_t length);
+void app_ibrt_shared_fastpair_info_received_handler(uint16_t rsp_seq,
+                                                    uint8_t *p_buff,
+                                                    uint16_t length);
 #endif
 
 bool app_tws_is_master_mode(void);

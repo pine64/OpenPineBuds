@@ -58,45 +58,39 @@
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
  */
 
-arm_status arm_mat_add_f32(
-  const arm_matrix_instance_f32 * pSrcA,
-  const arm_matrix_instance_f32 * pSrcB,
-        arm_matrix_instance_f32 * pDst)
-{
-  float32_t *pInA = pSrcA->pData;                /* input data matrix pointer A */
-  float32_t *pInB = pSrcB->pData;                /* input data matrix pointer B */
-  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
+arm_status arm_mat_add_f32(const arm_matrix_instance_f32 *pSrcA,
+                           const arm_matrix_instance_f32 *pSrcB,
+                           arm_matrix_instance_f32 *pDst) {
+  float32_t *pInA = pSrcA->pData; /* input data matrix pointer A */
+  float32_t *pInB = pSrcB->pData; /* input data matrix pointer B */
+  float32_t *pOut = pDst->pData;  /* output data matrix pointer */
 
-  uint32_t numSamples;                           /* total number of elements in the matrix */
-  uint32_t blkCnt;                               /* loop counters */
-  arm_status status;                             /* status of matrix addition */
+  uint32_t numSamples; /* total number of elements in the matrix */
+  uint32_t blkCnt;     /* loop counters */
+  arm_status status;   /* status of matrix addition */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
   if ((pSrcA->numRows != pSrcB->numRows) ||
-      (pSrcA->numCols != pSrcB->numCols) ||
-      (pSrcA->numRows != pDst->numRows)  ||
-      (pSrcA->numCols != pDst->numCols)    )
-  {
+      (pSrcA->numCols != pSrcB->numCols) || (pSrcA->numRows != pDst->numRows) ||
+      (pSrcA->numCols != pDst->numCols)) {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
-  }
-  else
+  } else
 
 #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
   {
     /* Total number of samples in input matrix */
-    numSamples = (uint32_t) pSrcA->numRows * pSrcA->numCols;
+    numSamples = (uint32_t)pSrcA->numRows * pSrcA->numCols;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
     /* Loop unrolling: Compute 4 outputs at a time */
     blkCnt = numSamples >> 2U;
 
-    while (blkCnt > 0U)
-    {
+    while (blkCnt > 0U) {
       /* C(m,n) = A(m,n) + B(m,n) */
 
       /* Add and store result in destination buffer. */
@@ -122,8 +116,7 @@ arm_status arm_mat_add_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-    while (blkCnt > 0U)
-    {
+    while (blkCnt > 0U) {
       /* C(m,n) = A(m,n) + B(m,n) */
 
       /* Add and store result in destination buffer. */

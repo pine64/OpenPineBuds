@@ -1,9 +1,10 @@
-#include <stdbool.h>
-#include <string.h>
 #include "plc_utils.h"
 #include "hal_trace.h"
+#include <stdbool.h>
+#include <string.h>
 
-#if defined(CHIP_BEST1400) || defined(CHIP_BEST1402) || defined(CHIP_BEST2300P) || defined(CHIP_BEST2300A)
+#if defined(CHIP_BEST1400) || defined(CHIP_BEST1402) ||                        \
+    defined(CHIP_BEST2300P) || defined(CHIP_BEST2300A)
 #define MSBC_MUTE_PATTERN (0x55)
 #else
 #define MSBC_MUTE_PATTERN (0x00)
@@ -19,9 +20,8 @@
 //#define ENABLE_PAD_CHECK
 
 /*
- * if msbc frame is filled by 10+ samples in the trail, crc maybe not detect this
- * satuation.
- * Do not check this by default
+ * if msbc frame is filled by 10+ samples in the trail, crc maybe not detect
+ * this satuation. Do not check this by default
  */
 //#define ENABLE_TRAILING_ZERO_CHECK
 
@@ -58,271 +58,256 @@ static const uint8_t sbc_crc_tbl[256] = {
     0x10, 0x0D, 0x2A, 0x37, 0x64, 0x79, 0x5E, 0x43, 0xB2, 0xAF, 0x88, 0x95,
     0xC6, 0xDB, 0xFC, 0xE1, 0x5A, 0x47, 0x60, 0x7D, 0x2E, 0x33, 0x14, 0x09,
     0x7F, 0x62, 0x45, 0x58, 0x0B, 0x16, 0x31, 0x2C, 0x97, 0x8A, 0xAD, 0xB0,
-    0xE3, 0xFE, 0xD9, 0xC4
-};
+    0xE3, 0xFE, 0xD9, 0xC4};
 #endif
 
-static int sco_parse_synchronization_header(uint8_t *buf, uint8_t *sn)
-{
-    uint8_t sn1, sn2;
+static int sco_parse_synchronization_header(uint8_t *buf, uint8_t *sn) {
+  uint8_t sn1, sn2;
 #ifdef ENABLE_CRC_CHECK
-    uint8_t fcs = 0x0F;
-    uint8_t crc = 0;
-    uint8_t i, sb, bit, shift;
-    uint8_t ind = 6, bitOffset = 24;
+  uint8_t fcs = 0x0F;
+  uint8_t crc = 0;
+  uint8_t i, sb, bit, shift;
+  uint8_t ind = 6, bitOffset = 24;
 #endif
-    *sn = 0xff;
+  *sn = 0xff;
 #if defined(MSBC_SYNC_HACKER)
-    if (((buf[0] != 0x01) && (buf[0] != 0x00)) ||
-        ((buf[1] & 0x0f) != 0x08) ||
-        (buf[2] != 0xad)) {
-        return -1;
-    }
+  if (((buf[0] != 0x01) && (buf[0] != 0x00)) || ((buf[1] & 0x0f) != 0x08) ||
+      (buf[2] != 0xad)) {
+    return -1;
+  }
 #else
-    if ((buf[0] != 0x01) ||
-        ((buf[1] & 0x0f) != 0x08) ||
-        (buf[2] != 0xad)) {
-        return -1;
-    }
+  if ((buf[0] != 0x01) || ((buf[1] & 0x0f) != 0x08) || (buf[2] != 0xad)) {
+    return -1;
+  }
 #endif
 
-    sn1 = (buf[1] & 0x30) >> 4;
-    sn2 = (buf[1] & 0xc0) >> 6;
-    if ((sn1 != 0) && (sn1 != 0x3)) {
-        return -2;
-    }
-    if ((sn2 != 0) && (sn2 != 0x3)) {
-        return -3;
-    }
+  sn1 = (buf[1] & 0x30) >> 4;
+  sn2 = (buf[1] & 0xc0) >> 6;
+  if ((sn1 != 0) && (sn1 != 0x3)) {
+    return -2;
+  }
+  if ((sn2 != 0) && (sn2 != 0x3)) {
+    return -3;
+  }
 
 #ifdef ENABLE_CRC_CHECK
-    fcs = sbc_crc_tbl[fcs ^ buf[3]];
-    if (buf[3] != 0x00)
-        return -4;
-    fcs = sbc_crc_tbl[fcs ^ buf[4]];
-    if (buf[4] != 0x00)
-        return -4;
-    crc = buf[5];
-    for (sb = 0; sb < 8; sb++) {
-        if (bitOffset % 8) {
-            /* Sum the whole byte */
-            fcs = sbc_crc_tbl[fcs ^ buf[ind]];
-            ind = ind + 1;
-        }
-        else {
-            if (sb == 7) {
-                /* Sum the next 4 bits */
+  fcs = sbc_crc_tbl[fcs ^ buf[3]];
+  if (buf[3] != 0x00)
+    return -4;
+  fcs = sbc_crc_tbl[fcs ^ buf[4]];
+  if (buf[4] != 0x00)
+    return -4;
+  crc = buf[5];
+  for (sb = 0; sb < 8; sb++) {
+    if (bitOffset % 8) {
+      /* Sum the whole byte */
+      fcs = sbc_crc_tbl[fcs ^ buf[ind]];
+      ind = ind + 1;
+    } else {
+      if (sb == 7) {
+        /* Sum the next 4 bits */
 
-                /* Just sum the most significant 4 bits */
-                shift = 7;
-                for (i = 0; i < 4; i++) {
-                    bit = (uint8_t)((0x01 & (buf[ind] >> shift--)) ^ (fcs >> 7));
-                    if (bit) {
-                        fcs = (uint8_t)(((fcs << 1) | bit) ^ 0x1C);
-                    }
-                    else {
-                        fcs = (uint8_t)((fcs << 1));
-                    }
-                }
-            }
+        /* Just sum the most significant 4 bits */
+        shift = 7;
+        for (i = 0; i < 4; i++) {
+          bit = (uint8_t)((0x01 & (buf[ind] >> shift--)) ^ (fcs >> 7));
+          if (bit) {
+            fcs = (uint8_t)(((fcs << 1) | bit) ^ 0x1C);
+          } else {
+            fcs = (uint8_t)((fcs << 1));
+          }
         }
-
-        bitOffset += 4;
+      }
     }
-    //TRACE(2,"msbc crc:%d fcs:%d", crc,fcs);
-    if (crc != fcs)
-        return -4;
+
+    bitOffset += 4;
+  }
+  // TRACE(2,"msbc crc:%d fcs:%d", crc,fcs);
+  if (crc != fcs)
+    return -4;
 #endif
 
-    *sn = (sn1 & 0x01) | (sn2 & 0x02);
+  *sn = (sn1 & 0x01) | (sn2 & 0x02);
 
 #ifdef ENABLE_PAD_CHECK
-    // when pad error detected, we should return sn
-    if (buf[MSBC_PKTSIZE - 1] != 0x0) {
-        return -5;
-    }
+  // when pad error detected, we should return sn
+  if (buf[MSBC_PKTSIZE - 1] != 0x0) {
+    return -5;
+  }
 #endif
 
-    return 0;
+  return 0;
 }
 
 #ifdef ENABLE_BLE_CONFLICT_CHECK
-static bool memcmp_U8(uint8_t *x, uint8_t *y, uint16_t size)
-{
-    for (int i = 0; i < size; i++) {
-        if (x[i] != y[i])
-            return true;
-    }
+static bool memcmp_U8(uint8_t *x, uint8_t *y, uint16_t size) {
+  for (int i = 0; i < size; i++) {
+    if (x[i] != y[i])
+      return true;
+  }
 
-    return false;
+  return false;
 }
 
-// when signal is mute, msbc data remains the same except seq num. We should check history flag,
-// otherwise a single conflict may be detected twice
-static bool update_ble_sco_conflict(PacketLossState* st, uint8_t *last_pkt, uint8_t *pkt)
-{
-    // do not check padding byte as it maybe useless when msbc_offset is 1
-    bool ret = (st->prev_ble_sco_conflict_flag[1] == false && memcmp_U8(last_pkt, pkt, MSBC_PKTSIZE - 1) == false);
+// when signal is mute, msbc data remains the same except seq num. We should
+// check history flag, otherwise a single conflict may be detected twice
+static bool update_ble_sco_conflict(PacketLossState *st, uint8_t *last_pkt,
+                                    uint8_t *pkt) {
+  // do not check padding byte as it maybe useless when msbc_offset is 1
+  bool ret = (st->prev_ble_sco_conflict_flag[1] == false &&
+              memcmp_U8(last_pkt, pkt, MSBC_PKTSIZE - 1) == false);
 
-    memcpy(&last_pkt[0], &last_pkt[MSBC_PKTSIZE], MSBC_PKTSIZE);
-    memcpy(&last_pkt[MSBC_PKTSIZE], pkt, MSBC_PKTSIZE);
+  memcpy(&last_pkt[0], &last_pkt[MSBC_PKTSIZE], MSBC_PKTSIZE);
+  memcpy(&last_pkt[MSBC_PKTSIZE], pkt, MSBC_PKTSIZE);
 
-    return ret;
+  return ret;
 }
 
-static bool check_ble_sco_conflict(PacketLossState* st, bool ret)
-{
-    st->prev_ble_sco_conflict_flag[1] = st->prev_ble_sco_conflict_flag[0];
-    st->prev_ble_sco_conflict_flag[0] = ret;
+static bool check_ble_sco_conflict(PacketLossState *st, bool ret) {
+  st->prev_ble_sco_conflict_flag[1] = st->prev_ble_sco_conflict_flag[0];
+  st->prev_ble_sco_conflict_flag[0] = ret;
 
-    return ret;
+  return ret;
 }
 #endif
 
-static bool msbc_check_controller_mute_pattern(uint8_t *pkt, uint8_t pattern)
-{
-    // do not check padding byte as it maybe useless when msbc_offset is 1
-    for (int i = 0; i < MSBC_PKTSIZE - 1; i++)
-        if (pkt[i] != pattern)
-            return false;
+static bool msbc_check_controller_mute_pattern(uint8_t *pkt, uint8_t pattern) {
+  // do not check padding byte as it maybe useless when msbc_offset is 1
+  for (int i = 0; i < MSBC_PKTSIZE - 1; i++)
+    if (pkt[i] != pattern)
+      return false;
 
-    return true;
+  return true;
 }
 
 #ifdef ENABLE_TRAILING_ZERO_CHECK
-static int msbc_check_pkt_trailing_zeros(uint8_t *pkt)
-{
-    int idx = MSBC_PKTSIZE;
+static int msbc_check_pkt_trailing_zeros(uint8_t *pkt) {
+  int idx = MSBC_PKTSIZE;
 
-    for (int i = MSBC_PKTSIZE - 1; i >= 0; i--) {
-        if (pkt[i] != 0) {
-            idx = i;
-            break;
-        }
+  for (int i = MSBC_PKTSIZE - 1; i >= 0; i--) {
+    if (pkt[i] != 0) {
+      idx = i;
+      break;
     }
+  }
 
-    return (MSBC_PKTSIZE - 1 - idx);
+  return (MSBC_PKTSIZE - 1 - idx);
 }
 #endif
 
-static uint8_t get_next_sequence_num(uint8_t seq_num)
-{
-    return (seq_num + 1 == 4) ? 0 : (seq_num + 1);
+static uint8_t get_next_sequence_num(uint8_t seq_num) {
+  return (seq_num + 1 == 4) ? 0 : (seq_num + 1);
 }
 
-void packet_loss_detection_init(PacketLossState *st)
-{
+void packet_loss_detection_init(PacketLossState *st) {
+  st->last_seq_num = 0xff;
+
+  memset(st->last_pkt, 0, sizeof(st->last_pkt));
+  memset(st->prev_ble_sco_conflict_flag, 0,
+         sizeof(st->prev_ble_sco_conflict_flag));
+  memset(st->hist, 0, sizeof(st->hist));
+}
+
+plc_type_t packet_loss_detection_process(PacketLossState *st,
+                                         uint8_t *sbc_buf) {
+  plc_type_t plc_type = PLC_TYPE_PASS;
+
+#ifdef ENABLE_BLE_CONFLICT_CHECK
+  bool ble_sco_conflict = update_ble_sco_conflict(st, st->last_pkt, sbc_buf);
+#endif
+
+  uint8_t seq_num;
+  if (msbc_check_controller_mute_pattern(sbc_buf, MSBC_MUTE_PATTERN) == true) {
+    plc_type = PLC_TYPE_CONTROLLER_MUTE;
     st->last_seq_num = 0xff;
-
-    memset(st->last_pkt, 0, sizeof(st->last_pkt));
-    memset(st->prev_ble_sco_conflict_flag, 0, sizeof(st->prev_ble_sco_conflict_flag));
-    memset(st->hist, 0, sizeof(st->hist));
-}
-
-plc_type_t packet_loss_detection_process(PacketLossState *st, uint8_t *sbc_buf)
-{
-    plc_type_t plc_type = PLC_TYPE_PASS;
-
+  }
 #ifdef ENABLE_BLE_CONFLICT_CHECK
-    bool ble_sco_conflict = update_ble_sco_conflict(st, st->last_pkt, sbc_buf);
+  else if (check_ble_sco_conflict(st, ble_sco_conflict) == true) {
+    plc_type = PLC_TYPE_BLE_CONFLICT;
+    st->last_seq_num = 0xff;
+  }
 #endif
-
-    uint8_t seq_num;
-    if (msbc_check_controller_mute_pattern(sbc_buf, MSBC_MUTE_PATTERN) == true) {
-        plc_type = PLC_TYPE_CONTROLLER_MUTE;
-        st->last_seq_num = 0xff;
+  else {
+    int err = sco_parse_synchronization_header(sbc_buf, &seq_num);
+    if (err < 0 && err >= -3) {
+      plc_type = PLC_TYPE_HEADER_ERROR;
+      st->last_seq_num = 0xff;
     }
-#ifdef ENABLE_BLE_CONFLICT_CHECK
-    else if (check_ble_sco_conflict(st, ble_sco_conflict) == true) {
-        plc_type = PLC_TYPE_BLE_CONFLICT;
-        st->last_seq_num = 0xff;
+#ifdef ENABLE_CRC_CHECK
+    else if (err == -4) {
+      plc_type = PLC_TYPE_CRC_ERROR;
+      st->last_seq_num = 0xff;
+    }
+#endif
+#ifdef ENABLE_PAD_CHECK
+    else if (err == -5) {
+      plc_type = PLC_TYPE_PAD_ERROR;
+      st->last_seq_num = seq_num;
+    }
+#endif
+#ifdef ENABLE_TRAILING_ZERO_CHECK
+    else if (msbc_check_pkt_trailing_zeros(sbc_buf) > 10) {
+      plc_type = PLC_TYPE_DATA_MISSING;
+      st->last_seq_num = 0xff;
     }
 #endif
     else {
-        int err = sco_parse_synchronization_header(sbc_buf, &seq_num);
-        if (err < 0 && err >= -3) {
-            plc_type = PLC_TYPE_HEADER_ERROR;
-            st->last_seq_num = 0xff;
-        }
-#ifdef ENABLE_CRC_CHECK
-        else if (err == -4) {
-            plc_type = PLC_TYPE_CRC_ERROR;
-            st->last_seq_num = 0xff;
-        }
-#endif
-#ifdef ENABLE_PAD_CHECK
-        else if (err == -5) {
-            plc_type = PLC_TYPE_PAD_ERROR;
-            st->last_seq_num = seq_num;
-        }
-#endif
-#ifdef ENABLE_TRAILING_ZERO_CHECK
-        else if (msbc_check_pkt_trailing_zeros(sbc_buf) > 10) {
-            plc_type = PLC_TYPE_DATA_MISSING;
-            st->last_seq_num = 0xff;
-        }
-#endif
-        else {
 #ifdef ENABLE_SEQ_CHECK
-            if (st->last_seq_num == 0xff) {
-                if (seq_num == 0xff) {
-                    plc_type = PLC_TYPE_SEQUENCE_DISCONTINUE;
-                }
-                else {
-                    plc_type = PLC_TYPE_PASS;
-                }
-                st->last_seq_num = seq_num;
-            }
-            else {
-                if (seq_num == 0xff) {
-                    st->last_seq_num = 0xff;
-                    plc_type = PLC_TYPE_SEQUENCE_DISCONTINUE;
-                }
-                else if (seq_num == get_next_sequence_num(st->last_seq_num)) {
-                    st->last_seq_num = seq_num;
-                    plc_type = PLC_TYPE_PASS;
-                }
-                else {
-                    st->last_seq_num = 0xff;
-                    plc_type = PLC_TYPE_SEQUENCE_DISCONTINUE;
-                }
-            }
-#else
-            plc_type = PLC_TYPE_PASS;
-#endif
+      if (st->last_seq_num == 0xff) {
+        if (seq_num == 0xff) {
+          plc_type = PLC_TYPE_SEQUENCE_DISCONTINUE;
+        } else {
+          plc_type = PLC_TYPE_PASS;
         }
+        st->last_seq_num = seq_num;
+      } else {
+        if (seq_num == 0xff) {
+          st->last_seq_num = 0xff;
+          plc_type = PLC_TYPE_SEQUENCE_DISCONTINUE;
+        } else if (seq_num == get_next_sequence_num(st->last_seq_num)) {
+          st->last_seq_num = seq_num;
+          plc_type = PLC_TYPE_PASS;
+        } else {
+          st->last_seq_num = 0xff;
+          plc_type = PLC_TYPE_SEQUENCE_DISCONTINUE;
+        }
+      }
+#else
+      plc_type = PLC_TYPE_PASS;
+#endif
     }
+  }
 
-    packet_loss_detection_update_histogram(st, plc_type);
+  packet_loss_detection_update_histogram(st, plc_type);
 
-    return plc_type;
+  return plc_type;
 }
 
-void packet_loss_detection_update_histogram(PacketLossState *st, plc_type_t plc_type)
-{
-    if (plc_type < 0 || plc_type >= PLC_TYPE_NUM) {
-        TRACE(2,"[%s] plc type %d is invalid", __FUNCTION__, plc_type);
-        return;
-    }
+void packet_loss_detection_update_histogram(PacketLossState *st,
+                                            plc_type_t plc_type) {
+  if (plc_type < 0 || plc_type >= PLC_TYPE_NUM) {
+    TRACE(2, "[%s] plc type %d is invalid", __FUNCTION__, plc_type);
+    return;
+  }
 
-    // The packet is detected as PLC_TYPE_PASS, but causes a decoder error.
-    if (plc_type == PLC_TYPE_DECODER_ERROR) {
-        st->hist[0] -= 1;
-    }
+  // The packet is detected as PLC_TYPE_PASS, but causes a decoder error.
+  if (plc_type == PLC_TYPE_DECODER_ERROR) {
+    st->hist[0] -= 1;
+  }
 
-    st->hist[plc_type] += 1;
+  st->hist[plc_type] += 1;
 }
 
-void packet_loss_detection_report(PacketLossState *st)
-{
-    uint32_t packet_loss_num = 0;
+void packet_loss_detection_report(PacketLossState *st) {
+  uint32_t packet_loss_num = 0;
 
-    for (uint8_t i = 1; i < PLC_TYPE_NUM; i++) {
-        TRACE(3,"[%s] plc type %d occurs %d times", __FUNCTION__, i, st->hist[i]);
-        packet_loss_num += st->hist[i];
-    }
+  for (uint8_t i = 1; i < PLC_TYPE_NUM; i++) {
+    TRACE(3, "[%s] plc type %d occurs %d times", __FUNCTION__, i, st->hist[i]);
+    packet_loss_num += st->hist[i];
+  }
 
-    uint32_t packet_total_num = st->hist[0] + packet_loss_num;
-    TRACE(4,"[%s] packet loss percent %d/10000(%d/%d)", __FUNCTION__,
-          (int32_t)(10000.f * packet_loss_num/ packet_total_num), packet_loss_num, packet_total_num);
+  uint32_t packet_total_num = st->hist[0] + packet_loss_num;
+  TRACE(4, "[%s] packet loss percent %d/10000(%d/%d)", __FUNCTION__,
+        (int32_t)(10000.f * packet_loss_num / packet_total_num),
+        packet_loss_num, packet_total_num);
 }

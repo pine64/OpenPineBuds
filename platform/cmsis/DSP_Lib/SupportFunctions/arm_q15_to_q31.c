@@ -51,31 +51,26 @@
   </pre>
  */
 
-void arm_q15_to_q31(
-  const q15_t * pSrc,
-        q31_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const q15_t *pIn = pSrc;                             /* Source pointer */
+void arm_q15_to_q31(const q15_t *pSrc, q31_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;         /* Loop counter */
+  const q15_t *pIn = pSrc; /* Source pointer */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        q31_t in1, in2;
-        q31_t out1, out2, out3, out4;
+#if defined(ARM_MATH_LOOPUNROLL)
+  q31_t in1, in2;
+  q31_t out1, out2, out3, out4;
 #endif
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (q31_t)A << 16 */
 
     /* Convert from q15 to q31 and store result in destination buffer */
-    in1 = read_q15x2_ia ((q15_t **) &pIn);
-    in2 = read_q15x2_ia ((q15_t **) &pIn);
+    in1 = read_q15x2_ia((q15_t **)&pIn);
+    in2 = read_q15x2_ia((q15_t **)&pIn);
 
 #ifndef ARM_MATH_BIG_ENDIAN
 
@@ -120,17 +115,15 @@ void arm_q15_to_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (q31_t) A << 16 */
 
     /* Convert from q15 to q31 and store result in destination buffer */
-    *pDst++ = (q31_t) *pIn++ << 16;
+    *pDst++ = (q31_t)*pIn++ << 16;
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

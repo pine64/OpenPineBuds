@@ -25,21 +25,18 @@
 
 #include "rtx_lib.h"
 
-
 //  OS Runtime Object Memory Usage
 #if ((defined(OS_OBJ_MEM_USAGE) && (OS_OBJ_MEM_USAGE != 0)))
-osRtxObjectMemUsage_t osRtxSemaphoreMemUsage \
-__attribute__((section(".data.os.semaphore.obj"))) =
-{ 0U, 0U, 0U };
+osRtxObjectMemUsage_t osRtxSemaphoreMemUsage
+    __attribute__((section(".data.os.semaphore.obj"))) = {0U, 0U, 0U};
 #endif
-
 
 //  ==== Helper functions ====
 
 /// Decrement Semaphore tokens.
 /// \param[in]  semaphore       semaphore object.
 /// \return 1 - success, 0 - failure.
-static uint32_t SemaphoreTokenDecrement (os_semaphore_t *semaphore) {
+static uint32_t SemaphoreTokenDecrement(os_semaphore_t *semaphore) {
 #if (EXCLUSIVE_ACCESS == 0)
   uint32_t primask = __get_PRIMASK();
 #endif
@@ -72,7 +69,7 @@ static uint32_t SemaphoreTokenDecrement (os_semaphore_t *semaphore) {
 /// Increment Semaphore tokens.
 /// \param[in]  semaphore       semaphore object.
 /// \return 1 - success, 0 - failure.
-static uint32_t SemaphoreTokenIncrement (os_semaphore_t *semaphore) {
+static uint32_t SemaphoreTokenIncrement(os_semaphore_t *semaphore) {
 #if (EXCLUSIVE_ACCESS == 0)
   uint32_t primask = __get_PRIMASK();
 #endif
@@ -92,7 +89,8 @@ static uint32_t SemaphoreTokenIncrement (os_semaphore_t *semaphore) {
     __enable_irq();
   }
 #else
-  if (atomic_inc16_lt(&semaphore->tokens, semaphore->max_tokens) < semaphore->max_tokens) {
+  if (atomic_inc16_lt(&semaphore->tokens, semaphore->max_tokens) <
+      semaphore->max_tokens) {
     ret = 1U;
   } else {
     ret = 0U;
@@ -102,12 +100,11 @@ static uint32_t SemaphoreTokenIncrement (os_semaphore_t *semaphore) {
   return ret;
 }
 
-
 //  ==== Post ISR processing ====
 
 /// Semaphore post ISR processing.
 /// \param[in]  semaphore       semaphore object.
-static void osRtxSemaphorePostProcess (os_semaphore_t *semaphore) {
+static void osRtxSemaphorePostProcess(os_semaphore_t *semaphore) {
   os_thread_t *thread;
 
   // Check if Thread is waiting for a token
@@ -122,55 +119,63 @@ static void osRtxSemaphorePostProcess (os_semaphore_t *semaphore) {
   }
 }
 
-
 //  ==== Service Calls ====
 
 /// Create and Initialize a Semaphore object.
 /// \note API identical to osSemaphoreNew
-static osSemaphoreId_t svcRtxSemaphoreNew (uint32_t max_count, uint32_t initial_count, const osSemaphoreAttr_t *attr) {
+static osSemaphoreId_t svcRtxSemaphoreNew(uint32_t max_count,
+                                          uint32_t initial_count,
+                                          const osSemaphoreAttr_t *attr) {
   os_semaphore_t *semaphore;
-  uint8_t         flags;
-  const char     *name;
+  uint8_t flags;
+  const char *name;
 
   // Check parameters
-  if ((max_count == 0U) || (max_count > osRtxSemaphoreTokenLimit) || (initial_count > max_count)) {
+  if ((max_count == 0U) || (max_count > osRtxSemaphoreTokenLimit) ||
+      (initial_count > max_count)) {
     EvrRtxSemaphoreError(NULL, (int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return NULL;
   }
 
   // Process attributes
   if (attr != NULL) {
-    name      = attr->name;
-    //lint -e{9079} "conversion from pointer to void to pointer to other type" [MISRA Note 6]
+    name = attr->name;
+    // lint -e{9079} "conversion from pointer to void to pointer to other type"
+    // [MISRA Note 6]
     semaphore = attr->cb_mem;
     if (semaphore != NULL) {
-      //lint -e(923) -e(9078) "cast from pointer to unsigned int" [MISRA Note 7]
-      if ((((uint32_t)semaphore & 3U) != 0U) || (attr->cb_size < sizeof(os_semaphore_t))) {
+      // lint -e(923) -e(9078) "cast from pointer to unsigned int" [MISRA Note
+      // 7]
+      if ((((uint32_t)semaphore & 3U) != 0U) ||
+          (attr->cb_size < sizeof(os_semaphore_t))) {
         EvrRtxSemaphoreError(NULL, osRtxErrorInvalidControlBlock);
-        //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+        // lint -e{904} "Return statement before end of function" [MISRA Note 1]
         return NULL;
       }
     } else {
       if (attr->cb_size != 0U) {
         EvrRtxSemaphoreError(NULL, osRtxErrorInvalidControlBlock);
-        //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+        // lint -e{904} "Return statement before end of function" [MISRA Note 1]
         return NULL;
       }
     }
   } else {
-    name      = NULL;
+    name = NULL;
     semaphore = NULL;
   }
 
   // Allocate object memory if not provided
   if (semaphore == NULL) {
     if (osRtxInfo.mpi.semaphore != NULL) {
-      //lint -e{9079} "conversion from pointer to void to pointer to other type" [MISRA Note 5]
+      // lint -e{9079} "conversion from pointer to void to pointer to other
+      // type" [MISRA Note 5]
       semaphore = osRtxMemoryPoolAlloc(osRtxInfo.mpi.semaphore);
     } else {
-      //lint -e{9079} "conversion from pointer to void to pointer to other type" [MISRA Note 5]
-      semaphore = osRtxMemoryAlloc(osRtxInfo.mem.common, sizeof(os_semaphore_t), 1U);
+      // lint -e{9079} "conversion from pointer to void to pointer to other
+      // type" [MISRA Note 5]
+      semaphore =
+          osRtxMemoryAlloc(osRtxInfo.mem.common, sizeof(os_semaphore_t), 1U);
     }
 #if (defined(OS_OBJ_MEM_USAGE) && (OS_OBJ_MEM_USAGE != 0))
     if (semaphore != NULL) {
@@ -189,19 +194,19 @@ static osSemaphoreId_t svcRtxSemaphoreNew (uint32_t max_count, uint32_t initial_
 
   if (semaphore != NULL) {
     // Initialize control block
-    semaphore->id          = osRtxIdSemaphore;
-    semaphore->flags       = flags;
-    semaphore->name        = name;
+    semaphore->id = osRtxIdSemaphore;
+    semaphore->flags = flags;
+    semaphore->name = name;
     semaphore->thread_list = NULL;
-    semaphore->tokens      = (uint16_t)initial_count;
-    semaphore->max_tokens  = (uint16_t)max_count;
+    semaphore->tokens = (uint16_t)initial_count;
+    semaphore->max_tokens = (uint16_t)max_count;
 
     // Register post ISR processing function
     osRtxInfo.post_process.semaphore = osRtxSemaphorePostProcess;
 
     EvrRtxSemaphoreCreated(semaphore, semaphore->name);
   } else {
-    EvrRtxSemaphoreError(NULL,(int32_t)osErrorNoMemory);
+    EvrRtxSemaphoreError(NULL, (int32_t)osErrorNoMemory);
   }
 
   return semaphore;
@@ -209,13 +214,13 @@ static osSemaphoreId_t svcRtxSemaphoreNew (uint32_t max_count, uint32_t initial_
 
 /// Get name of a Semaphore object.
 /// \note API identical to osSemaphoreGetName
-static const char *svcRtxSemaphoreGetName (osSemaphoreId_t semaphore_id) {
+static const char *svcRtxSemaphoreGetName(osSemaphoreId_t semaphore_id) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
 
   // Check parameters
   if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore)) {
     EvrRtxSemaphoreGetName(semaphore, NULL);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return NULL;
   }
 
@@ -226,14 +231,15 @@ static const char *svcRtxSemaphoreGetName (osSemaphoreId_t semaphore_id) {
 
 /// Acquire a Semaphore token or timeout if no tokens are available.
 /// \note API identical to osSemaphoreAcquire
-static osStatus_t svcRtxSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeout) {
+static osStatus_t svcRtxSemaphoreAcquire(osSemaphoreId_t semaphore_id,
+                                         uint32_t timeout) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
-  osStatus_t      status;
+  osStatus_t status;
 
   // Check parameters
   if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore)) {
     EvrRtxSemaphoreError(semaphore, (int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return osErrorParameter;
   }
 
@@ -263,15 +269,15 @@ static osStatus_t svcRtxSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t
 
 /// Release a Semaphore token that was acquired by osSemaphoreAcquire.
 /// \note API identical to osSemaphoreRelease
-static osStatus_t svcRtxSemaphoreRelease (osSemaphoreId_t semaphore_id) {
+static osStatus_t svcRtxSemaphoreRelease(osSemaphoreId_t semaphore_id) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
-  os_thread_t    *thread;
-  osStatus_t      status;
+  os_thread_t *thread;
+  osStatus_t status;
 
   // Check parameters
   if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore)) {
     EvrRtxSemaphoreError(semaphore, (int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return osErrorParameter;
   }
 
@@ -299,13 +305,13 @@ static osStatus_t svcRtxSemaphoreRelease (osSemaphoreId_t semaphore_id) {
 
 /// Get current Semaphore token count.
 /// \note API identical to osSemaphoreGetCount
-static uint32_t svcRtxSemaphoreGetCount (osSemaphoreId_t semaphore_id) {
+static uint32_t svcRtxSemaphoreGetCount(osSemaphoreId_t semaphore_id) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
 
   // Check parameters
   if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore)) {
     EvrRtxSemaphoreGetCount(semaphore, 0U);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return 0U;
   }
 
@@ -316,14 +322,14 @@ static uint32_t svcRtxSemaphoreGetCount (osSemaphoreId_t semaphore_id) {
 
 /// Delete a Semaphore object.
 /// \note API identical to osSemaphoreDelete
-static osStatus_t svcRtxSemaphoreDelete (osSemaphoreId_t semaphore_id) {
+static osStatus_t svcRtxSemaphoreDelete(osSemaphoreId_t semaphore_id) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
-  os_thread_t    *thread;
+  os_thread_t *thread;
 
   // Check parameters
   if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore)) {
     EvrRtxSemaphoreError(semaphore, (int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return osErrorParameter;
   }
 
@@ -357,29 +363,31 @@ static osStatus_t svcRtxSemaphoreDelete (osSemaphoreId_t semaphore_id) {
 }
 
 //  Service Calls definitions
-//lint ++flb "Library Begin" [MISRA Note 11]
-SVC0_3(SemaphoreNew,      osSemaphoreId_t, uint32_t, uint32_t, const osSemaphoreAttr_t *)
-SVC0_1(SemaphoreGetName,  const char *,    osSemaphoreId_t)
-SVC0_2(SemaphoreAcquire,  osStatus_t,      osSemaphoreId_t, uint32_t)
-SVC0_1(SemaphoreRelease,  osStatus_t,      osSemaphoreId_t)
-SVC0_1(SemaphoreGetCount, uint32_t,        osSemaphoreId_t)
-SVC0_1(SemaphoreDelete,   osStatus_t,      osSemaphoreId_t)
-//lint --flb "Library End"
-
+// lint ++flb "Library Begin" [MISRA Note 11]
+SVC0_3(SemaphoreNew, osSemaphoreId_t, uint32_t, uint32_t,
+       const osSemaphoreAttr_t *)
+SVC0_1(SemaphoreGetName, const char *, osSemaphoreId_t)
+SVC0_2(SemaphoreAcquire, osStatus_t, osSemaphoreId_t, uint32_t)
+SVC0_1(SemaphoreRelease, osStatus_t, osSemaphoreId_t)
+SVC0_1(SemaphoreGetCount, uint32_t, osSemaphoreId_t)
+SVC0_1(SemaphoreDelete, osStatus_t, osSemaphoreId_t)
+// lint --flb "Library End"
 
 //  ==== ISR Calls ====
 
 /// Acquire a Semaphore token or timeout if no tokens are available.
 /// \note API identical to osSemaphoreAcquire
 __STATIC_INLINE
-osStatus_t isrRtxSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeout) {
+osStatus_t isrRtxSemaphoreAcquire(osSemaphoreId_t semaphore_id,
+                                  uint32_t timeout) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
-  osStatus_t      status;
+  osStatus_t status;
 
   // Check parameters
-  if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore) || (timeout != 0U)) {
+  if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore) ||
+      (timeout != 0U)) {
     EvrRtxSemaphoreError(semaphore, (int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return osErrorParameter;
   }
 
@@ -399,14 +407,14 @@ osStatus_t isrRtxSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeou
 /// Release a Semaphore token that was acquired by osSemaphoreAcquire.
 /// \note API identical to osSemaphoreRelease
 __STATIC_INLINE
-osStatus_t isrRtxSemaphoreRelease (osSemaphoreId_t semaphore_id) {
+osStatus_t isrRtxSemaphoreRelease(osSemaphoreId_t semaphore_id) {
   os_semaphore_t *semaphore = osRtxSemaphoreId(semaphore_id);
-  osStatus_t      status;
+  osStatus_t status;
 
   // Check parameters
   if ((semaphore == NULL) || (semaphore->id != osRtxIdSemaphore)) {
     EvrRtxSemaphoreError(semaphore, (int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return osErrorParameter;
   }
 
@@ -424,11 +432,11 @@ osStatus_t isrRtxSemaphoreRelease (osSemaphoreId_t semaphore_id) {
   return status;
 }
 
-
 //  ==== Public API ====
 
 /// Create and Initialize a Semaphore object.
-osSemaphoreId_t osSemaphoreNew (uint32_t max_count, uint32_t initial_count, const osSemaphoreAttr_t *attr) {
+osSemaphoreId_t osSemaphoreNew(uint32_t max_count, uint32_t initial_count,
+                               const osSemaphoreAttr_t *attr) {
   osSemaphoreId_t semaphore_id;
 
   EvrRtxSemaphoreNew(max_count, initial_count, attr);
@@ -442,7 +450,7 @@ osSemaphoreId_t osSemaphoreNew (uint32_t max_count, uint32_t initial_count, cons
 }
 
 /// Get name of a Semaphore object.
-const char *osSemaphoreGetName (osSemaphoreId_t semaphore_id) {
+const char *osSemaphoreGetName(osSemaphoreId_t semaphore_id) {
   const char *name;
 
   if (IsIrqMode() || IsIrqMasked()) {
@@ -455,45 +463,45 @@ const char *osSemaphoreGetName (osSemaphoreId_t semaphore_id) {
 }
 
 /// Acquire a Semaphore token or timeout if no tokens are available.
-osStatus_t osSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeout) {
+osStatus_t osSemaphoreAcquire(osSemaphoreId_t semaphore_id, uint32_t timeout) {
   osStatus_t status;
 
   EvrRtxSemaphoreAcquire(semaphore_id, timeout);
   if (IsIrqMode() || IsIrqMasked()) {
     status = isrRtxSemaphoreAcquire(semaphore_id, timeout);
   } else {
-    status =  __svcSemaphoreAcquire(semaphore_id, timeout);
+    status = __svcSemaphoreAcquire(semaphore_id, timeout);
   }
   return status;
 }
 
 /// Release a Semaphore token that was acquired by osSemaphoreAcquire.
-osStatus_t osSemaphoreRelease (osSemaphoreId_t semaphore_id) {
+osStatus_t osSemaphoreRelease(osSemaphoreId_t semaphore_id) {
   osStatus_t status;
 
   EvrRtxSemaphoreRelease(semaphore_id);
   if (IsIrqMode() || IsIrqMasked()) {
     status = isrRtxSemaphoreRelease(semaphore_id);
   } else {
-    status =  __svcSemaphoreRelease(semaphore_id);
+    status = __svcSemaphoreRelease(semaphore_id);
   }
   return status;
 }
 
 /// Get current Semaphore token count.
-uint32_t osSemaphoreGetCount (osSemaphoreId_t semaphore_id) {
+uint32_t osSemaphoreGetCount(osSemaphoreId_t semaphore_id) {
   uint32_t count;
 
   if (IsIrqMode() || IsIrqMasked()) {
     count = svcRtxSemaphoreGetCount(semaphore_id);
   } else {
-    count =  __svcSemaphoreGetCount(semaphore_id);
+    count = __svcSemaphoreGetCount(semaphore_id);
   }
   return count;
 }
 
 /// Delete a Semaphore object.
-osStatus_t osSemaphoreDelete (osSemaphoreId_t semaphore_id) {
+osStatus_t osSemaphoreDelete(osSemaphoreId_t semaphore_id) {
   osStatus_t status;
 
   EvrRtxSemaphoreDelete(semaphore_id);

@@ -51,8 +51,9 @@
   realResult = 0;
   imagResult = 0;
   for (n = 0; n < numSamples; n++) {
-      realResult += pSrcA[(2*n)+0] * pSrcB[(2*n)+0] - pSrcA[(2*n)+1] * pSrcB[(2*n)+1];
-      imagResult += pSrcA[(2*n)+0] * pSrcB[(2*n)+1] + pSrcA[(2*n)+1] * pSrcB[(2*n)+0];
+      realResult += pSrcA[(2*n)+0] * pSrcB[(2*n)+0] - pSrcA[(2*n)+1] *
+  pSrcB[(2*n)+1]; imagResult += pSrcA[(2*n)+0] * pSrcB[(2*n)+1] + pSrcA[(2*n)+1]
+  * pSrcB[(2*n)+0];
   }
   </pre>
 
@@ -74,24 +75,19 @@
   @return        none
  */
 
-void arm_cmplx_dot_prod_f32(
-  const float32_t * pSrcA,
-  const float32_t * pSrcB,
-        uint32_t numSamples,
-        float32_t * realResult,
-        float32_t * imagResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t real_sum = 0.0f, imag_sum = 0.0f;    /* Temporary result variables */
-        float32_t a0,b0,c0,d0;
+void arm_cmplx_dot_prod_f32(const float32_t *pSrcA, const float32_t *pSrcB,
+                            uint32_t numSamples, float32_t *realResult,
+                            float32_t *imagResult) {
+  uint32_t blkCnt;                            /* Loop counter */
+  float32_t real_sum = 0.0f, imag_sum = 0.0f; /* Temporary result variables */
+  float32_t a0, b0, c0, d0;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = numSamples >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     a0 = *pSrcA++;
     b0 = *pSrcA++;
     c0 = *pSrcB++;
@@ -146,8 +142,7 @@ void arm_cmplx_dot_prod_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     a0 = *pSrcA++;
     b0 = *pSrcA++;
     c0 = *pSrcB++;

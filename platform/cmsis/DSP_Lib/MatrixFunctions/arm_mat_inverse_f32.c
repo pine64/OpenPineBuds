@@ -37,20 +37,21 @@
 
   Computes the inverse of a matrix.
 
-  The inverse is defined only if the input matrix is square and non-singular (the determinant is non-zero).
-  The function checks that the input and output matrices are square and of the same size.
+  The inverse is defined only if the input matrix is square and non-singular
+  (the determinant is non-zero). The function checks that the input and output
+  matrices are square and of the same size.
 
-  Matrix inversion is numerically sensitive and the CMSIS DSP library only supports matrix
-  inversion of floating-point matrices.
+  Matrix inversion is numerically sensitive and the CMSIS DSP library only
+  supports matrix inversion of floating-point matrices.
 
   @par Algorithm
   The Gauss-Jordan method is used to find the inverse.
   The algorithm performs a sequence of elementary row-operations until it
   reduces the input matrix to an identity matrix. Applying the same sequence
   of elementary row-operations to an identity matrix yields the inverse matrix.
-  If the input matrix is singular, then the algorithm terminates and returns error status
-  <code>ARM_MATH_SINGULAR</code>.
-  \image html MatrixInverse.gif "Matrix Inverse of a 3 x 3 matrix using Gauss-Jordan Method"
+  If the input matrix is singular, then the algorithm terminates and returns
+  error status <code>ARM_MATH_SINGULAR</code>. \image html MatrixInverse.gif
+  "Matrix Inverse of a 3 x 3 matrix using Gauss-Jordan Method"
  */
 
 /**
@@ -65,39 +66,36 @@
   @return        execution status
                    - \ref ARM_MATH_SUCCESS       : Operation successful
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
-                   - \ref ARM_MATH_SINGULAR      : Input matrix is found to be singular (non-invertible)
+                   - \ref ARM_MATH_SINGULAR      : Input matrix is found to be
+  singular (non-invertible)
  */
 
-arm_status arm_mat_inverse_f32(
-  const arm_matrix_instance_f32 * pSrc,
-        arm_matrix_instance_f32 * pDst)
-{
-  float32_t *pIn = pSrc->pData;                  /* input data matrix pointer */
-  float32_t *pOut = pDst->pData;                 /* output data matrix pointer */
-  float32_t *pInT1, *pInT2;                      /* Temporary input data matrix pointer */
-  float32_t *pOutT1, *pOutT2;                    /* Temporary output data matrix pointer */
-  float32_t *pPivotRowIn, *pPRT_in, *pPivotRowDst, *pPRT_pDst;  /* Temporary input and output data matrix pointer */
-  uint32_t numRows = pSrc->numRows;              /* Number of rows in the matrix  */
-  uint32_t numCols = pSrc->numCols;              /* Number of Cols in the matrix  */
+arm_status arm_mat_inverse_f32(const arm_matrix_instance_f32 *pSrc,
+                               arm_matrix_instance_f32 *pDst) {
+  float32_t *pIn = pSrc->pData;  /* input data matrix pointer */
+  float32_t *pOut = pDst->pData; /* output data matrix pointer */
+  float32_t *pInT1, *pInT2;      /* Temporary input data matrix pointer */
+  float32_t *pOutT1, *pOutT2;    /* Temporary output data matrix pointer */
+  float32_t *pPivotRowIn, *pPRT_in, *pPivotRowDst,
+      *pPRT_pDst; /* Temporary input and output data matrix pointer */
+  uint32_t numRows = pSrc->numRows; /* Number of rows in the matrix  */
+  uint32_t numCols = pSrc->numCols; /* Number of Cols in the matrix  */
 
-#if defined (ARM_MATH_DSP)
-  float32_t maxC;                                /* maximum value in the column */
+#if defined(ARM_MATH_DSP)
+  float32_t maxC; /* maximum value in the column */
 
-  float32_t Xchg, in = 0.0f, in1;                /* Temporary input values  */
-  uint32_t i, rowCnt, flag = 0U, j, loopCnt, k, l;      /* loop counters */
-  arm_status status;                             /* status of matrix inverse */
+  float32_t Xchg, in = 0.0f, in1;                  /* Temporary input values  */
+  uint32_t i, rowCnt, flag = 0U, j, loopCnt, k, l; /* loop counters */
+  arm_status status; /* status of matrix inverse */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
-  if ((pSrc->numRows != pSrc->numCols) ||
-      (pDst->numRows != pDst->numCols) ||
-      (pSrc->numRows != pDst->numRows)   )
-  {
+  if ((pSrc->numRows != pSrc->numCols) || (pDst->numRows != pDst->numCols) ||
+      (pSrc->numRows != pDst->numRows)) {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
-  }
-  else
+  } else
 
 #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
@@ -108,9 +106,8 @@ arm_status arm_mat_inverse_f32(
      *
      *  Gauss-Jordan Method:
      *
-     *      1. First combine the identity matrix and the input matrix separated by a bar to form an
-     *        augmented matrix as follows:
-     *                      _                  _         _         _
+     *      1. First combine the identity matrix and the input matrix separated
+     *by a bar to form an augmented matrix as follows: _                  _ _ _
      *                     |  a11  a12 | 1   0  |       |  X11 X12  |
      *                     |           |        |   =   |           |
      *                     |_ a21  a22 | 0   1 _|       |_ X21 X21 _|
@@ -119,24 +116,27 @@ arm_status arm_mat_inverse_f32(
      *
      *      3. Begin with the first row. Let i = 1.
      *
-     *      4. Check to see if the pivot for column i is the greatest of the column.
-     *         The pivot is the element of the main diagonal that is on the current row.
-     *         For instance, if working with row i, then the pivot element is aii.
-     *         If the pivot is not the most significant of the columns, exchange that row with a row
-     *         below it that does contain the most significant value in column i. If the most
-     *         significant value of the column is zero, then an inverse to that matrix does not exist.
-     *         The most significant value of the column is the absolute maximum.
+     *      4. Check to see if the pivot for column i is the greatest of the
+     *column. The pivot is the element of the main diagonal that is on the
+     *current row. For instance, if working with row i, then the pivot element
+     *is aii. If the pivot is not the most significant of the columns, exchange
+     *that row with a row below it that does contain the most significant value
+     *in column i. If the most significant value of the column is zero, then an
+     *inverse to that matrix does not exist. The most significant value of the
+     *column is the absolute maximum.
      *
      *      5. Divide every element of row i by the pivot.
      *
-     *      6. For every row below and  row i, replace that row with the sum of that row and
-     *         a multiple of row i so that each new element in column i below row i is zero.
+     *      6. For every row below and  row i, replace that row with the sum of
+     *that row and a multiple of row i so that each new element in column i
+     *below row i is zero.
      *
-     *      7. Move to the next row and column and repeat steps 2 through 5 until you have zeros
-     *         for every element below and above the main diagonal.
+     *      7. Move to the next row and column and repeat steps 2 through 5
+     *until you have zeros for every element below and above the main diagonal.
      *
-     *      8. Now an identical matrix is formed to the left of the bar(input matrix, pSrc).
-     *         Therefore, the matrix to the right of the bar is our solution(pDst matrix, pDst).
+     *      8. Now an identical matrix is formed to the left of the bar(input
+     *matrix, pSrc). Therefore, the matrix to the right of the bar is our
+     *solution(pDst matrix, pDst).
      *----------------------------------------------------------------------------------------------------------------*/
 
     /* Working pointer for destination matrix */
@@ -146,12 +146,10 @@ arm_status arm_mat_inverse_f32(
     rowCnt = numRows;
 
     /* Making the destination matrix as identity matrix */
-    while (rowCnt > 0U)
-    {
+    while (rowCnt > 0U) {
       /* Writing all zeroes in lower triangle of the destination matrix */
       j = numRows - rowCnt;
-      while (j > 0U)
-      {
+      while (j > 0U) {
         *pOutT1++ = 0.0f;
         j--;
       }
@@ -161,8 +159,7 @@ arm_status arm_mat_inverse_f32(
 
       /* Writing all zeroes in upper triangle of the destination matrix */
       j = rowCnt - 1U;
-      while (j > 0U)
-      {
+      while (j > 0U) {
         *pOutT1++ = 0.0f;
         j--;
       }
@@ -178,8 +175,7 @@ arm_status arm_mat_inverse_f32(
     /* Index modifier to navigate through the columns */
     l = 0U;
 
-    while (loopCnt > 0U)
-    {
+    while (loopCnt > 0U) {
       /* Check if the pivot element is zero..
        * If it is zero then interchange the row with non zero row below.
        * If there is no non zero element to replace in the rows below,
@@ -198,15 +194,14 @@ arm_status arm_mat_inverse_f32(
 
       /* Grab the most significant value from column l */
       maxC = 0;
-      for (i = l; i < numRows; i++)
-      {
-        maxC = *pInT1 > 0 ? (*pInT1 > maxC ? *pInT1 : maxC) : (-*pInT1 > maxC ? -*pInT1 : maxC);
+      for (i = l; i < numRows; i++) {
+        maxC = *pInT1 > 0 ? (*pInT1 > maxC ? *pInT1 : maxC)
+                          : (-*pInT1 > maxC ? -*pInT1 : maxC);
         pInT1 += numCols;
       }
 
       /* Update the status if the matrix is singular */
-      if (maxC == 0.0f)
-      {
+      if (maxC == 0.0f) {
         return ARM_MATH_SINGULAR;
       }
 
@@ -217,27 +212,23 @@ arm_status arm_mat_inverse_f32(
       k = 1U;
 
       /* Check if the pivot element is the most significant of the column */
-      if ( (in > 0.0f ? in : -in) != maxC)
-      {
+      if ((in > 0.0f ? in : -in) != maxC) {
         /* Loop over the number rows present below */
         i = numRows - (l + 1U);
 
-        while (i > 0U)
-        {
+        while (i > 0U) {
           /* Update the input and destination pointers */
           pInT2 = pInT1 + (numCols * l);
           pOutT2 = pOutT1 + (numCols * k);
 
           /* Look for the most significant element to
            * replace in the rows below */
-          if ((*pInT2 > 0.0f ? *pInT2: -*pInT2) == maxC)
-          {
+          if ((*pInT2 > 0.0f ? *pInT2 : -*pInT2) == maxC) {
             /* Loop over number of columns
              * to the right of the pilot element */
             j = numCols - l;
 
-            while (j > 0U)
-            {
+            while (j > 0U) {
               /* Exchange the row elements of the input matrix */
               Xchg = *pInT2;
               *pInT2++ = *pInT1;
@@ -250,8 +241,7 @@ arm_status arm_mat_inverse_f32(
             /* Loop over number of columns of the destination matrix */
             j = numCols;
 
-            while (j > 0U)
-            {
+            while (j > 0U) {
               /* Exchange the row elements of the destination matrix */
               Xchg = *pOutT2;
               *pOutT2++ = *pOutT1;
@@ -277,8 +267,7 @@ arm_status arm_mat_inverse_f32(
       }
 
       /* Update the status if the matrix is singular */
-      if ((flag != 1U) && (in == 0.0f))
-      {
+      if ((flag != 1U) && (in == 0.0f)) {
         return ARM_MATH_SINGULAR;
       }
 
@@ -297,8 +286,7 @@ arm_status arm_mat_inverse_f32(
        * to the right of the pilot element */
       j = (numCols - l);
 
-      while (j > 0U)
-      {
+      while (j > 0U) {
         /* Divide each element of the row of the input matrix
          * by the pivot element */
         in1 = *pInT1;
@@ -311,8 +299,7 @@ arm_status arm_mat_inverse_f32(
       /* Loop over number of columns of the destination matrix */
       j = numCols;
 
-      while (j > 0U)
-      {
+      while (j > 0U) {
         /* Divide each element of the row of the destination matrix
          * by the pivot element */
         in1 = *pInT2;
@@ -336,19 +323,15 @@ arm_status arm_mat_inverse_f32(
       /*  to be replaced by the sum of that row and a multiple of row i */
       k = numRows;
 
-      while (k > 0U)
-      {
+      while (k > 0U) {
         /* Check for the pivot element */
-        if (i == l)
-        {
+        if (i == l) {
           /* If the processing element is the pivot element,
              only the columns to the right are to be processed */
           pInT1 += numCols - l;
 
           pInT2 += numCols;
-        }
-        else
-        {
+        } else {
           /* Element of the reference row */
           in = *pInT1;
 
@@ -360,8 +343,7 @@ arm_status arm_mat_inverse_f32(
              to replace the elements in the input matrix */
           j = (numCols - l);
 
-          while (j > 0U)
-          {
+          while (j > 0U) {
             /* Replace the element by the sum of that row
                and a multiple of the reference row  */
             in1 = *pInT1;
@@ -375,8 +357,7 @@ arm_status arm_mat_inverse_f32(
              replace the elements in the destination matrix */
           j = numCols;
 
-          while (j > 0U)
-          {
+          while (j > 0U) {
             /* Replace the element by the sum of that row
                and a multiple of the reference row  */
             in1 = *pInT2;
@@ -385,7 +366,6 @@ arm_status arm_mat_inverse_f32(
             /* Decrement loop counter */
             j--;
           }
-
         }
 
         /* Increment temporary input pointer */
@@ -408,24 +388,20 @@ arm_status arm_mat_inverse_f32(
       l++;
     }
 
-
 #else
 
-  float32_t Xchg, in = 0.0f;                     /* Temporary input values  */
-  uint32_t i, rowCnt, flag = 0U, j, loopCnt, k, l;      /* loop counters */
-  arm_status status;                             /* status of matrix inverse */
+  float32_t Xchg, in = 0.0f;                       /* Temporary input values  */
+  uint32_t i, rowCnt, flag = 0U, j, loopCnt, k, l; /* loop counters */
+  arm_status status; /* status of matrix inverse */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
-  if ((pSrc->numRows != pSrc->numCols) ||
-      (pDst->numRows != pDst->numCols) ||
-      (pSrc->numRows != pDst->numRows)   )
-  {
+  if ((pSrc->numRows != pSrc->numCols) || (pDst->numRows != pDst->numCols) ||
+      (pSrc->numRows != pDst->numRows)) {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
-  }
-  else
+  } else
 
 #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
@@ -436,34 +412,36 @@ arm_status arm_mat_inverse_f32(
      *
      *  Gauss-Jordan Method:
      *
-     *      1. First combine the identity matrix and the input matrix separated by a bar to form an
-     *        augmented matrix as follows:
-     *                      _  _          _     _      _   _         _         _
-     *                     |  |  a11  a12  | | | 1   0  |   |       |  X11 X12  |
-     *                     |  |            | | |        |   |   =   |           |
-     *                     |_ |_ a21  a22 _| | |_0   1 _|  _|       |_ X21 X21 _|
+     *      1. First combine the identity matrix and the input matrix separated
+     *by a bar to form an augmented matrix as follows: _  _          _     _ _
+     *_         _         _ |  |  a11  a12  | | | 1   0  |   |       |  X11 X12
+     *| |  |            | | |        |   |   =   |           |
+     *                     |_ |_ a21  a22 _| | |_0   1 _|  _|       |_ X21 X21
+     *_|
      *
      *      2. In our implementation, pDst Matrix is used as identity matrix.
      *
      *      3. Begin with the first row. Let i = 1.
      *
      *      4. Check to see if the pivot for row i is zero.
-     *         The pivot is the element of the main diagonal that is on the current row.
-     *         For instance, if working with row i, then the pivot element is aii.
-     *         If the pivot is zero, exchange that row with a row below it that does not
-     *         contain a zero in column i. If this is not possible, then an inverse
-     *         to that matrix does not exist.
+     *         The pivot is the element of the main diagonal that is on the
+     *current row. For instance, if working with row i, then the pivot element
+     *is aii. If the pivot is zero, exchange that row with a row below it that
+     *does not contain a zero in column i. If this is not possible, then an
+     *inverse to that matrix does not exist.
      *
      *      5. Divide every element of row i by the pivot.
      *
-     *      6. For every row below and  row i, replace that row with the sum of that row and
-     *         a multiple of row i so that each new element in column i below row i is zero.
+     *      6. For every row below and  row i, replace that row with the sum of
+     *that row and a multiple of row i so that each new element in column i
+     *below row i is zero.
      *
-     *      7. Move to the next row and column and repeat steps 2 through 5 until you have zeros
-     *         for every element below and above the main diagonal.
+     *      7. Move to the next row and column and repeat steps 2 through 5
+     *until you have zeros for every element below and above the main diagonal.
      *
-     *      8. Now an identical matrix is formed to the left of the bar(input matrix, src).
-     *         Therefore, the matrix to the right of the bar is our solution(dst matrix, dst).
+     *      8. Now an identical matrix is formed to the left of the bar(input
+     *matrix, src). Therefore, the matrix to the right of the bar is our
+     *solution(dst matrix, dst).
      *----------------------------------------------------------------------------------------------------------------*/
 
     /* Working pointer for destination matrix */
@@ -473,12 +451,10 @@ arm_status arm_mat_inverse_f32(
     rowCnt = numRows;
 
     /* Making the destination matrix as identity matrix */
-    while (rowCnt > 0U)
-    {
+    while (rowCnt > 0U) {
       /* Writing all zeroes in lower triangle of the destination matrix */
       j = numRows - rowCnt;
-      while (j > 0U)
-      {
+      while (j > 0U) {
         *pOutT1++ = 0.0f;
         j--;
       }
@@ -488,8 +464,7 @@ arm_status arm_mat_inverse_f32(
 
       /* Writing all zeroes in upper triangle of the destination matrix */
       j = rowCnt - 1U;
-      while (j > 0U)
-      {
+      while (j > 0U) {
         *pOutT1++ = 0.0f;
         j--;
       }
@@ -505,8 +480,7 @@ arm_status arm_mat_inverse_f32(
     /* Index modifier to navigate through the columns */
     l = 0U;
 
-    while (loopCnt > 0U)
-    {
+    while (loopCnt > 0U) {
       /* Check if the pivot element is zero..
        * If it is zero then interchange the row with non zero row below.
        * If there is no non zero element to replace in the rows below,
@@ -527,31 +501,26 @@ arm_status arm_mat_inverse_f32(
       k = 1U;
 
       /* Check if the pivot element is zero */
-      if (*pInT1 == 0.0f)
-      {
+      if (*pInT1 == 0.0f) {
         /* Loop over the number rows present below */
-        for (i = (l + 1U); i < numRows; i++)
-        {
+        for (i = (l + 1U); i < numRows; i++) {
           /* Update the input and destination pointers */
           pInT2 = pInT1 + (numCols * l);
           pOutT2 = pOutT1 + (numCols * k);
 
           /* Check if there is a non zero pivot element to
            * replace in the rows below */
-          if (*pInT2 != 0.0f)
-          {
+          if (*pInT2 != 0.0f) {
             /* Loop over number of columns
              * to the right of the pilot element */
-            for (j = 0U; j < (numCols - l); j++)
-            {
+            for (j = 0U; j < (numCols - l); j++) {
               /* Exchange the row elements of the input matrix */
               Xchg = *pInT2;
               *pInT2++ = *pInT1;
               *pInT1++ = Xchg;
             }
 
-            for (j = 0U; j < numCols; j++)
-            {
+            for (j = 0U; j < numCols; j++) {
               Xchg = *pOutT2;
               *pOutT2++ = *pOutT1;
               *pOutT1++ = Xchg;
@@ -570,8 +539,7 @@ arm_status arm_mat_inverse_f32(
       }
 
       /* Update the status if the matrix is singular */
-      if ((flag != 1U) && (in == 0.0f))
-      {
+      if ((flag != 1U) && (in == 0.0f)) {
         return ARM_MATH_SINGULAR;
       }
 
@@ -588,15 +556,13 @@ arm_status arm_mat_inverse_f32(
 
       /* Loop over number of columns
        * to the right of the pilot element */
-      for (j = 0U; j < (numCols - l); j++)
-      {
+      for (j = 0U; j < (numCols - l); j++) {
         /* Divide each element of the row of the input matrix
          * by the pivot element */
         *pInT1 = *pInT1 / in;
         pInT1++;
       }
-      for (j = 0U; j < numCols; j++)
-      {
+      for (j = 0U; j < numCols; j++) {
         /* Divide each element of the row of the destination matrix
          * by the pivot element */
         *pOutT1 = *pOutT1 / in;
@@ -610,18 +576,14 @@ arm_status arm_mat_inverse_f32(
       pInT1 = pIn;
       pOutT1 = pOut;
 
-      for (i = 0U; i < numRows; i++)
-      {
+      for (i = 0U; i < numRows; i++) {
         /* Check for the pivot element */
-        if (i == l)
-        {
+        if (i == l) {
           /* If the processing element is the pivot element,
              only the columns to the right are to be processed */
           pInT1 += numCols - l;
           pOutT1 += numCols;
-        }
-        else
-        {
+        } else {
           /* Element of the reference row */
           in = *pInT1;
 
@@ -631,8 +593,7 @@ arm_status arm_mat_inverse_f32(
 
           /* Loop over the number of columns to the right of the pivot element,
              to replace the elements in the input matrix */
-          for (j = 0U; j < (numCols - l); j++)
-          {
+          for (j = 0U; j < (numCols - l); j++) {
             /* Replace the element by the sum of that row
                and a multiple of the reference row  */
             *pInT1 = *pInT1 - (in * *pPRT_in++);
@@ -641,14 +602,12 @@ arm_status arm_mat_inverse_f32(
 
           /* Loop over the number of columns to
              replace the elements in the destination matrix */
-          for (j = 0U; j < numCols; j++)
-          {
+          for (j = 0U; j < numCols; j++) {
             /* Replace the element by the sum of that row
                and a multiple of the reference row  */
             *pOutT1 = *pOutT1 - (in * *pPRT_pDst++);
             pOutT1++;
           }
-
         }
 
         /* Increment temporary input pointer */
@@ -670,13 +629,11 @@ arm_status arm_mat_inverse_f32(
     /* Set status as ARM_MATH_SUCCESS */
     status = ARM_MATH_SUCCESS;
 
-    if ((flag != 1U) && (in == 0.0f))
-    {
+    if ((flag != 1U) && (in == 0.0f)) {
       pIn = pSrc->pData;
-      for (i = 0; i < numRows * numCols; i++)
-      {
+      for (i = 0; i < numRows * numCols; i++) {
         if (pIn[i] != 0.0f)
-            break;
+          break;
       }
 
       if (i == numRows * numCols)

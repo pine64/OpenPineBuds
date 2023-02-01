@@ -46,40 +46,38 @@
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The intermediate multiplications are in 1.15 x 1.15 = 2.30 format and these
-                   results are added to a 64-bit accumulator in 34.30 format.
-                   Nonsaturating additions are used and given that there are 33 guard bits in the accumulator
-                   there is no risk of overflow.
-                   The return result is in 34.30 format.
+                   The intermediate multiplications are in 1.15 x 1.15 = 2.30
+  format and these results are added to a 64-bit accumulator in 34.30 format.
+                   Nonsaturating additions are used and given that there are 33
+  guard bits in the accumulator there is no risk of overflow. The return result
+  is in 34.30 format.
  */
 
-void arm_dot_prod_q15(
-  const q15_t * pSrcA,
-  const q15_t * pSrcB,
-        uint32_t blockSize,
-        q63_t * result)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q63_t sum = 0;                                 /* Temporary return variable */
+void arm_dot_prod_q15(const q15_t *pSrcA, const q15_t *pSrcB,
+                      uint32_t blockSize, q63_t *result) {
+  uint32_t blkCnt; /* Loop counter */
+  q63_t sum = 0;   /* Temporary return variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
-    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]* B[blockSize-1] */
+  while (blkCnt > 0U) {
+    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]*
+     * B[blockSize-1] */
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     /* Calculate dot product and store result in a temporary buffer. */
-    sum = __SMLALD(read_q15x2_ia ((q15_t **) &pSrcA), read_q15x2_ia ((q15_t **) &pSrcB), sum);
-    sum = __SMLALD(read_q15x2_ia ((q15_t **) &pSrcA), read_q15x2_ia ((q15_t **) &pSrcB), sum);
+    sum = __SMLALD(read_q15x2_ia((q15_t **)&pSrcA),
+                   read_q15x2_ia((q15_t **)&pSrcB), sum);
+    sum = __SMLALD(read_q15x2_ia((q15_t **)&pSrcA),
+                   read_q15x2_ia((q15_t **)&pSrcB), sum);
 #else
-    sum += (q63_t)((q31_t) *pSrcA++ * *pSrcB++);
-    sum += (q63_t)((q31_t) *pSrcA++ * *pSrcB++);
-    sum += (q63_t)((q31_t) *pSrcA++ * *pSrcB++);
-    sum += (q63_t)((q31_t) *pSrcA++ * *pSrcB++);
+    sum += (q63_t)((q31_t)*pSrcA++ * *pSrcB++);
+    sum += (q63_t)((q31_t)*pSrcA++ * *pSrcB++);
+    sum += (q63_t)((q31_t)*pSrcA++ * *pSrcB++);
+    sum += (q63_t)((q31_t)*pSrcA++ * *pSrcB++);
 #endif
 
     /* Decrement loop counter */
@@ -96,16 +94,16 @@ void arm_dot_prod_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
-    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]* B[blockSize-1] */
+  while (blkCnt > 0U) {
+    /* C = A[0]* B[0] + A[1]* B[1] + A[2]* B[2] + .....+ A[blockSize-1]*
+     * B[blockSize-1] */
 
     /* Calculate dot product and store result in a temporary buffer. */
-//#if defined (ARM_MATH_DSP)
-//    sum  = __SMLALD(*pSrcA++, *pSrcB++, sum);
-//#else
-    sum += (q63_t)((q31_t) *pSrcA++ * *pSrcB++);
-//#endif
+    //#if defined (ARM_MATH_DSP)
+    //    sum  = __SMLALD(*pSrcA++, *pSrcB++, sum);
+    //#else
+    sum += (q63_t)((q31_t)*pSrcA++ * *pSrcB++);
+    //#endif
 
     /* Decrement loop counter */
     blkCnt--;

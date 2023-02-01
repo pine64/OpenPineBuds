@@ -32,23 +32,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
-#include "RTX_Conf.h"
-#include "rt_System.h"
 #include "rt_Event.h"
-#include "rt_List.h"
-#include "rt_Task.h"
+#include "RTX_Conf.h"
 #include "rt_HAL_CM.h"
-
+#include "rt_List.h"
+#include "rt_System.h"
+#include "rt_Task.h"
+#include "rt_TypeDef.h"
 
 /*----------------------------------------------------------------------------
  *      Functions
  *---------------------------------------------------------------------------*/
 
-
 /*--------------------------- rt_evt_wait -----------------------------------*/
 
-OS_RESULT rt_evt_wait (U16 wait_flags, U16 timeout, BOOL and_wait) {
+OS_RESULT rt_evt_wait(U16 wait_flags, U16 timeout, BOOL and_wait) {
   /* Wait for one or more event flags with optional time-out.                */
   /* "wait_flags" identifies the flags to wait for.                          */
   /* "timeout" is the time-out limit in system ticks (0xffff if no time-out) */
@@ -63,8 +61,7 @@ OS_RESULT rt_evt_wait (U16 wait_flags, U16 timeout, BOOL and_wait) {
       return (OS_R_EVT);
     }
     block_state = WAIT_AND;
-  }
-  else {
+  } else {
     /* Check for OR-connected events */
     if (os_tsk.run->events & wait_flags) {
       os_tsk.run->waits = os_tsk.run->events & wait_flags;
@@ -75,23 +72,22 @@ OS_RESULT rt_evt_wait (U16 wait_flags, U16 timeout, BOOL and_wait) {
   }
   /* Task has to wait */
   os_tsk.run->waits = wait_flags;
-  rt_block (timeout, (U8)block_state);
+  rt_block(timeout, (U8)block_state);
   return (OS_R_TMO);
 }
 
-
 /*--------------------------- rt_evt_set ------------------------------------*/
 
-void rt_evt_set (U16 event_flags, OS_TID task_id) {
+void rt_evt_set(U16 event_flags, OS_TID task_id) {
   /* Set one or more event flags of a selectable task. */
   P_TCB p_tcb;
 
-  p_tcb = os_active_TCB[task_id-1];
+  p_tcb = os_active_TCB[task_id - 1];
   if (p_tcb == NULL) {
     return;
   }
   p_tcb->events |= event_flags;
-  event_flags    = p_tcb->waits;
+  event_flags = p_tcb->waits;
   /* If the task is not waiting for an event, it should not be put */
   /* to ready state. */
   if (p_tcb->state == WAIT_AND) {
@@ -103,27 +99,27 @@ void rt_evt_set (U16 event_flags, OS_TID task_id) {
   if (p_tcb->state == WAIT_OR) {
     /* Check for OR-connected events */
     if (p_tcb->events & event_flags) {
-      p_tcb->waits  &= p_tcb->events;
-wkup: p_tcb->events &= ~event_flags;
-      rt_rmv_dly (p_tcb);
-      p_tcb->state   = READY;
+      p_tcb->waits &= p_tcb->events;
+    wkup:
+      p_tcb->events &= ~event_flags;
+      rt_rmv_dly(p_tcb);
+      p_tcb->state = READY;
 #ifdef __CMSIS_RTOS
-      rt_ret_val2(p_tcb, 0x08/*osEventSignal*/, p_tcb->waits);
+      rt_ret_val2(p_tcb, 0x08 /*osEventSignal*/, p_tcb->waits);
 #else
-      rt_ret_val (p_tcb, OS_R_EVT);
+      rt_ret_val(p_tcb, OS_R_EVT);
 #endif
-      rt_dispatch (p_tcb);
+      rt_dispatch(p_tcb);
     }
   }
 }
 
-
 /*--------------------------- rt_evt_clr ------------------------------------*/
 
-void rt_evt_clr (U16 clear_flags, OS_TID task_id) {
+void rt_evt_clr(U16 clear_flags, OS_TID task_id) {
   /* Clear one or more event flags (identified by "clear_flags") of a */
   /* selectable task (identified by "task"). */
-  P_TCB task = os_active_TCB[task_id-1];
+  P_TCB task = os_active_TCB[task_id - 1];
 
   if (task == NULL) {
     return;
@@ -131,32 +127,29 @@ void rt_evt_clr (U16 clear_flags, OS_TID task_id) {
   task->events &= ~clear_flags;
 }
 
-
 /*--------------------------- isr_evt_set -----------------------------------*/
 
-void isr_evt_set (U16 event_flags, OS_TID task_id) {
+void isr_evt_set(U16 event_flags, OS_TID task_id) {
   /* Same function as "os_evt_set", but to be called by ISRs. */
-  P_TCB p_tcb = os_active_TCB[task_id-1];
+  P_TCB p_tcb = os_active_TCB[task_id - 1];
 
   if (p_tcb == NULL) {
     return;
   }
-  rt_psq_enq (p_tcb, event_flags);
-  rt_psh_req ();
+  rt_psq_enq(p_tcb, event_flags);
+  rt_psh_req();
 }
-
 
 /*--------------------------- rt_evt_get ------------------------------------*/
 
-U16 rt_evt_get (void) {
+U16 rt_evt_get(void) {
   /* Get events of a running task after waiting for OR connected events. */
   return (os_tsk.run->waits);
 }
 
-
 /*--------------------------- rt_evt_psh ------------------------------------*/
 
-void rt_evt_psh (P_TCB p_CB, U16 set_flags) {
+void rt_evt_psh(P_TCB p_CB, U16 set_flags) {
   /* Check if task has to be waken up */
   U16 event_flags;
 
@@ -171,16 +164,17 @@ void rt_evt_psh (P_TCB p_CB, U16 set_flags) {
   if (p_CB->state == WAIT_OR) {
     /* Check for OR-connected events */
     if (p_CB->events & event_flags) {
-      p_CB->waits  &= p_CB->events;
-rdy:  p_CB->events &= ~event_flags;
-      rt_rmv_dly (p_CB);
-      p_CB->state   = READY;
+      p_CB->waits &= p_CB->events;
+    rdy:
+      p_CB->events &= ~event_flags;
+      rt_rmv_dly(p_CB);
+      p_CB->state = READY;
 #ifdef __CMSIS_RTOS
-      rt_ret_val2(p_CB, 0x08/*osEventSignal*/, p_CB->waits);
+      rt_ret_val2(p_CB, 0x08 /*osEventSignal*/, p_CB->waits);
 #else
-      rt_ret_val (p_CB, OS_R_EVT);
+      rt_ret_val(p_CB, OS_R_EVT);
 #endif
-      rt_put_prio (&os_rdy, p_CB);
+      rt_put_prio(&os_rdy, p_CB);
     }
   }
 }

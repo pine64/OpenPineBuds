@@ -47,49 +47,45 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] are saturated.
+                   Results outside of the allowable Q31 range [0x80000000
+  0x7FFFFFFF] are saturated.
  */
 
-void arm_offset_q31(
-  const q31_t * pSrc,
-        q31_t offset,
-        q31_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_offset_q31(const q31_t *pSrc, q31_t offset, q31_t *pDst,
+                    uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A + offset */
 
     /* Add offset and store result in destination buffer. */
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QADD(*pSrc++, offset);
 #else
-    *pDst++ = (q31_t) clip_q63_to_q31((q63_t) * pSrc++ + offset);
+    *pDst++ = (q31_t)clip_q63_to_q31((q63_t)*pSrc++ + offset);
 #endif
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QADD(*pSrc++, offset);
 #else
-    *pDst++ = (q31_t) clip_q63_to_q31((q63_t) * pSrc++ + offset);
+    *pDst++ = (q31_t)clip_q63_to_q31((q63_t)*pSrc++ + offset);
 #endif
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QADD(*pSrc++, offset);
 #else
-    *pDst++ = (q31_t) clip_q63_to_q31((q63_t) * pSrc++ + offset);
+    *pDst++ = (q31_t)clip_q63_to_q31((q63_t)*pSrc++ + offset);
 #endif
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QADD(*pSrc++, offset);
 #else
-    *pDst++ = (q31_t) clip_q63_to_q31((q63_t) * pSrc++ + offset);
+    *pDst++ = (q31_t)clip_q63_to_q31((q63_t)*pSrc++ + offset);
 #endif
 
     /* Decrement loop counter */
@@ -106,21 +102,19 @@ void arm_offset_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A + offset */
 
     /* Add offset and store result in destination buffer. */
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __QADD(*pSrc++, offset);
 #else
-    *pDst++ = (q31_t) clip_q63_to_q31((q63_t) * pSrc++ + offset);
+    *pDst++ = (q31_t)clip_q63_to_q31((q63_t)*pSrc++ + offset);
 #endif
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

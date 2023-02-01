@@ -20,10 +20,10 @@
 //#include "hal_spi.h"
 //#include "hal_cmu.h"
 //#include "hal_sleep.h"
+#include "hal_btpcm.h"
 #include "hal_dma.h"
 #include "stdbool.h"
 #include "string.h"
-#include "hal_btpcm.h"
 
 #if 0
 #define AUDIO_BUFFER_SIZE 2048

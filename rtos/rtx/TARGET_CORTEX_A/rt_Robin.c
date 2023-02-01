@@ -32,12 +32,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
+#include "rt_Robin.h"
 #include "RTX_Config.h"
 #include "rt_List.h"
 #include "rt_Task.h"
 #include "rt_Time.h"
-#include "rt_Robin.h"
+#include "rt_TypeDef.h"
 #ifdef __CORTEX_A9
 #include "rt_HAL_CA.h"
 #else
@@ -50,14 +50,13 @@
 
 struct OS_ROBIN os_robin;
 
-
 /*----------------------------------------------------------------------------
  *      Global Functions
  *---------------------------------------------------------------------------*/
 
 /*--------------------------- rt_init_robin ---------------------------------*/
 
-__weak void rt_init_robin (void) {
+__weak void rt_init_robin(void) {
   /* Initialize Round Robin variables. */
   os_robin.task = NULL;
   os_robin.tout = (U16)os_rrobin;
@@ -65,7 +64,7 @@ __weak void rt_init_robin (void) {
 
 /*--------------------------- rt_chk_robin ----------------------------------*/
 
-__weak void rt_chk_robin (void) {
+__weak void rt_chk_robin(void) {
   /* Check if Round Robin timeout expired and switch to the next ready task.*/
   P_TCB p_new;
 
@@ -77,12 +76,11 @@ __weak void rt_chk_robin (void) {
   if (os_robin.time == (U16)os_time) {
     /* Round Robin timeout has expired, swap Robin tasks. */
     os_robin.task = NULL;
-    p_new = rt_get_first (&os_rdy);
-    rt_put_prio ((P_XCB)&os_rdy, p_new);
+    p_new = rt_get_first(&os_rdy);
+    rt_put_prio((P_XCB)&os_rdy, p_new);
   }
 }
 
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

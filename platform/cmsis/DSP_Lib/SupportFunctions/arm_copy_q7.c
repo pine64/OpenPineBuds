@@ -45,24 +45,19 @@
   @return        none
  */
 
-void arm_copy_q7(
-  const q7_t * pSrc,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-  uint32_t blkCnt;                               /* Loop counter */
+void arm_copy_q7(const q7_t *pSrc, q7_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A */
 
     /* read 4 samples at a time */
-    write_q7x4_ia (&pDst, read_q7x4_ia ((q7_t **) &pSrc));
+    write_q7x4_ia(&pDst, read_q7x4_ia((q7_t **)&pSrc));
 
     /* Decrement loop counter */
     blkCnt--;
@@ -78,8 +73,7 @@ void arm_copy_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A */
 
     /* Copy and store result in destination buffer */

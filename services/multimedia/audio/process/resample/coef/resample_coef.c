@@ -13,14 +13,14 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-#include "plat_types.h"
-#include "hal_location.h"
 #include "resample_coef.h"
+#include "hal_location.h"
+#include "plat_types.h"
 
-#define COEF_DEF(n)                         FLASH_RODATA_DEF(n)
+#define COEF_DEF(n) FLASH_RODATA_DEF(n)
 
 static const int16_t COEF_DEF(filter_50p7k_to_48k)[] = {
-    #include "resample_50p7k_to_48k_filter.txt"
+#include "resample_50p7k_to_48k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_50p7k_to_48k) = {
     .upsample_factor = 69,
@@ -31,7 +31,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_50p7k_to_48k) = {
 };
 
 static const int16_t COEF_DEF(filter_50p7k_to_44p1k)[] = {
-    #include "resample_50p7k_to_44p1k_filter.txt"
+#include "resample_50p7k_to_44p1k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_50p7k_to_44p1k) = {
     .upsample_factor = 33,
@@ -42,7 +42,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_50p7k_to_44p1k) = {
 };
 
 static const int16_t COEF_DEF(filter_44p1k_to_48k)[] = {
-    #include "resample_44p1k_to_48k_filter.txt"
+#include "resample_44p1k_to_48k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_44p1k_to_48k) = {
     .upsample_factor = 160,
@@ -53,7 +53,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_44p1k_to_48k) = {
 };
 
 static const int16_t COEF_DEF(filter_48k_to_44p1k)[] = {
-    #include "resample_48k_to_44p1k_filter.txt"
+#include "resample_48k_to_44p1k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_48k_to_44p1k) = {
     .upsample_factor = 147,
@@ -64,7 +64,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_48k_to_44p1k) = {
 };
 
 static const int16_t COEF_DEF(filter_32k_to_50p7k)[] = {
-    #include "resample_32k_to_50p7k_filter.txt"
+#include "resample_32k_to_50p7k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_32k_to_50p7k) = {
     .upsample_factor = 73,
@@ -75,7 +75,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_32k_to_50p7k) = {
 };
 
 static const int16_t COEF_DEF(filter_44p1k_to_50p7k)[] = {
-    #include "resample_44p1k_to_50p7k_filter.txt"
+#include "resample_44p1k_to_50p7k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_44p1k_to_50p7k) = {
     .upsample_factor = 38,
@@ -86,7 +86,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_44p1k_to_50p7k) = {
 };
 
 static const int16_t COEF_DEF(filter_48k_to_50p7k)[] = {
-    #include "resample_48k_to_50p7k_filter.txt"
+#include "resample_48k_to_50p7k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_48k_to_50p7k) = {
     .upsample_factor = 73,
@@ -97,7 +97,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_48k_to_50p7k) = {
 };
 
 static const int16_t COEF_DEF(filter_8k_to_8p4k)[] = {
-    #include "resample_8k_to_8p4k_filter.txt"
+#include "resample_8k_to_8p4k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_8k_to_8p4k) = {
     .upsample_factor = 73,
@@ -108,7 +108,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_8k_to_8p4k) = {
 };
 
 static const int16_t COEF_DEF(filter_8p4k_to_8k)[] = {
-    #include "resample_8p4k_to_8k_filter.txt"
+#include "resample_8p4k_to_8k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_8p4k_to_8k) = {
     .upsample_factor = 69,
@@ -119,7 +119,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_8p4k_to_8k) = {
 };
 
 static const int16_t COEF_DEF(filter_16k_to_48k)[] = {
-    #include "resample_16k_to_48k_filter.txt"
+#include "resample_16k_to_48k_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_16k_to_48k) = {
     .upsample_factor = 3,
@@ -131,7 +131,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_16k_to_48k) = {
 
 #ifdef RESAMPLE_ANY_SAMPLE_RATE
 static const int16_t COEF_DEF(filter_any_up64)[] = {
-    #include "resample_any_up64_filter.txt"
+#include "resample_any_up64_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up64) = {
     .upsample_factor = 64,
@@ -142,7 +142,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up64) = {
 };
 
 static const int16_t COEF_DEF(filter_any_up256)[] = {
-    #include "resample_any_up256_filter.txt"
+#include "resample_any_up256_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up256) = {
     .upsample_factor = 256,
@@ -153,7 +153,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up256) = {
 };
 
 static const int16_t COEF_DEF(filter_any_up512_32)[] = {
-    #include "resample_any_up512_32_filter.txt"
+#include "resample_any_up512_32_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up512_32) = {
     .upsample_factor = 512,
@@ -164,7 +164,7 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up512_32) = {
 };
 
 static const int16_t COEF_DEF(filter_any_up512_36)[] = {
-    #include "resample_any_up512_36_filter.txt"
+#include "resample_any_up512_36_filter.txt"
 };
 const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up512_36) = {
     .upsample_factor = 512,
@@ -174,4 +174,3 @@ const struct RESAMPLE_COEF_T COEF_DEF(resample_coef_any_up512_36) = {
     .coef_group = filter_any_up512_36,
 };
 #endif
-

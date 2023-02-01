@@ -31,7 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
-
+#include "rt_TypeDef.h"
 /* Functions */
 extern void      rt_mut_init    (OS_ID mutex);
 extern OS_RESULT rt_mut_delete  (OS_ID mutex);

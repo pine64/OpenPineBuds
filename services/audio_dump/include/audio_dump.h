@@ -15,6 +15,8 @@
  ****************************************************************************/
 #ifndef __AUDIO_DUMP_H__
 #define __AUDIO_DUMP_H__
+#include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +29,10 @@ extern "C" {
 void audio_dump_init(int frame_len, int sample_bytes, int channel_num);
 void audio_dump_deinit(void);
 void audio_dump_clear_up(void);
-void audio_dump_add_channel_data_from_multi_channels(int channel_id, void *pcm_buf, int pcm_len, int channel_num, int channel_index);
+void audio_dump_add_channel_data_from_multi_channels(int channel_id,
+                                                     void *pcm_buf, int pcm_len,
+                                                     int channel_num,
+                                                     int channel_index);
 void audio_dump_add_channel_data(int channel_id, void *pcm_buf, int pcm_len);
 void audio_dump_run(void);
 

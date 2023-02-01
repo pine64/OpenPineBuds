@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
  * Title:        arm_cfft_init_f32.c
- * Description:  Split Radix Decimation in Frequency CFFT Floating point processing function
+ * Description:  Split Radix Decimation in Frequency CFFT Floating point
+ * processing function
  *
  * $Date:        18. March 2019
  * $Revision:    V1.6.0
@@ -26,8 +27,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @ingroup groupTransforms
@@ -38,7 +39,6 @@
   @{
  */
 
-
 /**
   @brief         Initialization function for the 32pt floating-point real FFT.
   @param[in,out] S  points to an arm_rfft_fast_instance_f32 structure
@@ -47,11 +47,12 @@
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
 
-arm_status arm_rfft_32_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_32_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 16U;
@@ -59,8 +60,8 @@ arm_status arm_rfft_32_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_16_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable16;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_16;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_32;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_16;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_32;
 
   return ARM_MATH_SUCCESS;
 }
@@ -73,11 +74,12 @@ arm_status arm_rfft_32_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
 
-arm_status arm_rfft_64_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_64_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 32U;
@@ -85,8 +87,8 @@ arm_status arm_rfft_64_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_32_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable32;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_32;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_64;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_32;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_64;
 
   return ARM_MATH_SUCCESS;
 }
@@ -99,11 +101,12 @@ arm_status arm_rfft_64_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
 
-arm_status arm_rfft_128_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_128_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 64U;
@@ -111,8 +114,8 @@ arm_status arm_rfft_128_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_64_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable64;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_64;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_128;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_64;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_128;
 
   return ARM_MATH_SUCCESS;
 }
@@ -125,11 +128,12 @@ arm_status arm_rfft_128_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
 */
 
-arm_status arm_rfft_256_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_256_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 128U;
@@ -137,8 +141,8 @@ arm_status arm_rfft_256_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_128_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable128;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_128;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_256;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_128;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_256;
 
   return ARM_MATH_SUCCESS;
 }
@@ -151,11 +155,12 @@ arm_status arm_rfft_256_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
 
-arm_status arm_rfft_512_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_512_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 256U;
@@ -163,8 +168,8 @@ arm_status arm_rfft_512_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_256_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable256;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_256;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_512;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_256;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_512;
 
   return ARM_MATH_SUCCESS;
 }
@@ -177,11 +182,12 @@ arm_status arm_rfft_512_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
 
-arm_status arm_rfft_1024_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_1024_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 512U;
@@ -189,8 +195,8 @@ arm_status arm_rfft_1024_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_512_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable512;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_512;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_1024;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_512;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_1024;
 
   return ARM_MATH_SUCCESS;
 }
@@ -202,11 +208,12 @@ arm_status arm_rfft_1024_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_SUCCESS        : Operation successful
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
-arm_status arm_rfft_2048_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_2048_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 1024U;
@@ -214,8 +221,8 @@ arm_status arm_rfft_2048_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_1024_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable1024;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_1024;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_2048;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_1024;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_2048;
 
   return ARM_MATH_SUCCESS;
 }
@@ -228,11 +235,12 @@ arm_status arm_rfft_2048_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
                    - \ref ARM_MATH_ARGUMENT_ERROR : an error is detected
  */
 
-arm_status arm_rfft_4096_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
+arm_status arm_rfft_4096_fast_init_f32(arm_rfft_fast_instance_f32 *S) {
 
-  arm_cfft_instance_f32 * Sint;
+  arm_cfft_instance_f32 *Sint;
 
-  if( !S ) return ARM_MATH_ARGUMENT_ERROR;
+  if (!S)
+    return ARM_MATH_ARGUMENT_ERROR;
 
   Sint = &(S->Sint);
   Sint->fftLen = 2048U;
@@ -240,8 +248,8 @@ arm_status arm_rfft_4096_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
 
   Sint->bitRevLength = ARMBITREVINDEXTABLE_2048_TABLE_LENGTH;
   Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable2048;
-  Sint->pTwiddle     = (float32_t *) twiddleCoef_2048;
-  S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_4096;
+  Sint->pTwiddle = (float32_t *)twiddleCoef_2048;
+  S->pTwiddleRFFT = (float32_t *)twiddleCoef_rfft_4096;
 
   return ARM_MATH_SUCCESS;
 }
@@ -252,24 +260,24 @@ arm_status arm_rfft_4096_fast_init_f32( arm_rfft_fast_instance_f32 * S ) {
   @param[in]     fftLen  length of the Real Sequence
   @return        execution status
                    - \ref ARM_MATH_SUCCESS        : Operation successful
-                   - \ref ARM_MATH_ARGUMENT_ERROR : <code>fftLen</code> is not a supported length
+                   - \ref ARM_MATH_ARGUMENT_ERROR : <code>fftLen</code> is not a
+  supported length
 
   @par           Description
-                   The parameter <code>fftLen</code> specifies the length of RFFT/CIFFT process.
-                   Supported FFT Lengths are 32, 64, 128, 256, 512, 1024, 2048, 4096.
+                   The parameter <code>fftLen</code> specifies the length of
+  RFFT/CIFFT process. Supported FFT Lengths are 32, 64, 128, 256, 512, 1024,
+  2048, 4096.
   @par
-                   This Function also initializes Twiddle factor table pointer and Bit reversal table pointer.
+                   This Function also initializes Twiddle factor table pointer
+  and Bit reversal table pointer.
  */
 
-arm_status arm_rfft_fast_init_f32(
-  arm_rfft_fast_instance_f32 * S,
-  uint16_t fftLen)
-{
-  typedef arm_status(*fft_init_ptr)( arm_rfft_fast_instance_f32 *);
+arm_status arm_rfft_fast_init_f32(arm_rfft_fast_instance_f32 *S,
+                                  uint16_t fftLen) {
+  typedef arm_status (*fft_init_ptr)(arm_rfft_fast_instance_f32 *);
   fft_init_ptr fptr = 0x0;
 
-  switch (fftLen)
-  {
+  switch (fftLen) {
 #ifdef ENABLE_ARM_RFFT_F32_4096
   case 4096U:
     fptr = arm_rfft_4096_fast_init_f32;
@@ -302,9 +310,9 @@ arm_status arm_rfft_fast_init_f32(
     return ARM_MATH_ARGUMENT_ERROR;
   }
 
-  if( ! fptr ) return ARM_MATH_ARGUMENT_ERROR;
-  return fptr( S );
-
+  if (!fptr)
+    return ARM_MATH_ARGUMENT_ERROR;
+  return fptr(S);
 }
 
 /**

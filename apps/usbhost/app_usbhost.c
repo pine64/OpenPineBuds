@@ -13,9 +13,6 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
+#include "app_thread.h"
 #include "cmsis_os.h"
 #include "hal_trace.h"
-#include "app_thread.h"
-
-
-

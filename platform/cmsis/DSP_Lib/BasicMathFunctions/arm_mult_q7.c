@@ -47,44 +47,40 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q7 range [0x80 0x7F] are saturated.
+                   Results outside of the allowable Q7 range [0x80 0x7F] are
+  saturated.
  */
 
-void arm_mult_q7(
-  const q7_t * pSrcA,
-  const q7_t * pSrcB,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_mult_q7(const q7_t *pSrcA, const q7_t *pSrcB, q7_t *pDst,
+                 uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
-#if defined (ARM_MATH_DSP)
-  q7_t out1, out2, out3, out4;                   /* Temporary output variables */
+#if defined(ARM_MATH_DSP)
+  q7_t out1, out2, out3, out4; /* Temporary output variables */
 #endif
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * B */
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     /* Multiply inputs and store results in temporary variables */
-    out1 = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
-    out2 = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
-    out3 = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
-    out4 = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    out1 = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    out2 = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    out3 = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    out4 = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
 
     /* Pack and store result in destination buffer (in single write) */
-    write_q7x4_ia (&pDst, __PACKq7(out1, out2, out3, out4));
+    write_q7x4_ia(&pDst, __PACKq7(out1, out2, out3, out4));
 #else
-    *pDst++ = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
-    *pDst++ = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
-    *pDst++ = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
-    *pDst++ = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    *pDst++ = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    *pDst++ = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    *pDst++ = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    *pDst++ = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
 #endif
 
     /* Decrement loop counter */
@@ -101,17 +97,15 @@ void arm_mult_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * B */
 
     /* Multiply input and store result in destination buffer. */
-    *pDst++ = (q7_t) __SSAT((((q15_t) (*pSrcA++) * (*pSrcB++)) >> 7), 8);
+    *pDst++ = (q7_t)__SSAT((((q15_t)(*pSrcA++) * (*pSrcB++)) >> 7), 8);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

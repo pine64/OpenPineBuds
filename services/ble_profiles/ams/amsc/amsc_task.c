@@ -14,7 +14,6 @@
  *
  ****************************************************************************/
 
-
 /**
  ****************************************************************************************
  * @addtogroup AMSCTASK
@@ -119,13 +118,12 @@ static int amsc_enable_req_handler(ke_msg_id_t const msgid,
   // Get connection index
   uint8_t conidx = param->conidx;
   uint8_t state = ke_state_get(dest_id);
-  TRACE(3,"AMSC %s Entry. state=%d, conidx=%d",
-      __func__, state, conidx);
+  TRACE(3, "AMSC %s Entry. state=%d, conidx=%d", __func__, state, conidx);
 
-  TRACE(3,"AMSC %s amsc_env->env[%d] = 0x%8.8x", __func__, conidx,
+  TRACE(3, "AMSC %s amsc_env->env[%d] = 0x%8.8x", __func__, conidx,
         (uint32_t)amsc_env->env[conidx]);
   if ((state == AMSC_IDLE) && (amsc_env->env[conidx] == NULL)) {
-    TRACE(1,"AMSC %s passed state check", __func__);
+    TRACE(1, "AMSC %s passed state check", __func__);
     // allocate environment variable for task instance
     amsc_env->env[conidx] = (struct amsc_cnx_env *)ke_malloc(
         sizeof(struct amsc_cnx_env), KE_MEM_ATT_DB);
@@ -172,7 +170,7 @@ static int amsc_read_cmd_handler(ke_msg_id_t const msgid,
                                  struct gattc_read_cmd *param,
                                  ke_task_id_t const dest_id,
                                  ke_task_id_t const src_id) {
-  TRACE(5,"AMSC %s Entry. hdl=0x%4.4x, op=%d, len=%d, off=%d", __func__,
+  TRACE(5, "AMSC %s Entry. hdl=0x%4.4x, op=%d, len=%d, off=%d", __func__,
         param->req.simple.handle, param->operation, param->req.simple.length,
         param->req.simple.offset);
 
@@ -202,17 +200,16 @@ static int gattc_read_ind_handler(ke_msg_id_t const msgid,
                                   ke_task_id_t const src_id) {
   // Get the address of the environment
   struct amsc_env_tag *amsc_env = PRF_ENV_GET(AMSC, amsc);
-  TRACE(3,"AMSC %s param->handle=%x param->length=%d", __func__, param->handle,
+  TRACE(3, "AMSC %s param->handle=%x param->length=%d", __func__, param->handle,
         param->length);
   uint8_t conidx = KE_IDX_GET(src_id);
 
   if (amsc_env != NULL) {
-  	amsc_last_read_handle = BTIF_INVALID_HCI_HANDLE;
-    struct gattc_read_cfm *cfm =
-        KE_MSG_ALLOC_DYN(GATTC_READ_CFM, 
-        				 KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx),
-                         dest_id, gattc_read_cfm, param->length);
-    cfm->status = 0;  // read_ind has no status???
+    amsc_last_read_handle = BTIF_INVALID_HCI_HANDLE;
+    struct gattc_read_cfm *cfm = KE_MSG_ALLOC_DYN(
+        GATTC_READ_CFM, KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx),
+        dest_id, gattc_read_cfm, param->length);
+    cfm->status = 0; // read_ind has no status???
     cfm->handle = param->handle;
     cfm->length = param->length;
     memcpy(cfm->value, param->value, param->length);
@@ -235,8 +232,8 @@ static int amsc_write_cmd_handler(ke_msg_id_t const msgid,
                                   struct gattc_write_cmd *param,
                                   ke_task_id_t const dest_id,
                                   ke_task_id_t const src_id) {
-  TRACE(4,"AMSC %s Entry. hdl=0x%4.4x, op=%d, len=%d", __func__,
-        param->handle, param->operation, param->length);
+  TRACE(4, "AMSC %s Entry. hdl=0x%4.4x, op=%d, len=%d", __func__, param->handle,
+        param->operation, param->length);
 
   uint8_t conidx = KE_IDX_GET(dest_id);
 
@@ -246,9 +243,9 @@ static int amsc_write_cmd_handler(ke_msg_id_t const msgid,
   if (amsc_env != NULL) {
     amsc_env->last_write_handle[conidx] = param->handle;
     // TODO(jkessinger): Use ke_msg_forward.
-    struct gattc_write_cmd *wr_char = KE_MSG_ALLOC_DYN(
-        GATTC_WRITE_CMD, KE_BUILD_ID(TASK_GATTC, conidx),
-        dest_id, gattc_write_cmd, param->length);
+    struct gattc_write_cmd *wr_char =
+        KE_MSG_ALLOC_DYN(GATTC_WRITE_CMD, KE_BUILD_ID(TASK_GATTC, conidx),
+                         dest_id, gattc_write_cmd, param->length);
     memcpy(wr_char, param, sizeof(struct gattc_write_cmd) + param->length);
     // Send the message
     ke_msg_send(wr_char);
@@ -278,14 +275,17 @@ __STATIC int gattc_sdp_svc_ind_handler(ke_msg_id_t const msgid,
                                        ke_task_id_t const src_id) {
   uint8_t state = ke_state_get(dest_id);
 
-  TRACE(4,"AMSC %s Entry. end_hdl=0x%4.4x, start_hdl=0x%4.4x, att.att_type=%d",
-      __func__, ind->end_hdl, ind->start_hdl, ind->info[0].att.att_type);
-  TRACE(3,"AMSC att_char.prop=%d, att_char.handle=0x%4.4x, att_char.att_type=%d",
-      ind->info[0].att_char.prop, ind->info[0].att_char.handle,
-      ind->info[0].att_char.att_type);
-  TRACE(4,"AMSC inc_svc.att_type=%d, inc_svc.end_hdl=0x%4.4x, inc_svc.start_hdl=0x%4.4x, state=%d",
-      ind->info[0].att_type, ind->info[0].inc_svc.att_type,
-      ind->info[0].inc_svc.start_hdl, state);
+  TRACE(4, "AMSC %s Entry. end_hdl=0x%4.4x, start_hdl=0x%4.4x, att.att_type=%d",
+        __func__, ind->end_hdl, ind->start_hdl, ind->info[0].att.att_type);
+  TRACE(3,
+        "AMSC att_char.prop=%d, att_char.handle=0x%4.4x, att_char.att_type=%d",
+        ind->info[0].att_char.prop, ind->info[0].att_char.handle,
+        ind->info[0].att_char.att_type);
+  TRACE(4,
+        "AMSC inc_svc.att_type=%d, inc_svc.end_hdl=0x%4.4x, "
+        "inc_svc.start_hdl=0x%4.4x, state=%d",
+        ind->info[0].att_type, ind->info[0].inc_svc.att_type,
+        ind->info[0].inc_svc.start_hdl, state);
 
   if (state == AMSC_DISCOVERING) {
     uint8_t conidx = KE_IDX_GET(src_id);
@@ -296,7 +296,7 @@ __STATIC int gattc_sdp_svc_ind_handler(ke_msg_id_t const msgid,
     ASSERT_INFO(amsc_env->env[conidx] != NULL, dest_id, src_id);
 
     if (amsc_env->env[conidx]->nb_svc == 0) {
-      TRACE(0,"AMSC retrieving characteristics and descriptors.");
+      TRACE(0, "AMSC retrieving characteristics and descriptors.");
       // Retrieve AMS characteristics and descriptors
       prf_extract_svc_info_128(ind, AMSC_CHAR_MAX, &amsc_ams_char[0],
                                &amsc_env->env[conidx]->ams.chars[0],
@@ -331,15 +331,15 @@ static int amsc_gattc_cmp_evt_handler(ke_msg_id_t const msgid,
   // Get the address of the environment
   struct amsc_env_tag *amsc_env = PRF_ENV_GET(AMSC, amsc);
   uint8_t conidx = KE_IDX_GET(dest_id);
-  TRACE(5,"AMSC %s entry. op=%d, seq=%d, status=%d, conidx=%d",
-      __func__, param->operation, param->seq_num, param->status, conidx);
+  TRACE(5, "AMSC %s entry. op=%d, seq=%d, status=%d, conidx=%d", __func__,
+        param->operation, param->seq_num, param->status, conidx);
   // Status
   uint8_t status;
 
   if (amsc_env->env[conidx] != NULL) {
     uint8_t state = ke_state_get(dest_id);
 
-    TRACE(2,"AMSC %s state=%d", __func__, state);
+    TRACE(2, "AMSC %s state=%d", __func__, state);
     if (state == AMSC_DISCOVERING) {
       status = param->status;
 
@@ -370,24 +370,26 @@ static int amsc_gattc_cmp_evt_handler(ke_msg_id_t const msgid,
 
       amsc_enable_rsp_send(amsc_env, conidx, status);
 #if (ANCS_PROXY_ENABLE)
-      TRACE(4,"AMSC %s rmtChar=0x%4.4x, rmtVal=0x%4.4x, rmtCfg=0x%4.4x",
-   		    __func__,
+      TRACE(4, "AMSC %s rmtChar=0x%4.4x, rmtVal=0x%4.4x, rmtCfg=0x%4.4x",
+            __func__,
             amsc_env->env[conidx]->ams.chars[AMSC_REMOTE_COMMAND_CHAR].char_hdl,
             amsc_env->env[conidx]->ams.chars[AMSC_REMOTE_COMMAND_CHAR].val_hdl,
             amsc_env->env[conidx]
                 ->ams.descs[AMSC_DESC_REMOTE_CMD_CL_CFG]
                 .desc_hdl);
-      TRACE(4,"AMSC %s EnUpChar=0x%4.4x EnUpVal=0x%4.4x, EnUpCfg=0x%4.4x",
+      TRACE(4, "AMSC %s EnUpChar=0x%4.4x EnUpVal=0x%4.4x, EnUpCfg=0x%4.4x",
             __func__,
             amsc_env->env[conidx]->ams.chars[AMSC_ENTITY_UPDATE_CHAR].char_hdl,
             amsc_env->env[conidx]->ams.chars[AMSC_ENTITY_UPDATE_CHAR].val_hdl,
             amsc_env->env[conidx]
                 ->ams.descs[AMSC_DESC_ENTITY_UPDATE_CL_CFG]
                 .desc_hdl);
-      TRACE(3,"AMSC %s EnAtrChar=0x%4.4x, EnAtrVal=0x%4.4x", __func__,
+      TRACE(
+          3, "AMSC %s EnAtrChar=0x%4.4x, EnAtrVal=0x%4.4x", __func__,
           amsc_env->env[conidx]->ams.chars[AMSC_ENTITY_ATTRIBUTE_CHAR].char_hdl,
           amsc_env->env[conidx]->ams.chars[AMSC_ENTITY_ATTRIBUTE_CHAR].val_hdl);
-      ams_proxy_set_ready_flag(conidx,
+      ams_proxy_set_ready_flag(
+          conidx,
           amsc_env->env[conidx]->ams.chars[AMSC_REMOTE_COMMAND_CHAR].char_hdl,
           amsc_env->env[conidx]->ams.chars[AMSC_REMOTE_COMMAND_CHAR].val_hdl,
           amsc_env->env[conidx]
@@ -404,49 +406,50 @@ static int amsc_gattc_cmp_evt_handler(ke_msg_id_t const msgid,
 #endif
     } else {
       switch (param->operation) {
-        case GATTC_READ: {
-          TRACE(3,"AMSC %s read complete status=%d amsc_last_read_handle %d",
-                __func__, param->status, amsc_last_read_handle);
-          if ((0 != param->status) &&
-              (BTIF_INVALID_HCI_HANDLE != amsc_last_read_handle)) {
-            struct gattc_read_cfm *cfm = KE_MSG_ALLOC_DYN(
-                GATTC_READ_CFM, KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx),
-                dest_id,
-                gattc_read_cfm, 0);
-            cfm->status = 0;
-            cfm->handle = amsc_last_read_handle;
-            cfm->length = 0;
-            ke_msg_send(cfm);
-          }
-          amsc_last_read_handle = BTIF_INVALID_HCI_HANDLE;
-          break;
-        }
-        case GATTC_WRITE: {
-          struct gattc_write_cfm *cfm =
-              KE_MSG_ALLOC(GATTC_WRITE_CFM, 
-              			   KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx),
-                           dest_id, gattc_write_cfm);
-          cfm->handle = amsc_env->last_write_handle[conidx];
-          amsc_env->last_write_handle[conidx] = ATT_INVALID_HANDLE;
-          cfm->status = param->status;
+      case GATTC_READ: {
+        TRACE(3, "AMSC %s read complete status=%d amsc_last_read_handle %d",
+              __func__, param->status, amsc_last_read_handle);
+        if ((0 != param->status) &&
+            (BTIF_INVALID_HCI_HANDLE != amsc_last_read_handle)) {
+          struct gattc_read_cfm *cfm = KE_MSG_ALLOC_DYN(
+              GATTC_READ_CFM,
+              KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx), dest_id,
+              gattc_read_cfm, 0);
+          cfm->status = 0;
+          cfm->handle = amsc_last_read_handle;
+          cfm->length = 0;
           ke_msg_send(cfm);
-          break;
         }
-        case GATTC_WRITE_NO_RESPONSE:
-          // There's currently no need to notify the proxy task that this completed.
-          break;
-        case GATTC_NOTIFY:
-        case GATTC_INDICATE:
-          // Nothing to do. Notify sent.
-        case GATTC_REGISTER:
-        case GATTC_UNREGISTER:
-        case GATTC_SDP_DISC_SVC:
-          // Do nothing
-          break;
+        amsc_last_read_handle = BTIF_INVALID_HCI_HANDLE;
+        break;
+      }
+      case GATTC_WRITE: {
+        struct gattc_write_cfm *cfm = KE_MSG_ALLOC(
+            GATTC_WRITE_CFM,
+            KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx), dest_id,
+            gattc_write_cfm);
+        cfm->handle = amsc_env->last_write_handle[conidx];
+        amsc_env->last_write_handle[conidx] = ATT_INVALID_HANDLE;
+        cfm->status = param->status;
+        ke_msg_send(cfm);
+        break;
+      }
+      case GATTC_WRITE_NO_RESPONSE:
+        // There's currently no need to notify the proxy task that this
+        // completed.
+        break;
+      case GATTC_NOTIFY:
+      case GATTC_INDICATE:
+        // Nothing to do. Notify sent.
+      case GATTC_REGISTER:
+      case GATTC_UNREGISTER:
+      case GATTC_SDP_DISC_SVC:
+        // Do nothing
+        break;
 
-        default:
-          ASSERT_ERR(0);
-          break;
+      default:
+        ASSERT_ERR(0);
+        break;
       }
     }
   }
@@ -469,14 +472,15 @@ static int gattc_event_ind_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id) {
   BLE_FUNC_ENTER();
-  TRACE(5,"AMSC %s Entry. handle=0x%x, len=%d, type=%d, val[0]=0x%x",
-        __func__, param->handle, param->length, param->type, param->value[0]);
+  TRACE(5, "AMSC %s Entry. handle=0x%x, len=%d, type=%d, val[0]=0x%x", __func__,
+        param->handle, param->length, param->type, param->value[0]);
   uint8_t conidx = KE_IDX_GET(src_id);
-  
+
   struct gattc_send_evt_cmd *cmd;
-  cmd = KE_MSG_ALLOC_DYN(AMS_PROXY_IND_EVT, 
-  	    				 KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx),
-                         dest_id, gattc_send_evt_cmd, param->length);
+  cmd =
+      KE_MSG_ALLOC_DYN(AMS_PROXY_IND_EVT,
+                       KE_BUILD_ID(prf_get_task_from_id(TASK_ID_AMSP), conidx),
+                       dest_id, gattc_send_evt_cmd, param->length);
   cmd->handle = param->handle;
   cmd->operation = GATTC_NOTIFY;
   cmd->seq_num = 0;
@@ -506,7 +510,7 @@ KE_MSG_HANDLER_TAB(amsc){
 };
 
 void amsc_task_init(struct ke_task_desc *task_desc) {
-  TRACE(1,"AMSC %s Entry.", __func__);
+  TRACE(1, "AMSC %s Entry.", __func__);
   // Get the address of the environment
   struct amsc_env_tag *amsc_env = PRF_ENV_GET(AMSC, amsc);
 
@@ -516,6 +520,6 @@ void amsc_task_init(struct ke_task_desc *task_desc) {
   task_desc->idx_max = AMSC_IDX_MAX;
 }
 
-#endif  //(BLE_AMS_CLIENT)
+#endif //(BLE_AMS_CLIENT)
 
 /// @} AMSCTASK

@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
  * Title:        arm_float_to_q31.c
- * Description:  Converts the elements of the floating-point vector to Q31 vector
+ * Description:  Converts the elements of the floating-point vector to Q31
+ * vector
  *
  * $Date:        18. March 2019
  * $Revision:    V1.6.0
@@ -42,7 +43,8 @@
  */
 
 /**
-  @brief         Converts the elements of the floating-point vector to Q31 vector.
+  @brief         Converts the elements of the floating-point vector to Q31
+  vector.
   @param[in]     pSrc       points to the floating-point input vector
   @param[out]    pDst       points to the Q31 output vector
   @param[in]     blockSize  number of samples in each vector
@@ -56,32 +58,29 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q31 range[0x80000000 0x7FFFFFFF] are saturated.
+                   Results outside of the allowable Q31 range[0x80000000
+  0x7FFFFFFF] are saturated.
 
   @note
-                   In order to apply rounding, the library should be rebuilt with the ROUNDING macro
-                   defined in the preprocessor section of project options.
+                   In order to apply rounding, the library should be rebuilt
+  with the ROUNDING macro defined in the preprocessor section of project
+  options.
  */
 
-void arm_float_to_q31(
-  const float32_t * pSrc,
-        q31_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const float32_t *pIn = pSrc;                         /* Source pointer */
+void arm_float_to_q31(const float32_t *pSrc, q31_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;             /* Loop counter */
+  const float32_t *pIn = pSrc; /* Source pointer */
 
 #ifdef ARM_MATH_ROUNDING
-        float32_t in;
+  float32_t in;
 #endif /* #ifdef ARM_MATH_ROUNDING */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * 2147483648 */
 
     /* convert from float to Q31 and store result in destination buffer */
@@ -89,26 +88,26 @@ void arm_float_to_q31(
 
     in = (*pIn++ * 2147483648.0f);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = clip_q63_to_q31((q63_t) (in));
+    *pDst++ = clip_q63_to_q31((q63_t)(in));
 
     in = (*pIn++ * 2147483648.0f);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = clip_q63_to_q31((q63_t) (in));
+    *pDst++ = clip_q63_to_q31((q63_t)(in));
 
     in = (*pIn++ * 2147483648.0f);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = clip_q63_to_q31((q63_t) (in));
+    *pDst++ = clip_q63_to_q31((q63_t)(in));
 
     in = (*pIn++ * 2147483648.0f);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = clip_q63_to_q31((q63_t) (in));
+    *pDst++ = clip_q63_to_q31((q63_t)(in));
 
 #else
 
-    *pDst++ = clip_q63_to_q31((q63_t) (*pIn++ * 2147483648.0f));
-    *pDst++ = clip_q63_to_q31((q63_t) (*pIn++ * 2147483648.0f));
-    *pDst++ = clip_q63_to_q31((q63_t) (*pIn++ * 2147483648.0f));
-    *pDst++ = clip_q63_to_q31((q63_t) (*pIn++ * 2147483648.0f));
+    *pDst++ = clip_q63_to_q31((q63_t)(*pIn++ * 2147483648.0f));
+    *pDst++ = clip_q63_to_q31((q63_t)(*pIn++ * 2147483648.0f));
+    *pDst++ = clip_q63_to_q31((q63_t)(*pIn++ * 2147483648.0f));
+    *pDst++ = clip_q63_to_q31((q63_t)(*pIn++ * 2147483648.0f));
 
 #endif /* #ifdef ARM_MATH_ROUNDING */
 
@@ -126,8 +125,7 @@ void arm_float_to_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * 2147483648 */
 
     /* convert from float to Q31 and store result in destination buffer */
@@ -135,18 +133,17 @@ void arm_float_to_q31(
 
     in = (*pIn++ * 2147483648.0f);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = clip_q63_to_q31((q63_t) (in));
+    *pDst++ = clip_q63_to_q31((q63_t)(in));
 
 #else
 
-    *pDst++ = clip_q63_to_q31((q63_t) (*pIn++ * 2147483648.0f));
+    *pDst++ = clip_q63_to_q31((q63_t)(*pIn++ * 2147483648.0f));
 
 #endif /* #ifdef ARM_MATH_ROUNDING */
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**
