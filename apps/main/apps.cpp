@@ -161,10 +161,6 @@ extern "C" void ota_flash_init(void);
 #define APP_BATTERY_LEVEL_LOWPOWERTHRESHOLD (1)
 #define POWERON_PRESSMAXTIME_THRESHOLD_MS (5000)
 
-#ifdef FPGA
-uint32_t __ota_upgrade_log_start[100];
-#endif
-
 enum APP_POWERON_CASE_T {
   APP_POWERON_CASE_NORMAL = 0,
   APP_POWERON_CASE_DITHERING,
@@ -2095,12 +2091,10 @@ int app_deinit(int deinit_case) {
     app_thirdparty_specific_lib_event_handle(THIRDPARTY_FUNC_NO1,
                                              THIRDPARTY_DEINIT);
 #endif
-#if FPGA == 0
     nv_record_flash_flush();
     norflash_api_flush_all();
 #if defined(DUMP_LOG_ENABLE)
     log_dump_flush_all();
-#endif
 #endif
     osDelay(1000);
     af_close();

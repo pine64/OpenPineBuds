@@ -36,7 +36,7 @@
 #include "nvrecord_bt.h"
 #endif
 #if defined(A2DP_LHDC_ON)
-//#include "../liblhdc-dec/lhdcUtil.h"
+// #include "../liblhdc-dec/lhdcUtil.h"
 #include "lhdcUtil.h"
 #endif
 
@@ -1332,7 +1332,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl,
         if (app_bt_device.avrcp_control_rsp[device_id] == NULL)
           btif_app_a2dp_avrcpadvancedpdu_mempool_calloc(
               &app_bt_device.avrcp_control_rsp[device_id]);
-        //#if defined(__BQB_PROFILE_TEST__)
+        // #if defined(__BQB_PROFILE_TEST__)
         if ((btif_get_avrcp_cmd_frame(parms)->operandLen !=
              8)) // it works for BQB
         {
@@ -1342,7 +1342,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl,
               BTIF_AVCTP_RESPONSE_REJECTED, BTIF_AVRCP_ERR_INVALID_PARM);
           TRACE(0, "reject invalid volume");
         } else
-          //#endif
+          // #endif
           btif_avrcp_set_control_rsp_cmd(
               app_bt_device.avrcp_control_rsp[device_id],
               btif_get_avrcp_cmd_frame(parms)->transId,
@@ -1388,7 +1388,7 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl,
               status);
 
       }
-      //#if defined(__BQB_PROFILE_TEST__)
+      // #if defined(__BQB_PROFILE_TEST__)
       else if (btif_get_avrcp_cmd_frame(parms)->operands[7] ==
                0xff) // it works for BQB
       {
@@ -1406,9 +1406,9 @@ extern "C" void avrcp_callback_CT(btif_avrcp_chnl_handle_t chnl,
             channel, app_bt_device.avrcp_notify_rsp[device_id]);
         TRACE(1, "AVRCP_CtInvalidVolume_Rsp,status%d", status);
       }
-      //#endif
+      // #endif
     }
-    //#endif
+    // #endif
     break;
   case BTIF_AVRCP_EVENT_ADV_NOTIFY: // 17
     TRACE(3,
@@ -4292,9 +4292,7 @@ void a2dp_volume_local_set(enum BT_DEVICE_ID_T id, int8_t vol) {
 #if defined(NEW_NV_RECORD_ENABLED)
     nv_record_btdevicevolume_set_a2dp_vol(app_bt_stream_volume_get_ptr(), vol);
 #endif
-#ifndef FPGA
     nv_record_touch_cause_flush();
-#endif
   }
 }
 

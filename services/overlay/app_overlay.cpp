@@ -26,7 +26,6 @@ static APP_OVERLAY_ID_T app_overlay_id = APP_OVERLAY_ID_QTY;
 APP_OVERLAY_ID_T app_get_current_overlay(void) { return app_overlay_id; }
 
 void app_overlay_select(enum APP_OVERLAY_ID_T id) {
-#ifndef FPGA
   TRACE(3, "%s id:%d:%d", __func__, id, app_overlay_id);
 
   osMutexWait(app_overlay_mutex_id, osWaitForever);
@@ -40,7 +39,6 @@ void app_overlay_select(enum APP_OVERLAY_ID_T id) {
   }
   app_overlay_id = id;
   osMutexRelease(app_overlay_mutex_id);
-#endif
 }
 
 void app_overlay_unloadall(void) {

@@ -13,7 +13,7 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-//#include "mbed.h"
+// #include "mbed.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -209,7 +209,7 @@ hw_filter_codec_iir_state *hw_filter_codec_iir_st;
 
 #include "audio_cfg.h"
 
-//#define SCO_DMA_SNAPSHOT_DEBUG
+// #define SCO_DMA_SNAPSHOT_DEBUG
 
 extern uint8_t bt_audio_get_eq_index(AUDIO_EQ_TYPE_T audio_eq_type,
                                      uint8_t anc_status);
@@ -475,14 +475,14 @@ int app_bt_stream_trigger_checker_handler(uint32_t trigger_checker) {
 extern struct BT_DEVICE_T app_bt_device;
 #if defined(A2DP_LHDC_V3)
 #define LHDC_AUDIO_96K_BUFF_SIZE (256 * 2 * 4 * 8)
-//#define LHDC_AUDIO_96K_16BITS_BUFF_SIZE (256*2*2*8)
+// #define LHDC_AUDIO_96K_16BITS_BUFF_SIZE (256*2*2*8)
 
 #define LHDC_AUDIO_BUFF_SIZE (256 * 2 * 4 * 4)
-//#define LHDC_AUDIO_16BITS_BUFF_SIZE     (256*2*2*4)
+// #define LHDC_AUDIO_16BITS_BUFF_SIZE     (256*2*2*4)
 #define LHDC_LLC_AUDIO_BUFF_SIZE (256 * 2 * 2 * 2)
 #else
 #define LHDC_AUDIO_BUFF_SIZE (512 * 2 * 4)
-//#define LHDC_AUDIO_16BITS_BUFF_SIZE     (512*2*2)
+// #define LHDC_AUDIO_16BITS_BUFF_SIZE     (512*2*2)
 #endif
 #endif
 uint16_t gStreamplayer = APP_BT_STREAM_INVALID;
@@ -516,7 +516,7 @@ int app_a2dp_source_linein_on(bool on);
 #define LINEIN_CAPTURE_BUFFER_SIZE (LINEIN_PLAYER_BUFFER_SIZE / 2)
 #elif (LINEIN_CAPTURE_CHANNEL == 2)
 #define LINEIN_PLAYER_BUFFER_SIZE (1024 * LINEIN_PLAYER_CHANNEL)
-//#define LINEIN_CAPTURE_BUFFER_SIZE (LINEIN_PLAYER_BUFFER_SIZE)
+// #define LINEIN_CAPTURE_BUFFER_SIZE (LINEIN_PLAYER_BUFFER_SIZE)
 #define LINEIN_CAPTURE_BUFFER_SIZE (1024 * 10)
 #endif
 
@@ -611,11 +611,7 @@ int app_a2dp_source_I2S_onoff(bool onoff) {
     stream_cfg.sample_rate = AUD_SAMPRATE_44100;
 
 #if 0
-#if FPGA == 0
         stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#else
-        stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#endif
 
         stream_cfg.vol = 10;//stream_linein_volume;
         //TRACE_AUD_STREAM_I("vol = %d",stream_linein_volume);
@@ -1206,7 +1202,6 @@ FRAM_TEXT_LOC uint32_t bt_sbc_player_more_data(uint8_t *buf, uint32_t len) {
 #endif
 #endif
 
-#ifndef FPGA
   uint8_t codec_type = bt_sbc_player_get_codec_type();
   uint32_t overlay_id = 0;
   if (codec_type == BTIF_AVDTP_CODEC_TYPE_MPEG2_4_AAC) {
@@ -1238,7 +1233,6 @@ FRAM_TEXT_LOC uint32_t bt_sbc_player_more_data(uint8_t *buf, uint32_t len) {
   if (app_get_current_overlay() != overlay_id) {
     return len;
   }
-#endif
 
 #ifdef PLAYBACK_FORCE_48K
   app_playback_resample_run(force48k_resample, buf, len);
@@ -1246,9 +1240,7 @@ FRAM_TEXT_LOC uint32_t bt_sbc_player_more_data(uint8_t *buf, uint32_t len) {
 #if (A2DP_DECODER_VER == 2)
   a2dp_audio_playback_handler(buf, len);
 #else
-#ifndef FPGA
   a2dp_audio_more_data(overlay_id, buf, len);
-#endif
 #endif
 #endif
 
@@ -1293,7 +1285,7 @@ FRAM_TEXT_LOC uint32_t bt_sbc_player_more_data(uint8_t *buf, uint32_t len) {
 
   audio_process_run(buf, len);
 
-#if defined(IBRT) && !defined(FPGA)
+#if defined(IBRT)
   app_tws_ibrt_audio_analysis_audiohandler_tick();
 #endif
 
@@ -3707,12 +3699,10 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq) {
 #ifdef __A2DP_PLAYER_USE_BT_TRIGGER__
       app_bt_stream_trigger_deinit();
 #endif
-#ifndef FPGA
 #ifdef BT_XTAL_SYNC
       bt_term_xtal_sync(false);
 #ifndef BT_XTAL_SYNC_NO_RESET
       bt_term_xtal_sync_default();
-#endif
 #endif
 #endif
       a2dp_audio_deinit();
@@ -3962,15 +3952,12 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq) {
     stream_cfg.sample_rate = sample_rate;
 #endif
 
-#ifdef FPGA
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#else
 #ifdef PLAYBACK_USE_I2S
     stream_cfg.device = AUD_STREAM_USE_I2S0_MASTER;
 #else
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
 #endif
-#endif
+
 #ifdef PLAYBACK_USE_I2S
     stream_cfg.io_path = AUD_IO_PATH_NULL;
 #else
@@ -5152,7 +5139,7 @@ static int32_t wnr_buf[256 * 2];
 static short wnr_buf[256 * 2];
 #endif
 #endif
-//#define BT_SCO_HANDLER_PROFILE
+// #define BT_SCO_HANDLER_PROFILE
 
 //( codec:mic-->btpcm:tx
 // codec:mic
@@ -6207,12 +6194,10 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq) {
     TRACE_AUD_STREAM_I("[SCO_PLAYER] sysfreq calc : %d\n",
                        hal_sys_timer_calc_cpu_freq(5, 0));
 
-#ifndef FPGA
     app_overlay_select(APP_OVERLAY_HFP);
 #ifdef BT_XTAL_SYNC
     bt_init_xtal_sync(BT_XTAL_SYNC_MODE_VOICE, BT_INIT_XTAL_SYNC_MIN,
                       BT_INIT_XTAL_SYNC_MAX, BT_INIT_XTAL_SYNC_FCAP_RANGE);
-#endif
 #endif
     btdrv_rf_bit_offset_track_enable(true);
 
@@ -6236,9 +6221,6 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq) {
 
     sco_cap_chan_num = (enum AUD_CHANNEL_NUM_T)SPEECH_CODEC_CAPTURE_CHANNEL_NUM;
 
-#if defined(FPGA)
-    sco_cap_chan_num = AUD_CHANNEL_NUM_2;
-#endif
 
 #if defined(SPEECH_TX_AEC_CODEC_REF)
     sco_cap_chan_num = (enum AUD_CHANNEL_NUM_T)(sco_cap_chan_num + 1);
@@ -6306,11 +6288,7 @@ int bt_sco_player(bool on, enum APP_SYSFREQ_FREQ_T freq) {
 #endif
     stream_cfg.vol = stream_local_volume;
 
-#ifdef FPGA
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#else
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#endif
     stream_cfg.io_path = AUD_INPUT_PATH_MAINMIC;
     stream_cfg.handler = bt_sco_codec_capture_data;
     app_audio_mempool_get_buff(&bt_audio_buff, stream_cfg.data_size);
@@ -6699,10 +6677,6 @@ defined(ANC_APP) && !defined(__AUDIO_RESAMPLE__)
 
 #endif
 
-#ifdef FPGA
-    app_bt_stream_volumeset(stream_local_volume);
-    // btdrv_set_bt_pcm_en(1);
-#endif
     app_bt_stream_trigger_checker_start();
     TRACE_AUD_STREAM_I("[SCO_PLAYER] on");
   } else {
@@ -6818,12 +6792,10 @@ defined(ANC_APP) && !defined(__AUDIO_RESAMPLE__)
     lis25ba_deinit();
 #endif
 
-#ifndef FPGA
 #ifdef BT_XTAL_SYNC
     bt_term_xtal_sync(false);
 #ifndef BT_XTAL_SYNC_NO_RESET
     bt_term_xtal_sync_default();
-#endif
 #endif
 #endif
 #if defined(HFP_1_6_ENABLE)
@@ -6983,11 +6955,7 @@ int app_play_linein_onoff(bool onoff) {
 #else
     stream_cfg.sample_rate = AUD_SAMPRATE_44100;
 #endif
-#if FPGA == 0
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#else
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#endif
     stream_cfg.vol = stream_linein_volume;
     TRACE_AUD_STREAM_I("[LINEIN_PLAYER] vol = %d", stream_linein_volume);
     stream_cfg.io_path = AUD_OUTPUT_PATH_SPEAKER;
@@ -7114,11 +7082,7 @@ int app_play_linein_onoff(bool onoff) {
 #else
     stream_cfg.sample_rate = AUD_SAMPRATE_44100;
 #endif
-#if FPGA == 0
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#else
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#endif
     stream_cfg.io_path = AUD_INPUT_PATH_LINEIN;
     stream_cfg.channel_num = (enum AUD_CHANNEL_NUM_T)LINEIN_CAPTURE_CHANNEL;
     stream_cfg.channel_map =
@@ -7521,9 +7485,7 @@ void app_bt_stream_volumeup(void) {
     TRACE_AUD_STREAM_I("[STRM_PLAYER][VOL][UP]  hfp: %d",
                        btdevice_volume_p->hfp_vol);
   }
-#ifndef FPGA
   nv_record_touch_cause_flush();
-#endif
 }
 
 void app_bt_set_volume(uint16_t type, uint8_t level) {
@@ -7562,9 +7524,7 @@ void app_bt_set_volume(uint16_t type, uint8_t level) {
   TRACE_AUD_STREAM_I("[STRM_PLAYER][VOL] a2dp: %d",
                      btdevice_volume_p->a2dp_vol);
   TRACE_AUD_STREAM_I("[STRM_PLAYER][VOL] hfp: %d", btdevice_volume_p->hfp_vol);
-#ifndef FPGA
   nv_record_touch_cause_flush();
-#endif
 }
 
 void app_bt_stream_volumedown(void) {
@@ -7624,9 +7584,7 @@ void app_bt_stream_volumedown(void) {
     TRACE_AUD_STREAM_I("[STRM_PLAYER][VOL][DONW] hfp: %d",
                        btdevice_volume_p->hfp_vol);
   }
-#ifndef FPGA
   nv_record_touch_cause_flush();
-#endif
 }
 
 void app_bt_stream_volumeset_handler(int8_t vol) {
@@ -7697,7 +7655,6 @@ void app_bt_stream_volume_ptr_update(uint8_t *bdAddr) {
       NVRAM_ENV_STREAM_VOLUME_A2DP_VOL_DEFAULT,
       NVRAM_ENV_STREAM_VOLUME_HFP_VOL_DEFAULT};
 
-#ifndef FPGA
   nvrec_btdevicerecord *record = NULL;
 
   memset(&current_btdevice_volume, 0, sizeof(btdevice_volume));
@@ -7711,7 +7668,6 @@ void app_bt_stream_volume_ptr_update(uint8_t *bdAddr) {
         btdevice_volume_p->a2dp_vol, btdevice_volume_p->hfp_vol,
         btdevice_volume_p);
   } else
-#endif
   {
     btdevice_volume_p = &stream_volume;
     TRACE_AUD_STREAM_I("[STRM_PLAYER][VOL][UPDATE] default");

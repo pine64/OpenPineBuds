@@ -20,128 +20,128 @@
 extern "C" {
 #endif
 
-#include "stdint.h"
 #include "plat_addr_map.h"
+#include "stdint.h"
 #include CHIP_SPECIFIC_HDR(hal_cmu)
 
 #ifndef HAL_CMU_DEFAULT_CRYSTAL_FREQ
-#define HAL_CMU_DEFAULT_CRYSTAL_FREQ        26000000
+#define HAL_CMU_DEFAULT_CRYSTAL_FREQ 26000000
 #endif
 
-#define LPU_TIMER_US(us)                    (((us) * 32 + 1000 - 1) / 1000)
+#define LPU_TIMER_US(us) (((us)*32 + 1000 - 1) / 1000)
 
 enum HAL_CMU_CLK_STATUS_T {
-    HAL_CMU_CLK_DISABLED,
-    HAL_CMU_CLK_ENABLED,
+  HAL_CMU_CLK_DISABLED,
+  HAL_CMU_CLK_ENABLED,
 };
 
 enum HAL_CMU_CLK_MODE_T {
-    HAL_CMU_CLK_AUTO,
-    HAL_CMU_CLK_MANUAL,
+  HAL_CMU_CLK_AUTO,
+  HAL_CMU_CLK_MANUAL,
 };
 
 enum HAL_CMU_RST_STATUS_T {
-    HAL_CMU_RST_SET,
-    HAL_CMU_RST_CLR,
+  HAL_CMU_RST_SET,
+  HAL_CMU_RST_CLR,
 };
 
 enum HAL_CMU_TIMER_ID_T {
-    HAL_CMU_TIMER_ID_00,
-    HAL_CMU_TIMER_ID_01,
-    HAL_CMU_TIMER_ID_10,
-    HAL_CMU_TIMER_ID_11,
-    HAL_CMU_TIMER_ID_20,
-    HAL_CMU_TIMER_ID_21,
+  HAL_CMU_TIMER_ID_00,
+  HAL_CMU_TIMER_ID_01,
+  HAL_CMU_TIMER_ID_10,
+  HAL_CMU_TIMER_ID_11,
+  HAL_CMU_TIMER_ID_20,
+  HAL_CMU_TIMER_ID_21,
 };
 
 #ifndef HAL_CMU_FREQ_T
 enum HAL_CMU_FREQ_T {
-    HAL_CMU_FREQ_32K,
-    HAL_CMU_FREQ_26M,
-    HAL_CMU_FREQ_52M,
-    HAL_CMU_FREQ_78M,
-    HAL_CMU_FREQ_104M,
-    HAL_CMU_FREQ_208M,
+  HAL_CMU_FREQ_32K,
+  HAL_CMU_FREQ_26M,
+  HAL_CMU_FREQ_52M,
+  HAL_CMU_FREQ_78M,
+  HAL_CMU_FREQ_104M,
+  HAL_CMU_FREQ_208M,
 
-    HAL_CMU_FREQ_QTY
+  HAL_CMU_FREQ_QTY
 };
 #endif
 
 #ifndef HAL_CMU_PLL_T
 enum HAL_CMU_PLL_T {
-    HAL_CMU_PLL_AUD,
-    HAL_CMU_PLL_USB,
+  HAL_CMU_PLL_AUD,
+  HAL_CMU_PLL_USB,
 
-    HAL_CMU_PLL_QTY
+  HAL_CMU_PLL_QTY
 };
 #endif
 
 #ifndef HAL_CMU_PLL_USER_T
 enum HAL_CMU_PLL_USER_T {
-    HAL_CMU_PLL_USER_SYS,
-    HAL_CMU_PLL_USER_AUD,
-    HAL_CMU_PLL_USER_USB,
+  HAL_CMU_PLL_USER_SYS,
+  HAL_CMU_PLL_USER_AUD,
+  HAL_CMU_PLL_USER_USB,
 
-    HAL_CMU_PLL_USER_QTY,
-    HAL_CMU_PLL_USER_ALL = HAL_CMU_PLL_USER_QTY,
+  HAL_CMU_PLL_USER_QTY,
+  HAL_CMU_PLL_USER_ALL = HAL_CMU_PLL_USER_QTY,
 };
 #endif
 
 enum HAL_CMU_PERIPH_FREQ_T {
-    HAL_CMU_PERIPH_FREQ_26M,
-    HAL_CMU_PERIPH_FREQ_52M,
+  HAL_CMU_PERIPH_FREQ_26M,
+  HAL_CMU_PERIPH_FREQ_52M,
 
-    HAL_CMU_PERIPH_FREQ_QTY
+  HAL_CMU_PERIPH_FREQ_QTY
 };
 
 enum HAL_CMU_LPU_CLK_CFG_T {
-    HAL_CMU_LPU_CLK_NONE,
-    HAL_CMU_LPU_CLK_26M,
-    HAL_CMU_LPU_CLK_PLL,
+  HAL_CMU_LPU_CLK_NONE,
+  HAL_CMU_LPU_CLK_26M,
+  HAL_CMU_LPU_CLK_PLL,
 
-    HAL_CMU_LPU_CLK_QTY
+  HAL_CMU_LPU_CLK_QTY
 };
 
 enum HAL_CMU_LPU_SLEEP_MODE_T {
-    HAL_CMU_LPU_SLEEP_MODE_SYS,
-    HAL_CMU_LPU_SLEEP_MODE_CHIP,
+  HAL_CMU_LPU_SLEEP_MODE_SYS,
+  HAL_CMU_LPU_SLEEP_MODE_CHIP,
 
-    HAL_CMU_LPU_SLEEP_MODE_QTY
+  HAL_CMU_LPU_SLEEP_MODE_QTY
 };
 
 #ifndef HAL_PWM_ID_T
 enum HAL_PWM_ID_T {
-    HAL_PWM_ID_0,
-    HAL_PWM_ID_1,
-    HAL_PWM_ID_2,
-    HAL_PWM_ID_3,
+  HAL_PWM_ID_0,
+  HAL_PWM_ID_1,
+  HAL_PWM_ID_2,
+  HAL_PWM_ID_3,
 
-    HAL_PWM_ID_QTY
+  HAL_PWM_ID_QTY
 };
 #endif
 
 #ifndef HAL_I2S_ID_T
 enum HAL_I2S_ID_T {
-    HAL_I2S_ID_0 = 0,
+  HAL_I2S_ID_0 = 0,
 
-    HAL_I2S_ID_QTY,
+  HAL_I2S_ID_QTY,
 };
 #endif
 
 #ifndef HAL_SPDIF_ID_T
 enum HAL_SPDIF_ID_T {
-    HAL_SPDIF_ID_0 = 0,
+  HAL_SPDIF_ID_0 = 0,
 
-    HAL_SPDIF_ID_QTY,
+  HAL_SPDIF_ID_QTY,
 };
 #endif
 
 enum HAL_CMU_USB_CLOCK_SEL_T {
-    HAL_CMU_USB_CLOCK_SEL_PLL,
-    HAL_CMU_USB_CLOCK_SEL_24M_X2,
-    HAL_CMU_USB_CLOCK_SEL_48M,
-    HAL_CMU_USB_CLOCK_SEL_26M_X2,
-    HAL_CMU_USB_CLOCK_SEL_26M_X4,
+  HAL_CMU_USB_CLOCK_SEL_PLL,
+  HAL_CMU_USB_CLOCK_SEL_24M_X2,
+  HAL_CMU_USB_CLOCK_SEL_48M,
+  HAL_CMU_USB_CLOCK_SEL_26M_X2,
+  HAL_CMU_USB_CLOCK_SEL_26M_X4,
 };
 
 void hal_cmu_set_crystal_freq_index(uint32_t index);
@@ -156,7 +156,8 @@ int hal_cmu_clock_disable(enum HAL_CMU_MOD_ID_T id);
 
 enum HAL_CMU_CLK_STATUS_T hal_cmu_clock_get_status(enum HAL_CMU_MOD_ID_T id);
 
-int hal_cmu_clock_set_mode(enum HAL_CMU_MOD_ID_T id, enum HAL_CMU_CLK_MODE_T mode);
+int hal_cmu_clock_set_mode(enum HAL_CMU_MOD_ID_T id,
+                           enum HAL_CMU_CLK_MODE_T mode);
 
 enum HAL_CMU_CLK_MODE_T hal_cmu_clock_get_mode(enum HAL_CMU_MOD_ID_T id);
 
@@ -406,9 +407,11 @@ uint32_t hal_cmu_simu_get_val(void);
 
 void hal_cmu_low_freq_mode_init(void);
 
-void hal_cmu_low_freq_mode_enable(enum HAL_CMU_FREQ_T old_freq, enum HAL_CMU_FREQ_T new_freq);
+void hal_cmu_low_freq_mode_enable(enum HAL_CMU_FREQ_T old_freq,
+                                  enum HAL_CMU_FREQ_T new_freq);
 
-void hal_cmu_low_freq_mode_disable(enum HAL_CMU_FREQ_T old_freq, enum HAL_CMU_FREQ_T new_freq);
+void hal_cmu_low_freq_mode_disable(enum HAL_CMU_FREQ_T old_freq,
+                                   enum HAL_CMU_FREQ_T new_freq);
 
 void hal_cmu_rom_enable_pll(void);
 
@@ -419,8 +422,6 @@ void hal_cmu_init_pll_selection(void);
 void hal_cmu_rom_setup(void);
 
 void hal_cmu_programmer_setup(void);
-
-void hal_cmu_fpga_setup(void);
 
 void hal_cmu_setup(void);
 
@@ -459,4 +460,3 @@ volatile uint32_t *hal_cmu_get_memsc_addr(void);
 #endif
 
 #endif
-

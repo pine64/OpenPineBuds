@@ -31,7 +31,6 @@ void pair_handler_func(enum pair_event evt, const btif_event_t *event) {
     AUTO_TEST_SEND("Pairing ok.");
 #endif
 
-#ifndef FPGA
 #ifdef MEDIA_PLAYER_SUPPORT
     if (btif_me_get_callback_event_err_code(event) == BTIF_BEC_NO_ERROR) {
 #if defined(IBRT)
@@ -40,7 +39,6 @@ void pair_handler_func(enum pair_event evt, const btif_event_t *event) {
     } else {
       app_voice_report(APP_STATUS_INDICATION_PAIRFAIL, 0);
     }
-#endif
 #endif
 #if defined(IBRT)
     if (app_ibrt_if_is_audio_active()) {

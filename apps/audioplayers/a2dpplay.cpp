@@ -52,7 +52,7 @@ extern "C" {
 extern "C" {
 #if defined(A2DP_LDAC_ON)
 #include "hal_sysfreq.h"
-//#include "speech_memory.h"
+// #include "speech_memory.h"
 #include "ldacBT.h"
 #define MED_MEM_HEAP_SIZE (1024 * 20)
 HANDLE_LDAC_BT hLdacData = NULL;
@@ -80,7 +80,7 @@ HANDLE_LDAC_BT hLdacData = NULL;
 #define TEXT_LDAC_LOC TEXT_A2DP_LOC(.overlay_a2dp_ldac, __LINE__)
 #define TEXT_LHDC_LOC TEXT_A2DP_LOC(.overlay_a2dp_lhdc, __LINE__)
 
-//#define A2DP_AUDIO_SYNC_WITH_LOCAL (1)
+// #define A2DP_AUDIO_SYNC_WITH_LOCAL (1)
 
 #define A2DP_AUDIO_SYNC_TRACE(s, ...)
 // TRACE(s, ##__VA_ARGS__)
@@ -186,7 +186,7 @@ extern int a2dp_timestamp_parser_needsync(void);
     }                                                                          \
   } while (0)
 
-//#define A2DP_SYNC_WITH_PUT_MUTUX (1)
+// #define A2DP_SYNC_WITH_PUT_MUTUX (1)
 #define A2DP_SYNC_WITH_PUT_MUTUX_TIMEROUT_CNT (1)
 #define A2DP_SYNC_WITH_PUT_MUTUX_TIMEROUT_MS (3)
 static osThreadId a2dp_get_thread_tid = NULL;
@@ -770,7 +770,7 @@ int get_ldac_data(unsigned char *frame, unsigned int len) {
 /**
  * Decode LDAC data...
  */
-//#include "os_tcb.h"
+// #include "os_tcb.h"
 extern const char *get_error_code_string(int error_code);
 extern int app_audio_mempool_force_set_buff_used(uint32_t size);
 extern uint32_t ldac_buffer_used;
@@ -3061,10 +3061,8 @@ uint32_t a2dp_audio_more_data(uint8_t overlay_type, uint8_t *buf,
 #endif
 
   if (a2dp_cache_status == APP_AUDIO_CACHE_CACHEING) {
-#if FPGA == 0
     TRACE(1, "a2dp_audio_more_data cache not ready skip frame %d\n",
           overlay_type);
-#endif
   } else {
 #if defined(__AUDIO_RESAMPLE__) && defined(SW_PLAYBACK_RESAMPLE)
     if (allow_resample) {

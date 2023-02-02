@@ -13,7 +13,7 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-//#include "mbed.h"
+// #include "mbed.h"
 #include "analog.h"
 #include "app_bt_func.h"
 #include "app_bt_stream.h"
@@ -268,9 +268,7 @@ static void __set_local_dev_name(void) {
   devinfo.localname = bt_get_local_name();
   devinfo.ble_name = bt_get_ble_local_name();
 
-#ifndef FPGA
   nvrec_dev_localname_addr_init(&devinfo);
-#endif
   bt_set_local_dev_name((const unsigned char *)devinfo.localname,
                         strlen(devinfo.localname) + 1);
 }
@@ -317,9 +315,7 @@ static void stack_ready_callback(int status) {
   devinfo.localname = bt_get_local_name();
   devinfo.ble_name = bt_get_ble_local_name();
 
-#ifndef FPGA
   nvrec_dev_localname_addr_init(&devinfo);
-#endif
   bt_set_local_dev_name((const unsigned char *)devinfo.localname,
                         strlen(devinfo.localname) + 1);
 

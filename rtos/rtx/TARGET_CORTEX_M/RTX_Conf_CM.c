@@ -209,7 +209,7 @@ void os_idle_demon(void) {
   unsigned int start_os_time;
   unsigned int start_tick;
 #endif
-#if defined(FPGA) || !(defined(ROM_BUILD) || defined(PROGRAMMER))
+#if !(defined(ROM_BUILD) || defined(PROGRAMMER))
   ret = hal_trace_crash_dump_register(HAL_TRACE_CRASH_DUMP_MODULE_SYS,
                                       rtx_show_all_threads);
   ASSERT(ret == 0, "IdleTask: Failed to register crash dump callback");

@@ -195,11 +195,7 @@ endif
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ifeq ($(OTA_ENABLE),1)
 
-ifeq ($(FPGA),1)
-OTA_CODE_OFFSET := 0
-else
 OTA_CODE_OFFSET := 0x18000
-endif
 
 OTA_UPGRADE_LOG_SIZE := 0x1000
 OTA_SUPPORT_SLAVE_BIN := 0
@@ -514,34 +510,6 @@ export CHIP_CACHE_VER := 2
 export CHIP_FLASH_CTRL_VER := 2
 export CHIP_SPI_VER := 4
 export CHIP_HAS_DCO ?= 1
-export NO_LPU_26M ?= 1
-else ifeq ($(CHIP),fpga1000)
-KBUILD_CPPFLAGS += -DCHIP_FPGA1000
-KBUILD_CPPFLAGS += -DCHIP_BEST1000
-CPU := m4
-export CHIP_HAS_FPU := 1
-export CHIP_HAS_USB := 1
-export CHIP_HAS_USBPHY := 0
-export CHIP_HAS_SDMMC := 1
-export CHIP_HAS_SDIO := 1
-export CHIP_HAS_PSRAM := 1
-export CHIP_HAS_SPI := 1
-export CHIP_HAS_SPILCD := 1
-export CHIP_HAS_SPIPHY := 0
-export CHIP_HAS_I2C := 1
-export CHIP_HAS_UART := 2
-export CHIP_HAS_DMA := 2
-export CHIP_INTERSYS_VER := 2
-export CHIP_HAS_SPDIF := 1
-export CHIP_HAS_TRANSQ := 0
-export CHIP_HAS_EXT_PMU := 0
-export CHIP_HAS_AUDIO_CONST_ROM := 1
-export CHIP_FLASH_CTRL_VER := 1
-export CHIP_PSRAM_CTRL_VER := 1
-export CHIP_SPI_VER := 1
-export CHIP_HAS_EC_CODEC_REF := 0
-export CHIP_HAS_SCO_DMA_SNAPSHOT := 0
-export CHIP_ROM_UTILS_VER := 1
 export NO_LPU_26M ?= 1
 else
 $(error Invalid CHIP: $(CHIP))
@@ -1002,18 +970,6 @@ export SIMU
 ifeq ($(SIMU),1)
 
 KBUILD_CPPFLAGS += -DSIMU
-
-endif
-
-# -------------------------------------------
-# FPGA functions
-# -------------------------------------------
-
-export FPGA
-
-ifeq ($(FPGA),1)
-
-KBUILD_CPPFLAGS += -DFPGA
 
 endif
 

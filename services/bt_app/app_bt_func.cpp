@@ -232,11 +232,9 @@ static void app_add_pending_stop_sniff_op(btif_remote_device_t *remDev) {
   }
 }
 
-#ifdef FPGA
 extern "C" bt_status_t
 app_tws_ibrt_set_access_mode(btif_accessible_mode_t mode);
 void app_start_ble_adv_for_test(void);
-#endif
 
 static inline int app_bt_mail_process(APP_BT_MAIL *mail_p) {
   bt_status_t status = BT_STS_LAST_CODE;
@@ -391,42 +389,14 @@ static inline int app_bt_mail_process(APP_BT_MAIL *mail_p) {
                                 mail_p->param.HS_EnableSniffMode_param.Enable);
     break;
 #endif
-#ifdef FPGA
-  case BT_Set_Access_Mode_Test:
-#if defined(IBRT)
-    app_tws_ibrt_set_access_mode(mail_p->param.ME_SetAccessibleMode_param.mode);
-#else
-    app_set_accessmode(mail_p->param.ME_SetAccessibleMode_param.mode);
-#endif
-    break;
-  case BT_Set_Adv_Mode_Test:
-#if defined(IBRT)
-    app_start_ble_adv_for_test();
-#endif
-    break;
-  case Write_Controller_Memory_Test: {
-    status = btif_me_write_controller_memory(
-        mail_p->param.Me_writecontrollermem_param.addr,
-        mail_p->param.Me_writecontrollermem_param.memval,
-        mail_p->param.Me_writecontrollermem_param.type);
-    break;
-  }
-  case Read_Controller_Memory_Test: {
-    status = btif_me_read_controller_memory(
-        mail_p->param.Me_readcontrollermem_param.addr,
-        mail_p->param.Me_readcontrollermem_param.len,
-        mail_p->param.Me_readcontrollermem_param.type);
-    break;
-  }
-#endif
   case BT_Custom_Func_req:
     if (mail_p->param.CustomFunc_param.func_ptr) {
       TRACE(3, "func:0x%08x,param0:0x%08x, param1:0x%08x",
             mail_p->param.CustomFunc_param.func_ptr,
             mail_p->param.CustomFunc_param.param0,
             mail_p->param.CustomFunc_param.param1);
-      ((APP_BTTHREAD_REQ_CUSTOMER_CALL_CB_T)(
-          mail_p->param.CustomFunc_param.func_ptr))(
+      ((APP_BTTHREAD_REQ_CUSTOMER_CALL_CB_T)(mail_p->param.CustomFunc_param
+                                                 .func_ptr))(
           (void *)mail_p->param.CustomFunc_param.param0,
           (void *)mail_p->param.CustomFunc_param.param1);
     }
@@ -587,63 +557,6 @@ int app_bt_ME_SetAccessibleMode(btif_accessible_mode_t mode,
   app_bt_mail_send(mail);
   return 0;
 }
-
-#ifdef FPGA
-int app_bt_ME_SetAccessibleMode_Fortest(btif_accessible_mode_t mode,
-                                        const btif_access_mode_info_t *info) {
-#if defined(BLE_ONLY_ENABLED)
-  return 0;
-#endif
-
-  APP_BT_MAIL *mail;
-  app_bt_mail_alloc(&mail);
-  mail->src_thread = (uint32_t)osThreadGetId();
-  mail->request_id = BT_Set_Access_Mode_Test;
-  mail->param.ME_SetAccessibleMode_param.mode = mode;
-  memcpy(&mail->param.ME_SetAccessibleMode_param.info, info,
-         sizeof(btif_access_mode_info_t));
-  app_bt_mail_send(mail);
-  return 0;
-}
-
-int app_bt_ME_Set_Advmode_Fortest(uint8_t en) {
-
-  APP_BT_MAIL *mail;
-  app_bt_mail_alloc(&mail);
-  mail->src_thread = (uint32_t)osThreadGetId();
-  mail->request_id = BT_Set_Adv_Mode_Test;
-  mail->param.ME_BtSetAdvMode_param.isEnable = en;
-  app_bt_mail_send(mail);
-  return 0;
-}
-
-int app_bt_ME_Write_Controller_Memory_Fortest(uint32_t addr, uint32_t val,
-                                              uint8_t type) {
-  APP_BT_MAIL *mail;
-  app_bt_mail_alloc(&mail);
-  mail->src_thread = (uint32_t)osThreadGetId();
-  mail->request_id = Write_Controller_Memory_Test;
-  mail->param.Me_writecontrollermem_param.addr = addr;
-  mail->param.Me_writecontrollermem_param.memval = val;
-  mail->param.Me_writecontrollermem_param.type = type;
-  app_bt_mail_send(mail);
-  return 0;
-}
-
-int app_bt_ME_Read_Controller_Memory_Fortest(uint32_t addr, uint32_t len,
-                                             uint8_t type) {
-  APP_BT_MAIL *mail;
-  app_bt_mail_alloc(&mail);
-  mail->src_thread = (uint32_t)osThreadGetId();
-  mail->request_id = Read_Controller_Memory_Test;
-  mail->param.Me_readcontrollermem_param.addr = addr;
-  mail->param.Me_readcontrollermem_param.len = len;
-  mail->param.Me_readcontrollermem_param.type = type;
-  app_bt_mail_send(mail);
-  return 0;
-}
-
-#endif
 
 int app_bt_Me_SetLinkPolicy(btif_remote_device_t *remDev,
                             btif_link_policy_t policy) {

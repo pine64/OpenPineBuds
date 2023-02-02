@@ -416,7 +416,7 @@ int MAIN_ENTRY(void) {
   hal_trace_open(HAL_TRACE_TRANSPORT_UART0);
 #endif
 
-#if !defined(SIMU) && !defined(FPGA)
+#if !defined(SIMU)
   uint8_t flash_id[HAL_NORFLASH_DEVICE_ID_LEN];
   hal_norflash_get_id(HAL_NORFLASH_ID_0, flash_id, ARRAY_SIZE(flash_id));
   TRACE(3, "FLASH_ID: %02X-%02X-%02X", flash_id[0], flash_id[1], flash_id[2]);

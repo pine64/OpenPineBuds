@@ -26,15 +26,15 @@
 #include "psramuhsphy.h"
 #include "reg_psramuhs_mc.h"
 
-//#define PSRAMUHS_DUAL_8BIT
-//#define PSRAMUHS_BURST_REFRESH
-//#define PSRAMUHS_DUMMY_CYCLE
-//#define PSRAMUHS_PRA_ENABLE
-//#define PSRAMUHS_DUAL_SWITCH
-//#define PSRAMUHS_DIG_LOOPBACK
-//#define PSRAMUHS_ANA_LOOPBACK
-//#define PSRAMUHS_AUTO_PRECHARGE
-//#define PSRAMUHS_WRAP_ENABLE
+// #define PSRAMUHS_DUAL_8BIT
+// #define PSRAMUHS_BURST_REFRESH
+// #define PSRAMUHS_DUMMY_CYCLE
+// #define PSRAMUHS_PRA_ENABLE
+// #define PSRAMUHS_DUAL_SWITCH
+// #define PSRAMUHS_DIG_LOOPBACK
+// #define PSRAMUHS_ANA_LOOPBACK
+// #define PSRAMUHS_AUTO_PRECHARGE
+// #define PSRAMUHS_WRAP_ENABLE
 
 #if defined(CHIP_BEST2001) && !defined(PSRAMUHS_DUMMY_CYCLE)
 #define PSRAMUHS_DUMMY_CYCLE
@@ -71,14 +71,10 @@ enum MEMIF_CMD_T {
 static struct PSRAMUHS_MC_T *const psramuhs_mc =
     (struct PSRAMUHS_MC_T *)PSRAMUHS_CTRL_BASE;
 
-#ifdef FPGA
-static const uint32_t psramuhs_run_clk = 26000000;
-#else
 #if (PSRAMUHS_SPEED != 0)
 static const uint32_t psramuhs_run_clk = PSRAMUHS_SPEED * 1000 * 1000;
 #else
 #error "invalid PSRAMUHS_SPEED"
-#endif
 #endif
 
 static int hal_psramuhsip_mc_busy(void) {
@@ -356,9 +352,6 @@ static void hal_psramuhs_mc_set_timing(uint32_t clk) {
   psramuhs_mc->REG_04C =
       PSRAM_UHS_MC_T_REFI(val) | PSRAM_UHS_MC_NUM_OF_BURST_RFS(0x1000);
 
-#ifdef FPGA
-  clk = 800 * 1000 * 1000;
-#endif
   // tRC >= 60 ns
   val = ((clk / 1000000) * 60 + (1000 - 1)) / 1000;
   psramuhs_mc->REG_050 = PSRAM_UHS_MC_T_RC(val);
@@ -539,10 +532,8 @@ static void hal_psramuhs_mc_init(uint32_t clk) {
   psramuhs_mc->REG_840 |= PSRAM_UHS_MC_ANA_LOOPBACK_EN;
 #endif
 
-#ifndef FPGA
 #if !defined(PSRAMUHS_DIG_LOOPBACK) && !defined(PSRAMUHS_ANA_LOOPBACK)
   psramuhsphy_init_calib();
-#endif
 #endif
 }
 
@@ -579,9 +570,7 @@ void hal_psramuhs_init(void) {
   hal_cmu_reset_clear(HAL_CMU_MOD_O_PSRAMUHS);
   hal_cmu_reset_clear(HAL_CMU_MOD_H_PSRAMUHS);
 
-#ifndef FPGA
   psramuhsphy_open(psramuhs_run_clk);
-#endif
   hal_psramuhs_mc_init(psramuhs_run_clk);
   psramuhs_start_clock();
   hal_sys_timer_delay_us(3);
@@ -589,12 +578,10 @@ void hal_psramuhs_init(void) {
   psramuhs_stop_clock();
   psramuhs_set_timing(psramuhs_run_clk);
   hal_psramuhs_refresh_enable();
-#ifndef FPGA
 #if !defined(PSRAMUHS_DIG_LOOPBACK) && !defined(PSRAMUHS_ANA_LOOPBACK)
   hal_psramuhs_snoop_disable();
   psramuhsphy_calib(psramuhs_run_clk);
   hal_psramuhs_snoop_enable();
-#endif
 #endif
   // hal_psramuhs_mc_entry_auto_lp();
 }

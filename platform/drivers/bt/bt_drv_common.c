@@ -33,9 +33,7 @@
   ((uint32_t)(((clock_a) + (clock_b)) & MAX_SLOT_CLOCK))
 
 struct bt_cb_tag bt_drv_func_cb = {NULL};
-struct bt_cb_tag *bt_drv_get_func_cb_ptr(void) {
-  return &bt_drv_func_cb;
-}
+struct bt_cb_tag *bt_drv_get_func_cb_ptr(void) { return &bt_drv_func_cb; }
 
 /// only used for bt chip write patch data for speed up
 void btdrv_memory_copy(uint32_t *dest, const uint32_t *src, uint16_t length) {
@@ -326,8 +324,6 @@ bool bt_drv_is_enhanced_ibrt_rom(void) {
   ret = true;
 #elif CHIP_BEST2300A
   ret = true;
-#elif FPGA
-  ret = true;
 #elif CHIP_BEST2300
   ret = true;
 #endif
@@ -393,9 +389,6 @@ bool bt_drv_is_bes_fa_mode_en(void) {
 
 bool bt_drv_is_support_multipoint_ibrt(void) {
   bool ret = false;
-#ifdef __FPGA_BT_1500__
-  ret = true;
-#endif
   return ret;
 }
 

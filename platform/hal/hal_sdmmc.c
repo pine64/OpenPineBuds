@@ -34,12 +34,12 @@
 #endif
 
 #define HAL_SDMMC_USE_DMA 1
-//#define __BUS_WIDTH_SUPPORT_4BIT__ 1
+// #define __BUS_WIDTH_SUPPORT_4BIT__ 1
 
 #define HAL_SDMMC_TRACE(...)
-//#define HAL_SDMMC_TRACE   TRACE
+// #define HAL_SDMMC_TRACE   TRACE
 #define HAL_SDMMC_ASSERT(...)
-//#define HAL_SDMMC_ASSERT  ASSERT
+// #define HAL_SDMMC_ASSERT  ASSERT
 
 #define _SDMMC_CLOCK 52000000
 
@@ -1194,9 +1194,7 @@ int mmc_set_blocklen(struct mmc *mmc, int len) {
   return mmc_send_cmd(mmc, &cmd, NULL);
 }
 
-struct mmc *find_mmc_device(int dev_num) {
-  return &sdmmc_devices[dev_num];
-}
+struct mmc *find_mmc_device(int dev_num) { return &sdmmc_devices[dev_num]; }
 
 static int mmc_read_blocks(struct mmc *mmc, void *dst, uint32_t start,
                            uint32_t blkcnt) {
@@ -2572,24 +2570,12 @@ int32_t hal_sdmmc_open(enum HAL_SDMMC_ID_T id) {
   struct sdmmcip_host *host = NULL;
   HAL_SDMMC_ASSERT(id < HAL_SDMMC_ID_NUM, invalid_id, id);
 
-#ifdef FPGA
-  hal_cmu_sdmmc_set_freq(HAL_CMU_PERIPH_FREQ_26M);
-#else
   hal_cmu_sdmmc_set_freq(HAL_CMU_PERIPH_FREQ_52M);
-#endif
 
   hal_cmu_clock_enable(HAL_CMU_MOD_O_SDMMC);
   hal_cmu_clock_enable(HAL_CMU_MOD_H_SDMMC);
   hal_cmu_reset_clear(HAL_CMU_MOD_O_SDMMC);
   hal_cmu_reset_clear(HAL_CMU_MOD_H_SDMMC);
-
-#ifdef FPGA
-#ifdef CHIP_BEST1000
-  /* iomux */
-  *((volatile uint32_t *)0x4001f004) |= 0x1 << 16;
-  *((volatile uint32_t *)0x4001f004) |= 0x1 << 17;
-#endif
-#endif
 
   host = &sdmmc_host[id];
 

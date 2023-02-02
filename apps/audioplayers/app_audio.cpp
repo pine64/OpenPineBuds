@@ -293,9 +293,7 @@ static void app_audio_switch_flash_proc(void) {
   int_unlock(lock);
 
   if (need_flush_flash) {
-#ifndef FPGA
     nv_record_flash_flush();
-#endif
   }
 }
 

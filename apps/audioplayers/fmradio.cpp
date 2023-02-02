@@ -33,7 +33,7 @@
 #include "pmu.h"
 #include "string.h"
 
-//#define FM_DEBUG 1
+// #define FM_DEBUG 1
 
 #define FM_DIGITAL_REG(a) *(volatile uint32_t *)(a)
 #define fm_read_rf_reg(reg, val) hal_analogif_reg_read(reg, val)
@@ -145,7 +145,7 @@ void fm_radio_digit_init(void) {
 #endif
 
 #ifdef SINGLECHANLE
-  // 0x4000a010  bit2 Ð´0   µ¥channel dac
+  // 0x4000a010  bit2 Ð´0   ï¿½ï¿½channel dac
   FM_DIGITAL_REG(0x4000a010) = (1 << 5) | (1 << 4);
 #else
 
@@ -196,7 +196,7 @@ void fm_radio_digit_init(void) {
                                0x18000; // for dual channel adc/dac
 
 #ifdef SINGLECHANLE
-  // 0x4000a050  bit16  Ð´0   µ¥channel dac for codec
+  // 0x4000a050  bit16  Ð´0   ï¿½ï¿½channel dac for codec
   FM_DIGITAL_REG(0x4000a050) = (FM_DIGITAL_REG(0x4000a050) & ~(1 << 16));
 #endif
 
@@ -295,10 +295,10 @@ int fm_radio_analog_init(void) {
                                              // frf/(4*reg_bt_vco_fm_div_ctrl)
   fm_write_rf_reg(0x17, 0b1000000000000000); // reg_bt_vco_calen
 
-  // adcÒ²Òª¿ªµÄ»°£¬ÐèÒªÅä cmu
-  // 0x40000060[29] = 1  ×îºÃÏÈ¶ÁÔÙÐ´£¬·ñÔò°Ñ±ðµÄbit³åµôÁË¡£
+  // adcÒ²Òªï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ cmu
+  // 0x40000060[29] = 1  ï¿½ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½bitï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
 
-  //ÐèÒªÅäÖÃµÄspi¼Ä´æÆ÷£ºana interface:
+  // ï¿½ï¿½Òªï¿½ï¿½ï¿½Ãµï¿½spiï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ana interface:
 
   // 0x05 = 0xFCB1 // Audio Pll
   // 0x06 = 0x881C
@@ -423,9 +423,7 @@ int fm_radio_player(bool on) {
     app_audio_pcmbuff_init(buff, FM_AUDIO_BUFFER_SIZE * 2);
     fm_sample_buffer_p =
         (int32_t *)fm_radio_get_ext_buff(FM_SAMPLE_BUFFER_SIZE);
-#if FPGA == 0
     app_overlay_select(APP_OVERLAY_FM);
-#endif
     memset(&stream_cfg, 0, sizeof(stream_cfg));
     stream_cfg.vol = app_bt_stream_local_volume_get();
     stream_cfg.handler = fm_capture_more_data;
@@ -440,11 +438,7 @@ int fm_radio_player(bool on) {
     stream_cfg.bits = AUD_BITS_16;
     stream_cfg.channel_num = AUD_CHANNEL_NUM_1;
     stream_cfg.sample_rate = AUD_SAMPRATE_48000;
-#if FPGA == 0
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#else
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#endif
     stream_cfg.io_path = AUD_OUTPUT_PATH_SPEAKER;
     stream_cfg.vol = app_bt_stream_local_volume_get();
     stream_cfg.handler = fm_pcm_more_data;

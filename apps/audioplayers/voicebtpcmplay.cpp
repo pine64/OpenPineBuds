@@ -87,7 +87,7 @@ static bool echo_buf_q_full;
 static void *speech_plc;
 }
 
-//#define PENDING_MSBC_DECODER_ALG
+// #define PENDING_MSBC_DECODER_ALG
 
 // #define SPEECH_RX_PLC_DUMP_DATA
 
@@ -146,11 +146,6 @@ extern bool bt_sco_codec_is_msbc(void);
 #define MSBC_FRAME_SIZE (60)
 #if defined(HFP_1_6_ENABLE)
 static btif_sbc_decoder_t msbc_decoder;
-#if FPGA == 1
-#define CFG_HW_AUD_EQ_NUM_BANDS (8)
-const int8_t cfg_hw_aud_eq_band_settings[CFG_HW_AUD_EQ_NUM_BANDS] = {
-    0, 0, 0, 0, 0, 0, 0, 0};
-#endif
 static float msbc_eq_band_gain[CFG_HW_AUD_EQ_NUM_BANDS] = {0, 0, 0, 0,
                                                            0, 0, 0, 0};
 
@@ -1789,11 +1784,8 @@ uint32_t voicebtpcm_pcm_audio_more_data(uint8_t *buf, uint32_t len) {
   uint32_t l = 0;
   // TRACE(3,"[%s]: pcm_len = %d, %d", __FUNCTION__, len / 2,
   // FAST_TICKS_TO_US(hal_fast_sys_timer_get()));
-  if ((voicebtpcm_cache_m2p_status == APP_AUDIO_CACHE_CACHEING)
-#ifndef FPGA
-      || (app_get_current_overlay() != APP_OVERLAY_HFP)
-#endif
-  ) {
+  if ((voicebtpcm_cache_m2p_status == APP_AUDIO_CACHE_CACHEING) ||
+      (app_get_current_overlay() != APP_OVERLAY_HFP)) {
     app_audio_memset_16bit((short *)buf, 0, len / 2);
     l = len;
   } else {

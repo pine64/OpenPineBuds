@@ -21,8 +21,6 @@ extern "C" {
 #endif
 
 #if 0
-#elif defined(CHIP_FPGA1000)
-#define CHIP_ID_LITERAL                         fpga1000
 #elif defined(CHIP_BEST1000)
 #define CHIP_ID_LITERAL                         best1000
 #elif defined(CHIP_BEST1400) || defined(CHIP_BEST1402)
