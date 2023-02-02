@@ -31,18 +31,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
-
+#include "rt_TypeDef.h"
 /* Functions */
-extern void      rt_mbx_init  (OS_ID mailbox, U16 mbx_size);
-extern OS_RESULT rt_mbx_send  (OS_ID mailbox, void *p_msg,    U16 timeout);
-extern OS_RESULT rt_mbx_wait  (OS_ID mailbox, void **message, U16 timeout);
-extern OS_RESULT rt_mbx_check (OS_ID mailbox);
-extern void      isr_mbx_send (OS_ID mailbox, void *p_msg);
-extern OS_RESULT isr_mbx_receive (OS_ID mailbox, void **message);
-extern void      rt_mbx_psh   (P_MCB p_CB,    void *p_msg);
-
+extern void rt_mbx_init(OS_ID mailbox, U16 mbx_size);
+extern OS_RESULT rt_mbx_send(OS_ID mailbox, void *p_msg, U16 timeout);
+extern OS_RESULT rt_mbx_wait(OS_ID mailbox, void **message, U16 timeout);
+extern OS_RESULT rt_mbx_check(OS_ID mailbox);
+extern void isr_mbx_send(OS_ID mailbox, void *p_msg);
+extern OS_RESULT isr_mbx_receive(OS_ID mailbox, void **message);
+extern void rt_mbx_psh(P_MCB p_CB, void *p_msg);
 
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

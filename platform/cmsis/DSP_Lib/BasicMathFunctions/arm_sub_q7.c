@@ -47,34 +47,31 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q7 range [0x80 0x7F] will be saturated.
+                   Results outside of the allowable Q7 range [0x80 0x7F] will be
+  saturated.
  */
 
-void arm_sub_q7(
-  const q7_t * pSrcA,
-  const q7_t * pSrcB,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_sub_q7(const q7_t *pSrcA, const q7_t *pSrcB, q7_t *pDst,
+                uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A - B */
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     /* Subtract and store result in destination buffer (4 samples at a time). */
-    write_q7x4_ia (&pDst, __QSUB8(read_q7x4_ia ((q7_t **) &pSrcA), read_q7x4_ia ((q7_t **) &pSrcB)));
+    write_q7x4_ia(&pDst, __QSUB8(read_q7x4_ia((q7_t **)&pSrcA),
+                                 read_q7x4_ia((q7_t **)&pSrcB)));
 #else
-    *pDst++ = (q7_t) __SSAT((q15_t) *pSrcA++ - *pSrcB++, 8);
-    *pDst++ = (q7_t) __SSAT((q15_t) *pSrcA++ - *pSrcB++, 8);
-    *pDst++ = (q7_t) __SSAT((q15_t) *pSrcA++ - *pSrcB++, 8);
-    *pDst++ = (q7_t) __SSAT((q15_t) *pSrcA++ - *pSrcB++, 8);
+    *pDst++ = (q7_t)__SSAT((q15_t)*pSrcA++ - *pSrcB++, 8);
+    *pDst++ = (q7_t)__SSAT((q15_t)*pSrcA++ - *pSrcB++, 8);
+    *pDst++ = (q7_t)__SSAT((q15_t)*pSrcA++ - *pSrcB++, 8);
+    *pDst++ = (q7_t)__SSAT((q15_t)*pSrcA++ - *pSrcB++, 8);
 #endif
 
     /* Decrement loop counter */
@@ -91,17 +88,15 @@ void arm_sub_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A - B */
 
     /* Subtract and store result in destination buffer. */
-    *pDst++ = (q7_t) __SSAT((q15_t) *pSrcA++ - *pSrcB++, 8);
+    *pDst++ = (q7_t)__SSAT((q15_t)*pSrcA++ - *pSrcB++, 8);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

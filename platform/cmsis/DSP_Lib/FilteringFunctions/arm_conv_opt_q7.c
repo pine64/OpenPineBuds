@@ -43,53 +43,49 @@
   @param[in]     srcALen    length of the first input sequence
   @param[in]     pSrcB      points to the second input sequence
   @param[in]     srcBLen    length of the second input sequence
-  @param[out]    pDst       points to the location where the output result is written.  Length srcALen+srcBLen-1.
-  @param[in]     pScratch1  points to scratch buffer(of type q15_t) of size max(srcALen, srcBLen) + 2*min(srcALen, srcBLen) - 2.
-  @param[in]     pScratch2  points to scratch buffer (of type q15_t) of size min(srcALen, srcBLen).
+  @param[out]    pDst       points to the location where the output result is
+  written.  Length srcALen+srcBLen-1.
+  @param[in]     pScratch1  points to scratch buffer(of type q15_t) of size
+  max(srcALen, srcBLen) + 2*min(srcALen, srcBLen) - 2.
+  @param[in]     pScratch2  points to scratch buffer (of type q15_t) of size
+  min(srcALen, srcBLen).
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The function is implemented using a 32-bit internal accumulator.
-                   Both the inputs are represented in 1.7 format and multiplications yield a 2.14 result.
-                   The 2.14 intermediate results are accumulated in a 32-bit accumulator in 18.14 format.
-                   This approach provides 17 guard bits and there is no risk of overflow as long as <code>max(srcALen, srcBLen)<131072</code>.
-                   The 18.14 result is then truncated to 18.7 format by discarding the low 7 bits and then saturated to 1.7 format.
+                   The function is implemented using a 32-bit internal
+  accumulator. Both the inputs are represented in 1.7 format and multiplications
+  yield a 2.14 result. The 2.14 intermediate results are accumulated in a 32-bit
+  accumulator in 18.14 format. This approach provides 17 guard bits and there is
+  no risk of overflow as long as <code>max(srcALen, srcBLen)<131072</code>.
+                   The 18.14 result is then truncated to 18.7 format by
+  discarding the low 7 bits and then saturated to 1.7 format.
  */
 
-void arm_conv_opt_q7(
-  const q7_t * pSrcA,
-        uint32_t srcALen,
-  const q7_t * pSrcB,
-        uint32_t srcBLen,
-        q7_t * pDst,
-        q15_t * pScratch1,
-        q15_t * pScratch2)
-{
-        q15_t *pScr1 = pScratch1;                      /* Temporary pointer for scratch */
-        q15_t *pScr2 = pScratch2;                      /* Temporary pointer for scratch */
-        q15_t x4;                                      /* Temporary input variable */
-        q15_t *py;                                     /* Temporary input2 pointer */
-        q31_t acc0, acc1, acc2, acc3;                  /* Accumulators */
-  const q7_t *pIn1, *pIn2;                             /* InputA and inputB pointer */
-        uint32_t j, k, blkCnt, tapCnt;                 /* Loop counter */
-        q31_t x1, x2, x3, y1;                          /* Temporary input variables */
-  const q7_t *px;                                      /* Temporary input1 pointer */
-        q7_t *pOut = pDst;                             /* Output pointer */
-        q7_t out0, out1, out2, out3;                   /* Temporary variables */
+void arm_conv_opt_q7(const q7_t *pSrcA, uint32_t srcALen, const q7_t *pSrcB,
+                     uint32_t srcBLen, q7_t *pDst, q15_t *pScratch1,
+                     q15_t *pScratch2) {
+  q15_t *pScr1 = pScratch1;      /* Temporary pointer for scratch */
+  q15_t *pScr2 = pScratch2;      /* Temporary pointer for scratch */
+  q15_t x4;                      /* Temporary input variable */
+  q15_t *py;                     /* Temporary input2 pointer */
+  q31_t acc0, acc1, acc2, acc3;  /* Accumulators */
+  const q7_t *pIn1, *pIn2;       /* InputA and inputB pointer */
+  uint32_t j, k, blkCnt, tapCnt; /* Loop counter */
+  q31_t x1, x2, x3, y1;          /* Temporary input variables */
+  const q7_t *px;                /* Temporary input1 pointer */
+  q7_t *pOut = pDst;             /* Output pointer */
+  q7_t out0, out1, out2, out3;   /* Temporary variables */
 
   /* The algorithm implementation is based on the lengths of the inputs. */
   /* srcB is always made to slide across srcA. */
   /* So srcBLen is always considered as shorter or equal to srcALen */
-  if (srcALen >= srcBLen)
-  {
+  if (srcALen >= srcBLen) {
     /* Initialization of inputA pointer */
     pIn1 = pSrcA;
 
     /* Initialization of inputB pointer */
     pIn2 = pSrcB;
-  }
-  else
-  {
+  } else {
     /* Initialization of inputA pointer */
     pIn1 = pSrcB;
 
@@ -108,18 +104,18 @@ void arm_conv_opt_q7(
   /* Apply loop unrolling and do 4 Copies simultaneously. */
   k = srcBLen >> 2U;
 
-  /* First part of the processing with loop unrolling copies 4 data points at a time.
+  /* First part of the processing with loop unrolling copies 4 data points at a
+   *time.
    ** a second loop below copies for the remaining 1 to 3 samples. */
-  while (k > 0U)
-  {
+  while (k > 0U) {
     /* copy second buffer in reversal manner */
-    x4 = (q15_t) *px--;
+    x4 = (q15_t)*px--;
     *pScr2++ = x4;
-    x4 = (q15_t) *px--;
+    x4 = (q15_t)*px--;
     *pScr2++ = x4;
-    x4 = (q15_t) *px--;
+    x4 = (q15_t)*px--;
     *pScr2++ = x4;
-    x4 = (q15_t) *px--;
+    x4 = (q15_t)*px--;
     *pScr2++ = x4;
 
     /* Decrement loop counter */
@@ -130,10 +126,9 @@ void arm_conv_opt_q7(
    ** No loop unrolling is used. */
   k = srcBLen % 0x4U;
 
-  while (k > 0U)
-  {
+  while (k > 0U) {
     /* copy second buffer in reversal manner for remaining samples */
-    x4 = (q15_t) *px--;
+    x4 = (q15_t)*px--;
     *pScr2++ = x4;
 
     /* Decrement loop counter */
@@ -150,18 +145,18 @@ void arm_conv_opt_q7(
   /* Apply loop unrolling and do 4 Copies simultaneously. */
   k = srcALen >> 2U;
 
-  /* First part of the processing with loop unrolling copies 4 data points at a time.
+  /* First part of the processing with loop unrolling copies 4 data points at a
+   *time.
    ** a second loop below copies for the remaining 1 to 3 samples. */
-  while (k > 0U)
-  {
+  while (k > 0U) {
     /* copy second buffer in reversal manner */
-    x4 = (q15_t) *pIn1++;
+    x4 = (q15_t)*pIn1++;
     *pScr1++ = x4;
-    x4 = (q15_t) *pIn1++;
+    x4 = (q15_t)*pIn1++;
     *pScr1++ = x4;
-    x4 = (q15_t) *pIn1++;
+    x4 = (q15_t)*pIn1++;
     *pScr1++ = x4;
-    x4 = (q15_t) *pIn1++;
+    x4 = (q15_t)*pIn1++;
     *pScr1++ = x4;
 
     /* Decrement loop counter */
@@ -172,10 +167,9 @@ void arm_conv_opt_q7(
    ** No loop unrolling is used. */
   k = srcALen % 0x4U;
 
-  while (k > 0U)
-  {
+  while (k > 0U) {
     /* copy second buffer in reversal manner for remaining samples */
-    x4 = (q15_t) * pIn1++;
+    x4 = (q15_t)*pIn1++;
     *pScr1++ = x4;
 
     /* Decrement the loop counter */
@@ -192,15 +186,14 @@ void arm_conv_opt_q7(
   py = pScratch2;
 
   /* Initialization of pIn2 pointer */
-  pIn2 = (q7_t *) py;
+  pIn2 = (q7_t *)py;
 
   pScr2 = py;
 
   /* Actual convolution process starts here */
   blkCnt = (srcALen + srcBLen - 1U) >> 2U;
 
-  while (blkCnt > 0)
-  {
+  while (blkCnt > 0) {
     /* Initialze temporary scratch pointer as scratch1 */
     pScr1 = pScratch1;
 
@@ -211,17 +204,16 @@ void arm_conv_opt_q7(
     acc3 = 0;
 
     /* Read two samples from scratch1 buffer */
-    x1 = read_q15x2_ia (&pScr1);
+    x1 = read_q15x2_ia(&pScr1);
 
     /* Read next two samples from scratch1 buffer */
-    x2 = read_q15x2_ia (&pScr1);
+    x2 = read_q15x2_ia(&pScr1);
 
     tapCnt = (srcBLen) >> 2U;
 
-    while (tapCnt > 0U)
-    {
+    while (tapCnt > 0U) {
       /* Read four samples from smaller buffer */
-      y1 = read_q15x2_ia (&pScr2);
+      y1 = read_q15x2_ia(&pScr2);
 
       /* multiply and accumlate */
       acc0 = __SMLAD(x1, y1, acc0);
@@ -238,7 +230,7 @@ void arm_conv_opt_q7(
       acc1 = __SMLADX(x3, y1, acc1);
 
       /* Read next two samples from scratch1 buffer */
-      x1 = read_q15x2_ia (&pScr1);
+      x1 = read_q15x2_ia(&pScr1);
 
       /* pack input data */
 #ifndef ARM_MATH_BIG_ENDIAN
@@ -250,7 +242,7 @@ void arm_conv_opt_q7(
       acc3 = __SMLADX(x3, y1, acc3);
 
       /* Read four samples from smaller buffer */
-      y1 = read_q15x2_ia (&pScr2);
+      y1 = read_q15x2_ia(&pScr2);
 
       acc0 = __SMLAD(x2, y1, acc0);
 
@@ -258,7 +250,7 @@ void arm_conv_opt_q7(
 
       acc1 = __SMLADX(x3, y1, acc1);
 
-      x2 = read_q15x2_ia (&pScr1);
+      x2 = read_q15x2_ia(&pScr1);
 
 #ifndef ARM_MATH_BIG_ENDIAN
       x3 = __PKHBT(x2, x1, 0);
@@ -272,14 +264,14 @@ void arm_conv_opt_q7(
       tapCnt--;
     }
 
-    /* Update scratch pointer for remaining samples of smaller length sequence */
+    /* Update scratch pointer for remaining samples of smaller length sequence
+     */
     pScr1 -= 4U;
 
     /* apply same above for remaining samples of smaller length sequence */
-    tapCnt = (srcBLen) & 3U;
+    tapCnt = (srcBLen)&3U;
 
-    while (tapCnt > 0U)
-    {
+    while (tapCnt > 0U) {
       /* accumlate the results */
       acc0 += (*pScr1++ * *pScr2);
       acc1 += (*pScr1++ * *pScr2);
@@ -295,12 +287,12 @@ void arm_conv_opt_q7(
     blkCnt--;
 
     /* Store the result in the accumulator in the destination buffer. */
-    out0 = (q7_t) (__SSAT(acc0 >> 7U, 8));
-    out1 = (q7_t) (__SSAT(acc1 >> 7U, 8));
-    out2 = (q7_t) (__SSAT(acc2 >> 7U, 8));
-    out3 = (q7_t) (__SSAT(acc3 >> 7U, 8));
+    out0 = (q7_t)(__SSAT(acc0 >> 7U, 8));
+    out1 = (q7_t)(__SSAT(acc1 >> 7U, 8));
+    out2 = (q7_t)(__SSAT(acc2 >> 7U, 8));
+    out3 = (q7_t)(__SSAT(acc3 >> 7U, 8));
 
-    write_q7x4_ia (&pOut, __PACKq7(out0, out1, out2, out3));
+    write_q7x4_ia(&pOut, __PACKq7(out0, out1, out2, out3));
 
     /* Initialization of inputB pointer */
     pScr2 = py;
@@ -311,8 +303,7 @@ void arm_conv_opt_q7(
   blkCnt = (srcALen + srcBLen - 1U) & 0x3;
 
   /* Calculate convolution for remaining samples of Bigger length sequence */
-  while (blkCnt > 0)
-  {
+  while (blkCnt > 0) {
     /* Initialze temporary scratch pointer as scratch1 */
     pScr1 = pScratch1;
 
@@ -321,8 +312,7 @@ void arm_conv_opt_q7(
 
     tapCnt = (srcBLen) >> 1U;
 
-    while (tapCnt > 0U)
-    {
+    while (tapCnt > 0U) {
       acc0 += (*pScr1++ * *pScr2++);
       acc0 += (*pScr1++ * *pScr2++);
 
@@ -330,11 +320,10 @@ void arm_conv_opt_q7(
       tapCnt--;
     }
 
-    tapCnt = (srcBLen) & 1U;
+    tapCnt = (srcBLen)&1U;
 
     /* apply same above for remaining samples of smaller length sequence */
-    while (tapCnt > 0U)
-    {
+    while (tapCnt > 0U) {
       /* accumlate the results */
       acc0 += (*pScr1++ * *pScr2++);
 
@@ -345,14 +334,13 @@ void arm_conv_opt_q7(
     blkCnt--;
 
     /* Store the result in the accumulator in the destination buffer. */
-    *pOut++ = (q7_t) (__SSAT(acc0 >> 7U, 8));
+    *pOut++ = (q7_t)(__SSAT(acc0 >> 7U, 8));
 
     /* Initialization of inputB pointer */
     pScr2 = py;
 
     pScratch1 += 1U;
   }
-
 }
 
 /**

@@ -38,7 +38,8 @@
  */
 
 /**
-  @brief         Converts the elements of the floating-point vector to Q7 vector.
+  @brief         Converts the elements of the floating-point vector to Q7
+  vector.
   @param[in]     pSrc       points to the floating-point input vector
   @param[out]    pDst       points to the Q7 output vector
   @param[in]     blockSize  number of samples in each vector
@@ -52,31 +53,27 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q7 range [0x80 0x7F] are saturated.
+                   Results outside of the allowable Q7 range [0x80 0x7F] are
+  saturated.
   @note
-                  In order to apply rounding, the library should be rebuilt with the ROUNDING macro
-                  defined in the preprocessor section of project options.
+                  In order to apply rounding, the library should be rebuilt with
+  the ROUNDING macro defined in the preprocessor section of project options.
  */
 
-void arm_float_to_q7(
-  const float32_t * pSrc,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const float32_t *pIn = pSrc;                         /* Source pointer */
+void arm_float_to_q7(const float32_t *pSrc, q7_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;             /* Loop counter */
+  const float32_t *pIn = pSrc; /* Source pointer */
 
 #ifdef ARM_MATH_ROUNDING
-        float32_t in;
+  float32_t in;
 #endif /* #ifdef ARM_MATH_ROUNDING */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * 128 */
 
     /* Convert from float to q7 and store result in destination buffer */
@@ -84,26 +81,26 @@ void arm_float_to_q7(
 
     in = (*pIn++ * 128);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = (q7_t) (__SSAT((q15_t) (in), 8));
+    *pDst++ = (q7_t)(__SSAT((q15_t)(in), 8));
 
     in = (*pIn++ * 128);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = (q7_t) (__SSAT((q15_t) (in), 8));
+    *pDst++ = (q7_t)(__SSAT((q15_t)(in), 8));
 
     in = (*pIn++ * 128);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = (q7_t) (__SSAT((q15_t) (in), 8));
+    *pDst++ = (q7_t)(__SSAT((q15_t)(in), 8));
 
     in = (*pIn++ * 128);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = (q7_t) (__SSAT((q15_t) (in), 8));
+    *pDst++ = (q7_t)(__SSAT((q15_t)(in), 8));
 
 #else
 
-    *pDst++ = __SSAT((q31_t) (*pIn++ * 128.0f), 8);
-    *pDst++ = __SSAT((q31_t) (*pIn++ * 128.0f), 8);
-    *pDst++ = __SSAT((q31_t) (*pIn++ * 128.0f), 8);
-    *pDst++ = __SSAT((q31_t) (*pIn++ * 128.0f), 8);
+    *pDst++ = __SSAT((q31_t)(*pIn++ * 128.0f), 8);
+    *pDst++ = __SSAT((q31_t)(*pIn++ * 128.0f), 8);
+    *pDst++ = __SSAT((q31_t)(*pIn++ * 128.0f), 8);
+    *pDst++ = __SSAT((q31_t)(*pIn++ * 128.0f), 8);
 
 #endif /* #ifdef ARM_MATH_ROUNDING */
 
@@ -121,8 +118,7 @@ void arm_float_to_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A * 128 */
 
     /* Convert from float to q7 and store result in destination buffer */
@@ -130,18 +126,17 @@ void arm_float_to_q7(
 
     in = (*pIn++ * 128);
     in += in > 0.0f ? 0.5f : -0.5f;
-    *pDst++ = (q7_t) (__SSAT((q15_t) (in), 8));
+    *pDst++ = (q7_t)(__SSAT((q15_t)(in), 8));
 
 #else
 
-    *pDst++ = (q7_t) __SSAT((q31_t) (*pIn++ * 128.0f), 8);
+    *pDst++ = (q7_t)__SSAT((q31_t)(*pIn++ * 128.0f), 8);
 
 #endif /* #ifdef ARM_MATH_ROUNDING */
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

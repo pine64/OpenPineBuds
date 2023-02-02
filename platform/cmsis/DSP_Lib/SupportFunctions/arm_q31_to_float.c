@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS DSP Library
  * Title:        arm_q31_to_float.c
- * Description:  Converts the elements of the Q31 vector to floating-point vector
+ * Description:  Converts the elements of the Q31 vector to floating-point
+ * vector
  *
  * $Date:        18. March 2019
  * $Revision:    V1.6.0
@@ -42,7 +43,8 @@
  */
 
 /**
-  @brief         Converts the elements of the Q31 vector to floating-point vector.
+  @brief         Converts the elements of the Q31 vector to floating-point
+  vector.
   @param[in]     pSrc       points to the Q31 input vector
   @param[out]    pDst       points to the floating-point output vector
   @param[in]     blockSize  number of samples in each vector
@@ -55,28 +57,23 @@
   </pre>
  */
 
-void arm_q31_to_float(
-  const q31_t * pSrc,
-        float32_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const q31_t *pIn = pSrc;                             /* Source pointer */
+void arm_q31_to_float(const q31_t *pSrc, float32_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;         /* Loop counter */
+  const q31_t *pIn = pSrc; /* Source pointer */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (float32_t) A / 2147483648 */
 
     /* Convert from q31 to float and store result in destination buffer */
-    *pDst++ = ((float32_t) *pIn++ / 2147483648.0f);
-    *pDst++ = ((float32_t) *pIn++ / 2147483648.0f);
-    *pDst++ = ((float32_t) *pIn++ / 2147483648.0f);
-    *pDst++ = ((float32_t) *pIn++ / 2147483648.0f);
+    *pDst++ = ((float32_t)*pIn++ / 2147483648.0f);
+    *pDst++ = ((float32_t)*pIn++ / 2147483648.0f);
+    *pDst++ = ((float32_t)*pIn++ / 2147483648.0f);
+    *pDst++ = ((float32_t)*pIn++ / 2147483648.0f);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -92,17 +89,15 @@ void arm_q31_to_float(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (float32_t) A / 2147483648 */
 
     /* Convert from q31 to float and store result in destination buffer */
-    *pDst++ = ((float32_t) *pIn++ / 2147483648.0f);
+    *pDst++ = ((float32_t)*pIn++ / 2147483648.0f);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

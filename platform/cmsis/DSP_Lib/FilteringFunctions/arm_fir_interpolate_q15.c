@@ -39,57 +39,58 @@
 
 /**
   @brief         Processing function for the Q15 FIR interpolator.
-  @param[in]     S          points to an instance of the Q15 FIR interpolator structure
+  @param[in]     S          points to an instance of the Q15 FIR interpolator
+  structure
   @param[in]     pSrc       points to the block of input data
   @param[out]    pDst       points to the block of output data
   @param[in]     blockSize  number of samples to process
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The function is implemented using a 64-bit internal accumulator.
-                   Both coefficients and state variables are represented in 1.15 format and multiplications yield a 2.30 result.
-                   The 2.30 intermediate results are accumulated in a 64-bit accumulator in 34.30 format.
-                   There is no risk of internal overflow with this approach and the full precision of intermediate multiplications is preserved.
-                   After all additions have been performed, the accumulator is truncated to 34.15 format by discarding low 15 bits.
-                   Lastly, the accumulator is saturated to yield a result in 1.15 format.
+                   The function is implemented using a 64-bit internal
+  accumulator. Both coefficients and state variables are represented in 1.15
+  format and multiplications yield a 2.30 result. The 2.30 intermediate results
+  are accumulated in a 64-bit accumulator in 34.30 format. There is no risk of
+  internal overflow with this approach and the full precision of intermediate
+  multiplications is preserved. After all additions have been performed, the
+  accumulator is truncated to 34.15 format by discarding low 15 bits. Lastly,
+  the accumulator is saturated to yield a result in 1.15 format.
  */
 
-void arm_fir_interpolate_q15(
-  const arm_fir_interpolate_instance_q15 * S,
-  const q15_t * pSrc,
-        q15_t * pDst,
-        uint32_t blockSize)
-{
+void arm_fir_interpolate_q15(const arm_fir_interpolate_instance_q15 *S,
+                             const q15_t *pSrc, q15_t *pDst,
+                             uint32_t blockSize) {
 #if (1)
-//#if !defined(ARM_MATH_CM0_FAMILY)
+  //#if !defined(ARM_MATH_CM0_FAMILY)
 
-        q15_t *pState = S->pState;                     /* State pointer */
-  const q15_t *pCoeffs = S->pCoeffs;                   /* Coefficient pointer */
-        q15_t *pStateCur;                              /* Points to the current sample of the state */
-        q15_t *ptr1;                                   /* Temporary pointer for state buffer */
-  const q15_t *ptr2;                                   /* Temporary pointer for coefficient buffer */
-        q63_t sum0;                                    /* Accumulators */
-        uint32_t i, blkCnt, tapCnt;                    /* Loop counters */
-        uint32_t phaseLen = S->phaseLength;            /* Length of each polyphase filter component */
-        uint32_t j;
+  q15_t *pState = S->pState;         /* State pointer */
+  const q15_t *pCoeffs = S->pCoeffs; /* Coefficient pointer */
+  q15_t *pStateCur;           /* Points to the current sample of the state */
+  q15_t *ptr1;                /* Temporary pointer for state buffer */
+  const q15_t *ptr2;          /* Temporary pointer for coefficient buffer */
+  q63_t sum0;                 /* Accumulators */
+  uint32_t i, blkCnt, tapCnt; /* Loop counters */
+  uint32_t phaseLen =
+      S->phaseLength; /* Length of each polyphase filter component */
+  uint32_t j;
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        q63_t acc0, acc1, acc2, acc3;
-        q15_t x0, x1, x2, x3;
-        q15_t c0, c1, c2, c3;
+#if defined(ARM_MATH_LOOPUNROLL)
+  q63_t acc0, acc1, acc2, acc3;
+  q15_t x0, x1, x2, x3;
+  q15_t c0, c1, c2, c3;
 #endif
 
   /* S->pState buffer contains previous frame (phaseLen - 1) samples */
-  /* pStateCur points to the location where the new input data should be written */
+  /* pStateCur points to the location where the new input data should be written
+   */
   pStateCur = S->pState + (phaseLen - 1U);
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Copy new input sample into the state buffer */
     *pStateCur++ = *pSrc++;
     *pStateCur++ = *pSrc++;
@@ -102,8 +103,7 @@ void arm_fir_interpolate_q15(
     /* Loop over the Interpolation factor. */
     i = (S->L);
 
-    while (i > 0U)
-    {
+    while (i > 0U) {
       /* Set accumulator to zero */
       acc0 = 0;
       acc1 = 0;
@@ -124,8 +124,7 @@ void arm_fir_interpolate_q15(
       x1 = *(ptr1++);
       x2 = *(ptr1++);
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* Read the input sample */
         x3 = *(ptr1++);
 
@@ -133,10 +132,10 @@ void arm_fir_interpolate_q15(
         c0 = *(ptr2);
 
         /* Perform the multiply-accumulate */
-        acc0 += (q63_t) x0 * c0;
-        acc1 += (q63_t) x1 * c0;
-        acc2 += (q63_t) x2 * c0;
-        acc3 += (q63_t) x3 * c0;
+        acc0 += (q63_t)x0 * c0;
+        acc1 += (q63_t)x1 * c0;
+        acc2 += (q63_t)x2 * c0;
+        acc3 += (q63_t)x3 * c0;
 
         /* Read the coefficient */
         c1 = *(ptr2 + S->L);
@@ -145,10 +144,10 @@ void arm_fir_interpolate_q15(
         x0 = *(ptr1++);
 
         /* Perform the multiply-accumulate */
-        acc0 += (q63_t) x1 * c1;
-        acc1 += (q63_t) x2 * c1;
-        acc2 += (q63_t) x3 * c1;
-        acc3 += (q63_t) x0 * c1;
+        acc0 += (q63_t)x1 * c1;
+        acc1 += (q63_t)x2 * c1;
+        acc2 += (q63_t)x3 * c1;
+        acc3 += (q63_t)x0 * c1;
 
         /* Read the coefficient */
         c2 = *(ptr2 + S->L * 2);
@@ -157,10 +156,10 @@ void arm_fir_interpolate_q15(
         x1 = *(ptr1++);
 
         /* Perform the multiply-accumulate */
-        acc0 += (q63_t) x2 * c2;
-        acc1 += (q63_t) x3 * c2;
-        acc2 += (q63_t) x0 * c2;
-        acc3 += (q63_t) x1 * c2;
+        acc0 += (q63_t)x2 * c2;
+        acc1 += (q63_t)x3 * c2;
+        acc2 += (q63_t)x0 * c2;
+        acc3 += (q63_t)x1 * c2;
 
         /* Read the coefficient */
         c3 = *(ptr2 + S->L * 3);
@@ -169,11 +168,10 @@ void arm_fir_interpolate_q15(
         x2 = *(ptr1++);
 
         /* Perform the multiply-accumulate */
-        acc0 += (q63_t) x3 * c3;
-        acc1 += (q63_t) x0 * c3;
-        acc2 += (q63_t) x1 * c3;
-        acc3 += (q63_t) x2 * c3;
-
+        acc0 += (q63_t)x3 * c3;
+        acc1 += (q63_t)x0 * c3;
+        acc2 += (q63_t)x1 * c3;
+        acc3 += (q63_t)x2 * c3;
 
         /* Upsampling is done by stuffing L-1 zeros between each sample.
          * So instead of multiplying zeros with coefficients,
@@ -184,11 +182,11 @@ void arm_fir_interpolate_q15(
         tapCnt--;
       }
 
-      /* If the polyPhase length is not a multiple of 4, compute the remaining filter taps */
+      /* If the polyPhase length is not a multiple of 4, compute the remaining
+       * filter taps */
       tapCnt = phaseLen % 0x4U;
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* Read the input sample */
         x3 = *(ptr1++);
 
@@ -196,10 +194,10 @@ void arm_fir_interpolate_q15(
         c0 = *(ptr2);
 
         /* Perform the multiply-accumulate */
-        acc0 += (q63_t) x0 * c0;
-        acc1 += (q63_t) x1 * c0;
-        acc2 += (q63_t) x2 * c0;
-        acc3 += (q63_t) x3 * c0;
+        acc0 += (q63_t)x0 * c0;
+        acc1 += (q63_t)x1 * c0;
+        acc2 += (q63_t)x2 * c0;
+        acc3 += (q63_t)x3 * c0;
 
         /* Increment the coefficient pointer by interpolation factor times. */
         ptr2 += S->L;
@@ -214,10 +212,10 @@ void arm_fir_interpolate_q15(
       }
 
       /* The result is in the accumulator, store in the destination buffer. */
-      *(pDst           ) = (q15_t) (__SSAT((acc0 >> 15), 16));
-      *(pDst +     S->L) = (q15_t) (__SSAT((acc1 >> 15), 16));
-      *(pDst + 2 * S->L) = (q15_t) (__SSAT((acc2 >> 15), 16));
-      *(pDst + 3 * S->L) = (q15_t) (__SSAT((acc3 >> 15), 16));
+      *(pDst) = (q15_t)(__SSAT((acc0 >> 15), 16));
+      *(pDst + S->L) = (q15_t)(__SSAT((acc1 >> 15), 16));
+      *(pDst + 2 * S->L) = (q15_t)(__SSAT((acc2 >> 15), 16));
+      *(pDst + 3 * S->L) = (q15_t)(__SSAT((acc3 >> 15), 16));
 
       pDst++;
 
@@ -248,8 +246,7 @@ void arm_fir_interpolate_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Copy new input sample into the state buffer */
     *pStateCur++ = *pSrc++;
 
@@ -258,8 +255,7 @@ void arm_fir_interpolate_q15(
 
     /* Loop over the Interpolation factor. */
     i = S->L;
-    while (i > 0U)
-    {
+    while (i > 0U) {
       /* Set accumulator to zero */
       sum0 = 0;
 
@@ -272,28 +268,27 @@ void arm_fir_interpolate_q15(
       /* Loop over the polyPhase length.
          Repeat until we've computed numTaps-(4*S->L) coefficients. */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
-     /* Loop unrolling: Compute 4 outputs at a time */
+      /* Loop unrolling: Compute 4 outputs at a time */
       tapCnt = phaseLen >> 2U;
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* Perform the multiply-accumulate */
-        sum0 += (q63_t) *ptr1++ * *ptr2;
+        sum0 += (q63_t)*ptr1++ * *ptr2;
 
         /* Upsampling is done by stuffing L-1 zeros between each sample.
          * So instead of multiplying zeros with coefficients,
          * Increment the coefficient pointer by interpolation factor times. */
         ptr2 += S->L;
 
-        sum0 += (q63_t) *ptr1++ * *ptr2;
+        sum0 += (q63_t)*ptr1++ * *ptr2;
         ptr2 += S->L;
 
-        sum0 += (q63_t) *ptr1++ * *ptr2;
+        sum0 += (q63_t)*ptr1++ * *ptr2;
         ptr2 += S->L;
 
-        sum0 += (q63_t) *ptr1++ * *ptr2;
+        sum0 += (q63_t)*ptr1++ * *ptr2;
         ptr2 += S->L;
 
         /* Decrement loop counter */
@@ -310,10 +305,9 @@ void arm_fir_interpolate_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* Perform the multiply-accumulate */
-        sum0 += (q63_t) *ptr1++ * *ptr2;
+        sum0 += (q63_t)*ptr1++ * *ptr2;
 
         /* Upsampling is done by stuffing L-1 zeros between each sample.
          * So instead of multiplying zeros with coefficients,
@@ -325,7 +319,7 @@ void arm_fir_interpolate_q15(
       }
 
       /* The result is in the accumulator, store in the destination buffer. */
-      *pDst++ = (q15_t) (__SSAT((sum0 >> 15), 16));
+      *pDst++ = (q15_t)(__SSAT((sum0 >> 15), 16));
 
       /* Increment the address modifier index of coefficient buffer */
       j++;
@@ -349,16 +343,15 @@ void arm_fir_interpolate_q15(
   /* Points to the start of the state buffer */
   pStateCur = S->pState;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   tapCnt = (phaseLen - 1U) >> 2U;
 
   /* copy data */
-  while (tapCnt > 0U)
-  {
-    write_q15x2_ia (&pStateCur, read_q15x2_ia (&pState));
-    write_q15x2_ia (&pStateCur, read_q15x2_ia (&pState));
+  while (tapCnt > 0U) {
+    write_q15x2_ia(&pStateCur, read_q15x2_ia(&pState));
+    write_q15x2_ia(&pStateCur, read_q15x2_ia(&pState));
 
     /* Decrement loop counter */
     tapCnt--;
@@ -369,14 +362,13 @@ void arm_fir_interpolate_q15(
 
 #else
 
-    /* Initialize tapCnt with number of samples */
-    tapCnt = (phaseLen - 1U);
+  /* Initialize tapCnt with number of samples */
+  tapCnt = (phaseLen - 1U);
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
   /* Copy data */
-  while (tapCnt > 0U)
-  {
+  while (tapCnt > 0U) {
     *pStateCur++ = *pState++;
 
     /* Decrement loop counter */
@@ -384,35 +376,35 @@ void arm_fir_interpolate_q15(
   }
 
 #else
-/* alternate version for CM0_FAMILY */
+  /* alternate version for CM0_FAMILY */
 
-        q15_t *pState = S->pState;                     /* State pointer */
-  const q15_t *pCoeffs = S->pCoeffs;                   /* Coefficient pointer */
-        q15_t *pStateCur;                              /* Points to the current sample of the state */
-        q15_t *ptr1;                                   /* Temporary pointer for state buffer */
-  const q15_t *ptr2;                                   /* Temporary pointer for coefficient buffer */
-        q63_t sum0;                                    /* Accumulators */
-        uint32_t i, blkCnt, tapCnt;                    /* Loop counters */
-        uint32_t phaseLen = S->phaseLength;            /* Length of each polyphase filter component */
+  q15_t *pState = S->pState;         /* State pointer */
+  const q15_t *pCoeffs = S->pCoeffs; /* Coefficient pointer */
+  q15_t *pStateCur;           /* Points to the current sample of the state */
+  q15_t *ptr1;                /* Temporary pointer for state buffer */
+  const q15_t *ptr2;          /* Temporary pointer for coefficient buffer */
+  q63_t sum0;                 /* Accumulators */
+  uint32_t i, blkCnt, tapCnt; /* Loop counters */
+  uint32_t phaseLen =
+      S->phaseLength; /* Length of each polyphase filter component */
 
   /* S->pState buffer contains previous frame (phaseLen - 1) samples */
-  /* pStateCur points to the location where the new input data should be written */
+  /* pStateCur points to the location where the new input data should be written
+   */
   pStateCur = S->pState + (phaseLen - 1U);
 
   /* Total number of intput samples */
   blkCnt = blockSize;
 
   /* Loop over the blockSize. */
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Copy new input sample into the state buffer */
     *pStateCur++ = *pSrc++;
 
     /* Loop over the Interpolation factor. */
     i = S->L;
 
-    while (i > 0U)
-    {
+    while (i > 0U) {
       /* Set accumulator to zero */
       sum0 = 0;
 
@@ -425,10 +417,9 @@ void arm_fir_interpolate_q15(
       /* Loop over the polyPhase length */
       tapCnt = phaseLen;
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* Perform the multiply-accumulate */
-        sum0 += ((q63_t) *ptr1++ * *ptr2);
+        sum0 += ((q63_t)*ptr1++ * *ptr2);
 
         /* Increment the coefficient pointer by interpolation factor times. */
         ptr2 += S->L;
@@ -437,8 +428,9 @@ void arm_fir_interpolate_q15(
         tapCnt--;
       }
 
-      /* Store the result after converting to 1.15 format in the destination buffer. */
-      *pDst++ = (q15_t) (__SSAT((sum0 >> 15), 16));
+      /* Store the result after converting to 1.15 format in the destination
+       * buffer. */
+      *pDst++ = (q15_t)(__SSAT((sum0 >> 15), 16));
 
       /* Decrement loop counter */
       i--;
@@ -462,8 +454,7 @@ void arm_fir_interpolate_q15(
   tapCnt = phaseLen - 1U;
 
   /* Copy data */
-  while (tapCnt > 0U)
-  {
+  while (tapCnt > 0U) {
     *pStateCur++ = *pState++;
 
     /* Decrement loop counter */
@@ -471,7 +462,6 @@ void arm_fir_interpolate_q15(
   }
 
 #endif /* #if !defined(ARM_MATH_CM0_FAMILY) */
-
 }
 
 /**

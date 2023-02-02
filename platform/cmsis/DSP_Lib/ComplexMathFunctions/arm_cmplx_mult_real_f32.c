@@ -39,9 +39,9 @@
   The data in the complex arrays is stored in an interleaved fashion
   (real, imag, real, imag, ...).
   The parameter <code>numSamples</code> represents the number of complex
-  samples processed.  The complex arrays have a total of <code>2*numSamples</code>
-  real values while the real array has a total of <code>numSamples</code>
-  real values.
+  samples processed.  The complex arrays have a total of
+  <code>2*numSamples</code> real values while the real array has a total of
+  <code>numSamples</code> real values.
 
   The underlying algorithm is used:
 
@@ -69,22 +69,18 @@
   @return        none
  */
 
-void arm_cmplx_mult_real_f32(
-  const float32_t * pSrcCmplx,
-  const float32_t * pSrcReal,
-        float32_t * pCmplxDst,
-        uint32_t numSamples)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t in;                                  /* Temporary variable */
+void arm_cmplx_mult_real_f32(const float32_t *pSrcCmplx,
+                             const float32_t *pSrcReal, float32_t *pCmplxDst,
+                             uint32_t numSamples) {
+  uint32_t blkCnt; /* Loop counter */
+  float32_t in;    /* Temporary variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = numSamples >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C[2 * i    ] = A[2 * i    ] * B[i]. */
     /* C[2 * i + 1] = A[2 * i + 1] * B[i]. */
 
@@ -102,7 +98,7 @@ void arm_cmplx_mult_real_f32(
     *pCmplxDst++ = *pSrcCmplx++ * in;
 
     in = *pSrcReal++;
-    *pCmplxDst++ = *pSrcCmplx++* in;
+    *pCmplxDst++ = *pSrcCmplx++ * in;
     *pCmplxDst++ = *pSrcCmplx++ * in;
 
     /* Decrement loop counter */
@@ -119,8 +115,7 @@ void arm_cmplx_mult_real_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C[2 * i    ] = A[2 * i    ] * B[i]. */
     /* C[2 * i + 1] = A[2 * i + 1] * B[i]. */
 
@@ -132,7 +127,6 @@ void arm_cmplx_mult_real_f32(
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

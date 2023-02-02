@@ -34,7 +34,7 @@
 
 /**
   @defgroup MatrixInit Matrix Initialization
- 
+
  */
 
 /**
@@ -51,12 +51,8 @@
   @return        none
  */
 
-void arm_mat_init_q31(
-  arm_matrix_instance_q31 * S,
-  uint16_t nRows,
-  uint16_t nColumns,
-  q31_t * pData)
-{
+void arm_mat_init_q31(arm_matrix_instance_q31 *S, uint16_t nRows,
+                      uint16_t nColumns, q31_t *pData) {
   /* Assign Number of Rows */
   S->numRows = nRows;
 

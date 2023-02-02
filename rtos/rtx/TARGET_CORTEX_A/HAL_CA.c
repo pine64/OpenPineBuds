@@ -32,15 +32,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
 #include "RTX_Config.h"
 #include "rt_HAL_CA.h"
+#include "rt_TypeDef.h"
 
 /*--------------------------- os_init_context -------------------------------*/
 
-void rt_init_stack (P_TCB p_TCB, FUNCP task_body) {
+void rt_init_stack(P_TCB p_TCB, FUNCP task_body) {
   /* Prepare TCB and saved context for a first time start of a task. */
-  U32 *stk,i,size;
+  U32 *stk, i, size;
 
   /* Prepare a complete interrupt frame for first task start */
   size = p_TCB->priv_stack >> 2;
@@ -67,7 +67,7 @@ void rt_init_stack (P_TCB p_TCB, FUNCP task_body) {
     stk[15] |= CPSR_T_BIT;
   }
   /* Assign a void pointer to R0. */
-  stk[8]  = (U32)p_TCB->msg;
+  stk[8] = (U32)p_TCB->msg;
   /* Clear R1-R12,LR registers. */
   for (i = 0; i < 8; i++) {
     stk[i] = 0;
@@ -86,26 +86,25 @@ void rt_init_stack (P_TCB p_TCB, FUNCP task_body) {
   p_TCB->stack[0] = MAGIC_WORD;
 }
 
-
 /*--------------------------- rt_ret_val ----------------------------------*/
 
-static __inline U32 *rt_ret_regs (P_TCB p_TCB) {
+static __inline U32 *rt_ret_regs(P_TCB p_TCB) {
   /* Get pointer to task return value registers (R0..R3) in Stack */
 #if (__TARGET_FPU_VFP)
   if (p_TCB->stack_frame & 0x2) {
     /* Extended Stack Frame: S0-31,FPSCR,Reserved,R4-R11,R0-R3,R12,LR,PC,xPSR */
-    return (U32 *)(p_TCB->tsk_stack + 8*4 + 34*4);
+    return (U32 *)(p_TCB->tsk_stack + 8 * 4 + 34 * 4);
   } else {
     /* Basic Stack Frame: R4-R11,R0-R3,R12,LR,PC,xPSR */
-    return (U32 *)(p_TCB->tsk_stack + 8*4);
+    return (U32 *)(p_TCB->tsk_stack + 8 * 4);
   }
 #else
   /* Stack Frame: R4-R11,R0-R3,R12,LR,PC,xPSR */
-  return (U32 *)(p_TCB->tsk_stack + 8*4);
+  return (U32 *)(p_TCB->tsk_stack + 8 * 4);
 #endif
 }
 
-void rt_ret_val (P_TCB p_TCB, U32 v0) {
+void rt_ret_val(P_TCB p_TCB, U32 v0) {
   U32 *ret;
 
   ret = rt_ret_regs(p_TCB);
@@ -119,7 +118,6 @@ void rt_ret_val2(P_TCB p_TCB, U32 v0, U32 v1) {
   ret[0] = v0;
   ret[1] = v1;
 }
-
 
 /*----------------------------------------------------------------------------
  * end of file

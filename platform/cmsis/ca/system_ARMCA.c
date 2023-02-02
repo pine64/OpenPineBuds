@@ -25,11 +25,11 @@
  * limitations under the License.
  */
 
-#include "cmsis_nvic.h"
 #include "ca/system_ARMCA.h"
 #include "ca/irq_ctrl.h"
-#include "hal_location.h"
+#include "cmsis_nvic.h"
 #include "hal_cmu.h"
+#include "hal_location.h"
 
 extern uint32_t __sram_text_data_start_load__[];
 extern uint32_t __sram_text_data_end_load__[];
@@ -47,44 +47,41 @@ extern uint32_t __psramuhs_text_start[];
 /*----------------------------------------------------------------------------
   System Initialization
  *----------------------------------------------------------------------------*/
-void SystemInit (void)
-{
-    uint32_t *dst, *src;
+void SystemInit(void) {
+  uint32_t *dst, *src;
 
-    if (__sram_text_data_start__ != __sram_text_data_start_load__) {
-        for (dst = __sram_text_data_start__, src = __sram_text_data_start_load__;
-                src < __sram_text_data_end_load__;
-                dst++, src++) {
-            *dst = *src;
-        }
+  if (__sram_text_data_start__ != __sram_text_data_start_load__) {
+    for (dst = __sram_text_data_start__, src = __sram_text_data_start_load__;
+         src < __sram_text_data_end_load__; dst++, src++) {
+      *dst = *src;
     }
+  }
 
-    hal_cmu_dsp_setup();
-    /*psramhus_test load region covers sram_bss, and it needs to be copyed first*/
+  hal_cmu_dsp_setup();
+  /*psramhus_test load region covers sram_bss, and it needs to be copyed first*/
 #if defined(CHIP_HAS_PSRAMUHS) && defined(PSRAMUHS_ENABLE)
-    for (dst = __psramuhs_text_start, src = __psramuhs_text_data_start_load__;
-            src < __psramuhs_text_data_end_load__;
-            dst++, src++) {
-        *dst = *src;
-    }
+  for (dst = __psramuhs_text_start, src = __psramuhs_text_data_start_load__;
+       src < __psramuhs_text_data_end_load__; dst++, src++) {
+    *dst = *src;
+  }
 #endif
 
-    for (dst = __sram_bss_start__; dst < __sram_bss_end__; dst++) {
-        *dst = 0;
-    }
+  for (dst = __sram_bss_start__; dst < __sram_bss_end__; dst++) {
+    *dst = 0;
+  }
 
 #ifdef NOSTD
-    for (dst = __bss_start__; dst < __bss_end__; dst++) {
-        *dst = 0;
-    }
+  for (dst = __bss_start__; dst < __bss_end__; dst++) {
+    *dst = 0;
+  }
 #endif
 
-    for (dst = __sync_flags_start; dst < __sync_flags_end; dst++) {
-        *dst = 0;
-    }
+  for (dst = __sync_flags_start; dst < __sync_flags_end; dst++) {
+    *dst = 0;
+  }
 
-/* do not use global variables because this function is called before
-   reaching pre-main. RW section may be overwritten afterwards.          */
+  /* do not use global variables because this function is called before
+     reaching pre-main. RW section may be overwritten afterwards.          */
 
   // Init exception vectors
   GIC_InitVectors();
@@ -129,8 +126,4 @@ void SystemInit (void)
   IRQ_Initialize();
 }
 
-uint32_t BOOT_TEXT_SRAM_DEF(get_cpu_id) (void)
-{
-    return __get_MPIDR() & 3;
-}
-
+uint32_t BOOT_TEXT_SRAM_DEF(get_cpu_id)(void) { return __get_MPIDR() & 3; }

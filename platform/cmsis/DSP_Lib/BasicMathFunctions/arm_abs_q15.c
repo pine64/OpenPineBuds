@@ -46,53 +46,50 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   The Q15 value -1 (0x8000) will be saturated to the maximum allowable positive value 0x7FFF.
+                   The Q15 value -1 (0x8000) will be saturated to the maximum
+  allowable positive value 0x7FFF.
  */
 
-void arm_abs_q15(
-  const q15_t * pSrc,
-        q15_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q15_t in;                                      /* Temporary input variable */
+void arm_abs_q15(const q15_t *pSrc, q15_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
+  q15_t in;        /* Temporary input variable */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = |A| */
 
-    /* Calculate absolute of input (if -1 then saturated to 0x7fff) and store result in destination buffer. */
+    /* Calculate absolute of input (if -1 then saturated to 0x7fff) and store
+     * result in destination buffer. */
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = (in > 0) ? in : (q15_t)__QSUB16(0, in);
 #else
-    *pDst++ = (in > 0) ? in : ((in == (q15_t) 0x8000) ? 0x7fff : -in);
+    *pDst++ = (in > 0) ? in : ((in == (q15_t)0x8000) ? 0x7fff : -in);
 #endif
 
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = (in > 0) ? in : (q15_t)__QSUB16(0, in);
 #else
-    *pDst++ = (in > 0) ? in : ((in == (q15_t) 0x8000) ? 0x7fff : -in);
+    *pDst++ = (in > 0) ? in : ((in == (q15_t)0x8000) ? 0x7fff : -in);
 #endif
 
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = (in > 0) ? in : (q15_t)__QSUB16(0, in);
 #else
-    *pDst++ = (in > 0) ? in : ((in == (q15_t) 0x8000) ? 0x7fff : -in);
+    *pDst++ = (in > 0) ? in : ((in == (q15_t)0x8000) ? 0x7fff : -in);
 #endif
 
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = (in > 0) ? in : (q15_t)__QSUB16(0, in);
 #else
-    *pDst++ = (in > 0) ? in : ((in == (q15_t) 0x8000) ? 0x7fff : -in);
+    *pDst++ = (in > 0) ? in : ((in == (q15_t)0x8000) ? 0x7fff : -in);
 #endif
 
     /* Decrement loop counter */
@@ -109,22 +106,21 @@ void arm_abs_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = |A| */
 
-    /* Calculate absolute of input (if -1 then saturated to 0x7fff) and store result in destination buffer. */
+    /* Calculate absolute of input (if -1 then saturated to 0x7fff) and store
+     * result in destination buffer. */
     in = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = (in > 0) ? in : (q15_t)__QSUB16(0, in);
 #else
-    *pDst++ = (in > 0) ? in : ((in == (q15_t) 0x8000) ? 0x7fff : -in);
+    *pDst++ = (in > 0) ? in : ((in == (q15_t)0x8000) ? 0x7fff : -in);
 #endif
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

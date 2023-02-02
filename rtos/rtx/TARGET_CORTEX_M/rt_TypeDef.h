@@ -36,93 +36,110 @@
 
 #include "os_tcb.h"
 
-typedef U32     OS_TID;
-typedef void    *OS_ID;
-typedef U32     OS_RESULT;
+typedef U32 OS_TID;
+typedef void *OS_ID;
+typedef U32 OS_RESULT;
 
-#define TCB_STACKF      32        /* 'stack_frame' offset                    */
-#define TCB_TSTACK      40        /* 'tsk_stack' offset                      */
+#define TCB_STACKF 32 /* 'stack_frame' offset                    */
+#define TCB_TSTACK 40 /* 'tsk_stack' offset                      */
 
-typedef struct OS_PSFE {          /* Post Service Fifo Entry                 */
-  void  *id;                      /* Object Identification                   */
-  U32    arg;                     /* Object Argument                         */
+typedef struct OS_PSFE { /* Post Service Fifo Entry                 */
+  void *id;              /* Object Identification                   */
+  U32 arg;               /* Object Argument                         */
 } *P_PSFE;
 
-typedef struct OS_PSQ {           /* Post Service Queue                      */
-  U8     first;                   /* FIFO Head Index                         */
-  U8     last;                    /* FIFO Tail Index                         */
-  U8     count;                   /* Number of stored items in FIFO          */
-  U8     size;                    /* FIFO Size                               */
-  struct OS_PSFE q[1];            /* FIFO Content                            */
+typedef struct OS_PSQ { /* Post Service Queue                      */
+  U8 first;             /* FIFO Head Index                         */
+  U8 last;              /* FIFO Tail Index                         */
+  U8 count;             /* Number of stored items in FIFO          */
+  U8 size;              /* FIFO Size                               */
+  struct OS_PSFE q[1];  /* FIFO Content                            */
 } *P_PSQ;
 
 typedef struct OS_TSK {
-  P_TCB  run;                     /* Current running task                    */
-  P_TCB  new_tsk;                 /* Scheduled task to run                   */
+  P_TCB run;     /* Current running task                    */
+  P_TCB new_tsk; /* Scheduled task to run                   */
 } *P_TSK;
 
-typedef struct OS_ROBIN {         /* Round Robin Control                     */
-  P_TCB  task;                    /* Round Robin task                        */
-  U16    time;                    /* Round Robin switch time                 */
-  U16    tout;                    /* Round Robin timeout                     */
+typedef struct OS_ROBIN { /* Round Robin Control                     */
+  P_TCB task;             /* Round Robin task                        */
+  U16 time;               /* Round Robin switch time                 */
+  U16 tout;               /* Round Robin timeout                     */
 } *P_ROBIN;
 
 typedef struct OS_XCB {
-  U8     cb_type;                 /* Control Block Type                      */
-  struct OS_TCB *p_lnk;           /* Link pointer for ready/sem. wait list   */
-  struct OS_TCB *p_rlnk;          /* Link pointer for sem./mbx lst backwards */
-  struct OS_TCB *p_dlnk;          /* Link pointer for delay list             */
-  struct OS_TCB *p_blnk;          /* Link pointer for delay list backwards   */
-  U16    delta_time;              /* Time until time out                     */
+  U8 cb_type;            /* Control Block Type                      */
+  struct OS_TCB *p_lnk;  /* Link pointer for ready/sem. wait list   */
+  struct OS_TCB *p_rlnk; /* Link pointer for sem./mbx lst backwards */
+  struct OS_TCB *p_dlnk; /* Link pointer for delay list             */
+  struct OS_TCB *p_blnk; /* Link pointer for delay list backwards   */
+  U16 delta_time;        /* Time until time out                     */
 } *P_XCB;
 
 typedef struct OS_MCB {
-  U8     cb_type;                 /* Control Block Type                      */
-  U8     state;                   /* State flag variable                     */
-  U8     isr_st;                  /* State flag variable for isr functions   */
-  struct OS_TCB *p_lnk;           /* Chain of tasks waiting for message      */
-  U16    first;                   /* Index of the message list begin         */
-  U16    last;                    /* Index of the message list end           */
-  U16    count;                   /* Actual number of stored messages        */
-  U16    size;                    /* Maximum number of stored messages       */
-  void   *msg[1];                 /* FIFO for Message pointers 1st element   */
+  U8 cb_type;           /* Control Block Type                      */
+  U8 state;             /* State flag variable                     */
+  U8 isr_st;            /* State flag variable for isr functions   */
+  struct OS_TCB *p_lnk; /* Chain of tasks waiting for message      */
+  U16 first;            /* Index of the message list begin         */
+  U16 last;             /* Index of the message list end           */
+  U16 count;            /* Actual number of stored messages        */
+  U16 size;             /* Maximum number of stored messages       */
+  void *msg[1];         /* FIFO for Message pointers 1st element   */
 } *P_MCB;
 
 typedef struct OS_SCB {
-  U8     cb_type;                 /* Control Block Type                      */
-  U8     mask;                    /* Semaphore token mask                    */
-  U16    tokens;                  /* Semaphore tokens                        */
-  struct OS_TCB *p_lnk;           /* Chain of tasks waiting for tokens       */
+  U8 cb_type;           /* Control Block Type                      */
+  U8 mask;              /* Semaphore token mask                    */
+  U16 tokens;           /* Semaphore tokens                        */
+  struct OS_TCB *p_lnk; /* Chain of tasks waiting for tokens       */
 } *P_SCB;
 
 typedef struct OS_MUCB {
-  U8     cb_type;                 /* Control Block Type                      */
-  U8     prio;                    /* Owner task default priority             */
-  U16    level;                   /* Call nesting level                      */
-  struct OS_TCB *p_lnk;           /* Chain of tasks waiting for mutex        */
-  struct OS_TCB *owner;           /* Mutex owner task                        */
+  U8 cb_type;           /* Control Block Type                      */
+  U8 prio;              /* Owner task default priority             */
+  U16 level;            /* Call nesting level                      */
+  struct OS_TCB *p_lnk; /* Chain of tasks waiting for mutex        */
+  struct OS_TCB *owner; /* Mutex owner task                        */
 } *P_MUCB;
 
 typedef struct OS_XTMR {
-  struct OS_TMR  *next;
-  U16    tcnt;
+  struct OS_TMR *next;
+  U16 tcnt;
 } *P_XTMR;
 
 typedef struct OS_TMR {
-  struct OS_TMR  *next;           /* Link pointer to Next timer              */
-  U16    tcnt;                    /* Timer delay count                       */
-  U16    info;                    /* User defined call info                  */
+  struct OS_TMR *next; /* Link pointer to Next timer              */
+  U16 tcnt;            /* Timer delay count                       */
+  U16 info;            /* User defined call info                  */
 } *P_TMR;
 
 typedef struct OS_BM {
-  void *free;                     /* Pointer to first free memory block      */
-  void *end;                      /* Pointer to memory block end             */
-  U32  blk_size;                  /* Memory block size                       */
+  void *free;   /* Pointer to first free memory block      */
+  void *end;    /* Pointer to memory block end             */
+  U32 blk_size; /* Memory block size                       */
 } *P_BM;
 
 /* Definitions */
-#define __TRUE          1
-#define __FALSE         0
-#define NULL            ((void *) 0)
+#define __TRUE 1
+#define __FALSE 0
+#define NULL ((void *)0)
 
+#ifndef BOOL_DEFINED
+typedef unsigned int BOOL; /* IGNORESTYLE */
+#endif
+
+typedef unsigned int U32;
+typedef unsigned short U16;
+typedef unsigned char U8;
+
+typedef int S32;
+typedef short S16;
+typedef char S8;
+
+#ifndef U32_PTR_DEFINED
+typedef U32 U32_PTR;
+
+#define U32_PTR_DEFINED
+#endif /* U32_PTR_DEFINED */
 #endif

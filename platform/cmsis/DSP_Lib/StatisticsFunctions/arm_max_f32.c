@@ -54,17 +54,13 @@
   @return        none
  */
 
-void arm_max_f32(
-  const float32_t * pSrc,
-        uint32_t blockSize,
-        float32_t * pResult,
-        uint32_t * pIndex)
-{
-        float32_t maxVal, out;                         /* Temporary variables to store the output value. */
-        uint32_t blkCnt, outIndex;                     /* Loop counter */
+void arm_max_f32(const float32_t *pSrc, uint32_t blockSize, float32_t *pResult,
+                 uint32_t *pIndex) {
+  float32_t maxVal, out; /* Temporary variables to store the output value. */
+  uint32_t blkCnt, outIndex; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        uint32_t index;                                /* index of maximum value */
+#if defined(ARM_MATH_LOOPUNROLL)
+  uint32_t index; /* index of maximum value */
 #endif
 
   /* Initialise index value to zero. */
@@ -72,43 +68,38 @@ void arm_max_f32(
   /* Load first input value that act as reference value for comparision */
   out = *pSrc++;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
   /* Initialise index of maximum value. */
   index = 0U;
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = (blockSize - 1U) >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Initialize maxVal to next consecutive values one by one */
     maxVal = *pSrc++;
 
     /* compare for the maximum value */
-    if (out < maxVal)
-    {
+    if (out < maxVal) {
       /* Update the maximum value and it's index */
       out = maxVal;
       outIndex = index + 1U;
     }
 
     maxVal = *pSrc++;
-    if (out < maxVal)
-    {
+    if (out < maxVal) {
       out = maxVal;
       outIndex = index + 2U;
     }
 
     maxVal = *pSrc++;
-    if (out < maxVal)
-    {
+    if (out < maxVal) {
       out = maxVal;
       outIndex = index + 3U;
     }
 
     maxVal = *pSrc++;
-    if (out < maxVal)
-    {
+    if (out < maxVal) {
       out = maxVal;
       outIndex = index + 4U;
     }
@@ -129,14 +120,12 @@ void arm_max_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Initialize maxVal to the next consecutive values one by one */
     maxVal = *pSrc++;
 
     /* compare for the maximum value */
-    if (out < maxVal)
-    {
+    if (out < maxVal) {
       /* Update the maximum value and it's index */
       out = maxVal;
       outIndex = blockSize - blkCnt;

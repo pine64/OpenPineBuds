@@ -46,45 +46,39 @@
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
  */
 
-arm_status arm_mat_trans_q31(
-  const arm_matrix_instance_q31 * pSrc,
-        arm_matrix_instance_q31 * pDst)
-{
-  q31_t *pIn = pSrc->pData;                      /* input data matrix pointer */
-  q31_t *pOut = pDst->pData;                     /* output data matrix pointer */
-  q31_t *px;                                     /* Temporary output data matrix pointer */
-  uint16_t nRows = pSrc->numRows;                /* number of rows */
-  uint16_t nCols = pSrc->numCols;                /* number of columns */
-  uint32_t col, row = nRows, i = 0U;             /* Loop counters */
-  arm_status status;                             /* status of matrix transpose */
+arm_status arm_mat_trans_q31(const arm_matrix_instance_q31 *pSrc,
+                             arm_matrix_instance_q31 *pDst) {
+  q31_t *pIn = pSrc->pData;          /* input data matrix pointer */
+  q31_t *pOut = pDst->pData;         /* output data matrix pointer */
+  q31_t *px;                         /* Temporary output data matrix pointer */
+  uint16_t nRows = pSrc->numRows;    /* number of rows */
+  uint16_t nCols = pSrc->numCols;    /* number of columns */
+  uint32_t col, row = nRows, i = 0U; /* Loop counters */
+  arm_status status;                 /* status of matrix transpose */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
   /* Check for matrix mismatch condition */
-  if ((pSrc->numRows != pDst->numCols) ||
-      (pSrc->numCols != pDst->numRows)   )
-  {
+  if ((pSrc->numRows != pDst->numCols) || (pSrc->numCols != pDst->numRows)) {
     /* Set status as ARM_MATH_SIZE_MISMATCH */
     status = ARM_MATH_SIZE_MISMATCH;
-  }
-  else
+  } else
 
 #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
 
   {
     /* Matrix transpose by exchanging the rows with columns */
     /* row loop */
-    do
-    {
+    do {
       /* Pointer px is set to starting address of column being processed */
       px = pOut + i;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
       /* Loop unrolling: Compute 4 outputs at a time */
       col = nCols >> 2U;
 
-      while (col > 0U)        /* column loop */
+      while (col > 0U) /* column loop */
       {
         /* Read and store input element in destination */
         *px = *pIn++;
@@ -114,8 +108,7 @@ arm_status arm_mat_trans_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-      while (col > 0U)
-      {
+      while (col > 0U) {
         /* Read and store input element in destination */
         *px = *pIn++;
 
@@ -131,7 +124,7 @@ arm_status arm_mat_trans_q31(
       /* Decrement row loop counter */
       row--;
 
-    } while (row > 0U);          /* row loop end */
+    } while (row > 0U); /* row loop end */
 
     /* Set status as ARM_MATH_SUCCESS */
     status = ARM_MATH_SUCCESS;

@@ -31,16 +31,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
-
+#include "rt_TypeDef.h"
 /* Functions */
-extern void      rt_sem_init  (OS_ID semaphore, U16 token_count);
+extern void rt_sem_init(OS_ID semaphore, U16 token_count);
 extern OS_RESULT rt_sem_delete(OS_ID semaphore);
-extern OS_RESULT rt_sem_send  (OS_ID semaphore);
-extern OS_RESULT rt_sem_wait  (OS_ID semaphore, U16 timeout);
-extern void      isr_sem_send (OS_ID semaphore);
-extern void      rt_sem_psh (P_SCB p_CB);
+extern OS_RESULT rt_sem_send(OS_ID semaphore);
+extern OS_RESULT rt_sem_wait(OS_ID semaphore, U16 timeout);
+extern void isr_sem_send(OS_ID semaphore);
+extern void rt_sem_psh(P_SCB p_CB);
 
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

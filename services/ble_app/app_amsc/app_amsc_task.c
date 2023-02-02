@@ -14,7 +14,6 @@
  *
  ****************************************************************************/
 
-
 /**
  ****************************************************************************************
  * @addtogroup APPTASK
@@ -27,7 +26,7 @@
  ****************************************************************************************
  */
 
-#include "rwip_config.h"              // SW configuration
+#include "rwip_config.h" // SW configuration
 
 #if (BLE_APP_PRESENT)
 
@@ -35,8 +34,8 @@
 
 #include "app_amsc.h"
 #include "app_amsc_task.h"
-#include "app_task.h"                  // Application Task API
 #include "app_sec.h"
+#include "app_task.h" // Application Task API
 #include "ke_msg.h"
 
 /*
@@ -58,24 +57,23 @@
  */
 
 int amsc_anc_enable_rsp_handler(ke_msg_id_t const msgid,
-                                 struct amsc_enable_rsp const *param,
-                                 ke_task_id_t const dest_id,
-                                 ke_task_id_t const src_id)
-{    
-    
-    return (KE_MSG_CONSUMED);
+                                struct amsc_enable_rsp const *param,
+                                ke_task_id_t const dest_id,
+                                ke_task_id_t const src_id) {
+
+  return (KE_MSG_CONSUMED);
 }
 
 /// Default State handlers definition
-const struct ke_msg_handler app_amsc_msg_handler_list[] =
-{
-    {AMSC_ENABLE_RSP,                      (ke_msg_func_t)amsc_anc_enable_rsp_handler},
+const struct ke_msg_handler app_amsc_msg_handler_list[] = {
+    {AMSC_ENABLE_RSP, (ke_msg_func_t)amsc_anc_enable_rsp_handler},
 };
 
-const struct ke_state_handler app_amsc_table_handler =
-    {&app_amsc_msg_handler_list[0], (sizeof(app_amsc_msg_handler_list)/sizeof(struct ke_msg_handler))};
+const struct ke_state_handler app_amsc_table_handler = {
+    &app_amsc_msg_handler_list[0],
+    (sizeof(app_amsc_msg_handler_list) / sizeof(struct ke_msg_handler))};
 
-#endif //BLE_AMS_CLIENT
+#endif // BLE_AMS_CLIENT
 
 #endif //(BLE_APP_PRESENT)
 

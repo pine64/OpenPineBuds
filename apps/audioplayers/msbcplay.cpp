@@ -14,19 +14,18 @@
  *
  ****************************************************************************/
 // Standard C Included Files
-#include <string.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include "cmsis_os.h"
 #include "cqueue.h"
-#include "hal_uart.h"
 #include "hal_timer.h"
 #include "hal_trace.h"
+#include "hal_uart.h"
+#include <math.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // BT
-
 
 #if 0
 /* mutex */
@@ -35,16 +34,15 @@ osMutexDef(g_voicemsbc_queue_mutex);
 
 /* msbc queue */
 #define VOICEMSBC_TEMP_BUFFER_SIZE 128
-#define VOICEMSBC_QUEUE_SIZE (VOICEMSBC_TEMP_BUFFER_SIZE*100)
+#define VOICEMSBC_QUEUE_SIZE (VOICEMSBC_TEMP_BUFFER_SIZE * 100)
 unsigned char voicemsbc_queue_buf[VOICEMSBC_QUEUE_SIZE];
 CQueue voicemsbc_queue;
 static uint32_t ok_to_decode = 0;
 
-#define LOCK_VOICEMSBC_QUEUE() \
-	osMutexWait(g_voicemsbc_queue_mutex_id, osWaitForever)
+#define LOCK_VOICEMSBC_QUEUE()                                                 \
+  osMutexWait(g_voicemsbc_queue_mutex_id, osWaitForever)
 
-#define UNLOCK_VOICEMSBC_QUEUE() \
-	osMutexRelease(g_voicemsbc_queue_mutex_id)
+#define UNLOCK_VOICEMSBC_QUEUE() osMutexRelease(g_voicemsbc_queue_mutex_id)
 
 static void dump_buffer_to_psram(char *buf, unsigned int len)
 {

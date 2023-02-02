@@ -8,7 +8,6 @@
  * @param score     Score of word
  *
  */
-void nt_demo_words_cb(float power)
-{
-    TRACE(1,"active power %d", (int)(power));
+void nt_demo_words_cb(float power) {
+  TRACE(1, "active power %d", (int)(power));
 }

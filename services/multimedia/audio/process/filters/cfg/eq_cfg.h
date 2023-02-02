@@ -15,7 +15,7 @@
  ****************************************************************************/
 #ifndef __FIR_PROCESS_H__
 #define __FIR_PROCESS_H__
-
+#include "iir_process.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,7 +32,8 @@ void iir_lowspass_coefs_generate(float gain, float fn, float Q, float *coefs);
 
 float iir_convert_db_to_multiple(float db);
 
-void iir_coefs_generate(IIR_TYPE_T type, float gain, float fn, float Q, float *coefs);
+void iir_coefs_generate(IIR_TYPE_T type, float gain, float fn, float Q,
+                        float *coefs);
 
 #ifdef __cplusplus
 }

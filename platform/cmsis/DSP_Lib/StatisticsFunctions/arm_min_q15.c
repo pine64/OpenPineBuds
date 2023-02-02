@@ -32,7 +32,6 @@
   @ingroup groupStats
  */
 
-
 /**
   @addtogroup Min
   @{
@@ -47,17 +46,13 @@
   @return        none
  */
 
-void arm_min_q15(
-  const q15_t * pSrc,
-        uint32_t blockSize,
-        q15_t * pResult,
-        uint32_t * pIndex)
-{
-        q15_t minVal, out;                             /* Temporary variables to store the output value. */
-        uint32_t blkCnt, outIndex;                     /* Loop counter */
+void arm_min_q15(const q15_t *pSrc, uint32_t blockSize, q15_t *pResult,
+                 uint32_t *pIndex) {
+  q15_t minVal, out; /* Temporary variables to store the output value. */
+  uint32_t blkCnt, outIndex; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        uint32_t index;                                /* index of maximum value */
+#if defined(ARM_MATH_LOOPUNROLL)
+  uint32_t index; /* index of maximum value */
 #endif
 
   /* Initialise index value to zero. */
@@ -65,43 +60,38 @@ void arm_min_q15(
   /* Load first input value that act as reference value for comparision */
   out = *pSrc++;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
   /* Initialise index of maximum value. */
   index = 0U;
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = (blockSize - 1U) >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Initialize minVal to next consecutive values one by one */
     minVal = *pSrc++;
 
     /* compare for the minimum value */
-    if (out > minVal)
-    {
+    if (out > minVal) {
       /* Update the minimum value and it's index */
       out = minVal;
       outIndex = index + 1U;
     }
 
     minVal = *pSrc++;
-    if (out > minVal)
-    {
+    if (out > minVal) {
       out = minVal;
       outIndex = index + 2U;
     }
 
     minVal = *pSrc++;
-    if (out > minVal)
-    {
+    if (out > minVal) {
       out = minVal;
       outIndex = index + 3U;
     }
 
     minVal = *pSrc++;
-    if (out > minVal)
-    {
+    if (out > minVal) {
       out = minVal;
       outIndex = index + 4U;
     }
@@ -122,14 +112,12 @@ void arm_min_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Initialize minVal to the next consecutive values one by one */
     minVal = *pSrc++;
 
     /* compare for the minimum value */
-    if (out > minVal)
-    {
+    if (out > minVal) {
       /* Update the minimum value and it's index */
       out = minVal;
       outIndex = blockSize - blkCnt;

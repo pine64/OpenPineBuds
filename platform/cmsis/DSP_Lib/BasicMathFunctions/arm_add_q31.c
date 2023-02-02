@@ -47,24 +47,20 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q31 range [0x80000000 0x7FFFFFFF] are saturated.
+                   Results outside of the allowable Q31 range [0x80000000
+  0x7FFFFFFF] are saturated.
  */
 
-void arm_add_q31(
-  const q31_t * pSrcA,
-  const q31_t * pSrcB,
-        q31_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_add_q31(const q31_t *pSrcA, const q31_t *pSrcB, q31_t *pDst,
+                 uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A + B */
 
     /* Add and store result in destination buffer. */
@@ -90,8 +86,7 @@ void arm_add_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A + B */
 
     /* Add and store result in destination buffer. */
@@ -100,7 +95,6 @@ void arm_add_q31(
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

@@ -46,38 +46,33 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   The Q15 value -1 (0x8000) is saturated to the maximum allowable positive value 0x7FFF.
+                   The Q15 value -1 (0x8000) is saturated to the maximum
+  allowable positive value 0x7FFF.
  */
 
-void arm_cmplx_conj_q15(
-  const q15_t * pSrc,
-        q15_t * pDst,
-        uint32_t numSamples)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q31_t in1;                                     /* Temporary input variable */
+void arm_cmplx_conj_q15(const q15_t *pSrc, q15_t *pDst, uint32_t numSamples) {
+  uint32_t blkCnt; /* Loop counter */
+  q31_t in1;       /* Temporary input variable */
 
-#if defined (ARM_MATH_LOOPUNROLL) && defined (ARM_MATH_DSP)
-        q31_t in2, in3, in4;                           /* Temporary input variables */
+#if defined(ARM_MATH_LOOPUNROLL) && defined(ARM_MATH_DSP)
+  q31_t in2, in3, in4; /* Temporary input variables */
 #endif
 
-
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = numSamples >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C[0] + jC[1] = A[0]+ j(-1)A[1] */
 
     /* Calculate Complex Conjugate and store result in destination buffer. */
 
-    #if defined (ARM_MATH_DSP)
-    in1 = read_q15x2_ia ((q15_t **) &pSrc);
-    in2 = read_q15x2_ia ((q15_t **) &pSrc);
-    in3 = read_q15x2_ia ((q15_t **) &pSrc);
-    in4 = read_q15x2_ia ((q15_t **) &pSrc);
+#if defined(ARM_MATH_DSP)
+    in1 = read_q15x2_ia((q15_t **)&pSrc);
+    in2 = read_q15x2_ia((q15_t **)&pSrc);
+    in3 = read_q15x2_ia((q15_t **)&pSrc);
+    in4 = read_q15x2_ia((q15_t **)&pSrc);
 
 #ifndef ARM_MATH_BIG_ENDIAN
     in1 = __QASX(0, in1);
@@ -91,31 +86,31 @@ void arm_cmplx_conj_q15(
     in4 = __QSAX(0, in4);
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
-    in1 = ((uint32_t) in1 >> 16) | ((uint32_t) in1 << 16);
-    in2 = ((uint32_t) in2 >> 16) | ((uint32_t) in2 << 16);
-    in3 = ((uint32_t) in3 >> 16) | ((uint32_t) in3 << 16);
-    in4 = ((uint32_t) in4 >> 16) | ((uint32_t) in4 << 16);
+    in1 = ((uint32_t)in1 >> 16) | ((uint32_t)in1 << 16);
+    in2 = ((uint32_t)in2 >> 16) | ((uint32_t)in2 << 16);
+    in3 = ((uint32_t)in3 >> 16) | ((uint32_t)in3 << 16);
+    in4 = ((uint32_t)in4 >> 16) | ((uint32_t)in4 << 16);
 
-    write_q15x2_ia (&pDst, in1);
-    write_q15x2_ia (&pDst, in2);
-    write_q15x2_ia (&pDst, in3);
-    write_q15x2_ia (&pDst, in4);
+    write_q15x2_ia(&pDst, in1);
+    write_q15x2_ia(&pDst, in2);
+    write_q15x2_ia(&pDst, in3);
+    write_q15x2_ia(&pDst, in4);
 #else
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in1 = *pSrc++;
-    *pDst++ = (in1 == (q15_t) 0x8000) ? (q15_t) 0x7fff : -in1;
+    *pDst++ = (in1 == (q15_t)0x8000) ? (q15_t)0x7fff : -in1;
 
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in1 = *pSrc++;
-    *pDst++ = (in1 == (q15_t) 0x8000) ? (q15_t) 0x7fff : -in1;
+    *pDst++ = (in1 == (q15_t)0x8000) ? (q15_t)0x7fff : -in1;
 
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in1 = *pSrc++;
-    *pDst++ = (in1 == (q15_t) 0x8000) ? (q15_t) 0x7fff : -in1;
+    *pDst++ = (in1 == (q15_t)0x8000) ? (q15_t)0x7fff : -in1;
 
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in1 = *pSrc++;
-    *pDst++ = (in1 == (q15_t) 0x8000) ? (q15_t) 0x7fff : -in1;
+    *pDst++ = (in1 == (q15_t)0x8000) ? (q15_t)0x7fff : -in1;
 
 #endif /* #if defined (ARM_MATH_DSP) */
 
@@ -133,23 +128,21 @@ void arm_cmplx_conj_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C[0] + jC[1] = A[0]+ j(-1)A[1] */
 
     /* Calculate Complex Conjugate and store result in destination buffer. */
-    *pDst++ =  *pSrc++;
+    *pDst++ = *pSrc++;
     in1 = *pSrc++;
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     *pDst++ = __SSAT(-in1, 16);
 #else
-    *pDst++ = (in1 == (q15_t) 0x8000) ? (q15_t) 0x7fff : -in1;
+    *pDst++ = (in1 == (q15_t)0x8000) ? (q15_t)0x7fff : -in1;
 #endif
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

@@ -47,20 +47,17 @@
 
   @par           Scaling and Overflow Behavior
                    The function uses saturating arithmetic.
-                   Results outside of the allowable Q15 range [0x8000 0x7FFF] are saturated.
+                   Results outside of the allowable Q15 range [0x8000 0x7FFF]
+  are saturated.
  */
 
-void arm_sub_q15(
-  const q15_t * pSrcA,
-  const q15_t * pSrcB,
-        q15_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
+void arm_sub_q15(const q15_t *pSrcA, const q15_t *pSrcB, q15_t *pDst,
+                 uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
   q31_t inA1, inA2;
   q31_t inB1, inB2;
 #endif
@@ -68,26 +65,25 @@ void arm_sub_q15(
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A - B */
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
     /* read 2 times 2 samples at a time from sourceA */
-    inA1 = read_q15x2_ia ((q15_t **) &pSrcA);
-    inA2 = read_q15x2_ia ((q15_t **) &pSrcA);
+    inA1 = read_q15x2_ia((q15_t **)&pSrcA);
+    inA2 = read_q15x2_ia((q15_t **)&pSrcA);
     /* read 2 times 2 samples at a time from sourceB */
-    inB1 = read_q15x2_ia ((q15_t **) &pSrcB);
-    inB2 = read_q15x2_ia ((q15_t **) &pSrcB);
+    inB1 = read_q15x2_ia((q15_t **)&pSrcB);
+    inB2 = read_q15x2_ia((q15_t **)&pSrcB);
 
     /* Subtract and store 2 times 2 samples at a time */
-    write_q15x2_ia (&pDst, __QSUB16(inA1, inB1));
-    write_q15x2_ia (&pDst, __QSUB16(inA2, inB2));
+    write_q15x2_ia(&pDst, __QSUB16(inA1, inB1));
+    write_q15x2_ia(&pDst, __QSUB16(inA2, inB2));
 #else
-    *pDst++ = (q15_t) __SSAT(((q31_t) *pSrcA++ - *pSrcB++), 16);
-    *pDst++ = (q15_t) __SSAT(((q31_t) *pSrcA++ - *pSrcB++), 16);
-    *pDst++ = (q15_t) __SSAT(((q31_t) *pSrcA++ - *pSrcB++), 16);
-    *pDst++ = (q15_t) __SSAT(((q31_t) *pSrcA++ - *pSrcB++), 16);
+    *pDst++ = (q15_t)__SSAT(((q31_t)*pSrcA++ - *pSrcB++), 16);
+    *pDst++ = (q15_t)__SSAT(((q31_t)*pSrcA++ - *pSrcB++), 16);
+    *pDst++ = (q15_t)__SSAT(((q31_t)*pSrcA++ - *pSrcB++), 16);
+    *pDst++ = (q15_t)__SSAT(((q31_t)*pSrcA++ - *pSrcB++), 16);
 #endif
 
     /* Decrement loop counter */
@@ -104,21 +100,19 @@ void arm_sub_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A - B */
 
     /* Subtract and store result in destination buffer. */
-#if defined (ARM_MATH_DSP)
-    *pDst++ = (q15_t) __QSUB16(*pSrcA++, *pSrcB++);
+#if defined(ARM_MATH_DSP)
+    *pDst++ = (q15_t)__QSUB16(*pSrcA++, *pSrcB++);
 #else
-    *pDst++ = (q15_t) __SSAT(((q31_t) *pSrcA++ - *pSrcB++), 16);
+    *pDst++ = (q15_t)__SSAT(((q31_t)*pSrcA++ - *pSrcB++), 16);
 #endif
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

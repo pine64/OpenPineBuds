@@ -14,22 +14,20 @@
  *
  ****************************************************************************/
 #ifdef __GATT_OVER_BR_EDR__
-#include "hal_trace.h"
-#include "plat_types.h"
 #include "app_btgatt.h"
 #include "btgatt_api.h"
+#include "hal_trace.h"
+#include "plat_types.h"
 
-void app_btgatt_addsdp(uint16_t pServiceUUID, uint16_t startHandle, uint16_t endHandle)
-{
-    TRACE(1, "%s", __func__);
-    btif_btgatt_addsdp(pServiceUUID, startHandle, endHandle);
+void app_btgatt_addsdp(uint16_t pServiceUUID, uint16_t startHandle,
+                       uint16_t endHandle) {
+  TRACE(1, "%s", __func__);
+  btif_btgatt_addsdp(pServiceUUID, startHandle, endHandle);
 }
 
-void app_btgatt_init(void)
-{
-    TRACE(1, "%s", __func__);
-    btif_btgatt_init();
+void app_btgatt_init(void) {
+  TRACE(1, "%s", __func__);
+  btif_btgatt_init();
 }
 
 #endif
-

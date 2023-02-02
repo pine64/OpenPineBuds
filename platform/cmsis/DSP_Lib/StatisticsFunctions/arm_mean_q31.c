@@ -45,29 +45,24 @@
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The function is implemented using a 64-bit internal accumulator.
-                   The input is represented in 1.31 format and is accumulated in a 64-bit
-                   accumulator in 33.31 format.
-                   There is no risk of internal overflow with this approach, and the
-                   full precision of intermediate result is preserved.
-                   Finally, the accumulator is truncated to yield a result of 1.31 format.
+                   The function is implemented using a 64-bit internal
+  accumulator. The input is represented in 1.31 format and is accumulated in a
+  64-bit accumulator in 33.31 format. There is no risk of internal overflow with
+  this approach, and the full precision of intermediate result is preserved.
+                   Finally, the accumulator is truncated to yield a result
+  of 1.31 format.
  */
 
-void arm_mean_q31(
-  const q31_t * pSrc,
-        uint32_t blockSize,
-        q31_t * pResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q63_t sum = 0;                                 /* Temporary result storage */
+void arm_mean_q31(const q31_t *pSrc, uint32_t blockSize, q31_t *pResult) {
+  uint32_t blkCnt; /* Loop counter */
+  q63_t sum = 0;   /* Temporary result storage */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
     sum += *pSrc++;
 
@@ -91,8 +86,7 @@ void arm_mean_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
     sum += *pSrc++;
 
@@ -102,7 +96,7 @@ void arm_mean_q31(
 
   /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) / blockSize  */
   /* Store result to destination */
-  *pResult = (q31_t) (sum / blockSize);
+  *pResult = (q31_t)(sum / blockSize);
 }
 
 /**

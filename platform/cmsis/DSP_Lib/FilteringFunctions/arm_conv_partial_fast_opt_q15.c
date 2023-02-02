@@ -43,71 +43,65 @@
   @param[in]     srcALen    length of the first input sequence
   @param[in]     pSrcB      points to the second input sequence
   @param[in]     srcBLen    length of the second input sequence
-  @param[out]    pDst       points to the location where the output result is written
+  @param[out]    pDst       points to the location where the output result is
+  written
   @param[in]     firstIndex is the first output sample to start with
   @param[in]     numPoints  is the number of output points to be computed
-  @param[in]     pScratch1  points to scratch buffer of size max(srcALen, srcBLen) + 2*min(srcALen, srcBLen) - 2
-  @param[in]     pScratch2  points to scratch buffer of size min(srcALen, srcBLen)
+  @param[in]     pScratch1  points to scratch buffer of size max(srcALen,
+  srcBLen) + 2*min(srcALen, srcBLen) - 2
+  @param[in]     pScratch2  points to scratch buffer of size min(srcALen,
+  srcBLen)
   @return        execution status
                    - \ref ARM_MATH_SUCCESS        : Operation successful
-                   - \ref ARM_MATH_ARGUMENT_ERROR : requested subset is not in the range [0 srcALen+srcBLen-2]
+                   - \ref ARM_MATH_ARGUMENT_ERROR : requested subset is not in
+  the range [0 srcALen+srcBLen-2]
 
   @remark
-                   Refer to \ref arm_conv_partial_q15() for a slower implementation of this function which uses a 64-bit accumulator to avoid wrap around distortion.
+                   Refer to \ref arm_conv_partial_q15() for a slower
+  implementation of this function which uses a 64-bit accumulator to avoid wrap
+  around distortion.
  */
 
-arm_status arm_conv_partial_fast_opt_q15(
-  const q15_t * pSrcA,
-        uint32_t srcALen,
-  const q15_t * pSrcB,
-        uint32_t srcBLen,
-        q15_t * pDst,
-        uint32_t firstIndex,
-        uint32_t numPoints,
-        q15_t * pScratch1,
-        q15_t * pScratch2)
-{
-        q15_t *pOut = pDst;                            /* Output pointer */
-        q15_t *pScr1 = pScratch1;                      /* Temporary pointer for scratch1 */
-        q15_t *pScr2 = pScratch2;                      /* Temporary pointer for scratch1 */
-        q31_t acc0;                                    /* Accumulator */
-  const q15_t *pIn1;                                   /* InputA pointer */
-  const q15_t *pIn2;                                   /* InputB pointer */
-  const q15_t *px;                                     /* Intermediate inputA pointer */
-        q15_t *py;                                     /* Intermediate inputB pointer */
-        uint32_t j, k, blkCnt;                         /* Loop counter */
-        uint32_t tapCnt;                               /* Loop count */
-        arm_status status;                             /* Status variable */
-        q31_t x1;                                      /* Temporary variables to hold state and coefficient values */
-        q31_t y1;                                      /* State variables */
+arm_status arm_conv_partial_fast_opt_q15(const q15_t *pSrcA, uint32_t srcALen,
+                                         const q15_t *pSrcB, uint32_t srcBLen,
+                                         q15_t *pDst, uint32_t firstIndex,
+                                         uint32_t numPoints, q15_t *pScratch1,
+                                         q15_t *pScratch2) {
+  q15_t *pOut = pDst;       /* Output pointer */
+  q15_t *pScr1 = pScratch1; /* Temporary pointer for scratch1 */
+  q15_t *pScr2 = pScratch2; /* Temporary pointer for scratch1 */
+  q31_t acc0;               /* Accumulator */
+  const q15_t *pIn1;        /* InputA pointer */
+  const q15_t *pIn2;        /* InputB pointer */
+  const q15_t *px;          /* Intermediate inputA pointer */
+  q15_t *py;                /* Intermediate inputB pointer */
+  uint32_t j, k, blkCnt;    /* Loop counter */
+  uint32_t tapCnt;          /* Loop count */
+  arm_status status;        /* Status variable */
+  q31_t x1; /* Temporary variables to hold state and coefficient values */
+  q31_t y1; /* State variables */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        q31_t acc1, acc2, acc3;                        /* Accumulator */
-        q31_t x2, x3;                                  /* Temporary variables to hold state and coefficient values */
-        q31_t y2;                                      /* State variables */
+#if defined(ARM_MATH_LOOPUNROLL)
+  q31_t acc1, acc2, acc3; /* Accumulator */
+  q31_t x2, x3; /* Temporary variables to hold state and coefficient values */
+  q31_t y2;     /* State variables */
 #endif
 
   /* Check for range of output samples to be calculated */
-  if ((firstIndex + numPoints) > ((srcALen + (srcBLen - 1U))))
-  {
+  if ((firstIndex + numPoints) > ((srcALen + (srcBLen - 1U)))) {
     /* Set status as ARM_MATH_ARGUMENT_ERROR */
     status = ARM_MATH_ARGUMENT_ERROR;
-  }
-  else
-  {
+  } else {
     /* The algorithm implementation is based on the lengths of the inputs. */
     /* srcB is always made to slide across srcA. */
     /* So srcBLen is always considered as shorter or equal to srcALen */
-    if (srcALen >= srcBLen)
-    {
+    if (srcALen >= srcBLen) {
       /* Initialization of inputA pointer */
       pIn1 = pSrcA;
 
       /* Initialization of inputB pointer */
       pIn2 = pSrcB;
-    }
-    else
-    {
+    } else {
       /* Initialization of inputA pointer */
       pIn1 = pSrcB;
 
@@ -129,14 +123,14 @@ arm_status arm_conv_partial_fast_opt_q15(
     /* points to smaller length sequence */
     px = pIn2;
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
     /* Loop unrolling: Compute 4 outputs at a time */
     k = srcBLen >> 2U;
 
-    /* Copy smaller length input sequence in reverse order into second scratch buffer */
-    while (k > 0U)
-    {
+    /* Copy smaller length input sequence in reverse order into second scratch
+     * buffer */
+    while (k > 0U) {
       /* copy second buffer in reversal manner */
       *pScr2-- = *px++;
       *pScr2-- = *px++;
@@ -157,8 +151,7 @@ arm_status arm_conv_partial_fast_opt_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-    while (k > 0U)
-    {
+    while (k > 0U) {
       /* copy second buffer in reversal manner for remaining samples */
       *pScr2-- = *px++;
 
@@ -199,13 +192,12 @@ arm_status arm_conv_partial_fast_opt_q15(
 
     /* Actual convolution process starts here */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
     /* Loop unrolling: Compute 4 outputs at a time */
     blkCnt = (numPoints) >> 2;
 
-    while (blkCnt > 0)
-    {
+    while (blkCnt > 0) {
       /* Initialze temporary scratch pointer as scratch1 */
       pScr1 = pScratch1;
 
@@ -216,19 +208,18 @@ arm_status arm_conv_partial_fast_opt_q15(
       acc3 = 0;
 
       /* Read two samples from scratch1 buffer */
-      x1 = read_q15x2_ia (&pScr1);
+      x1 = read_q15x2_ia(&pScr1);
 
       /* Read next two samples from scratch1 buffer */
-      x2 = read_q15x2_ia (&pScr1);
+      x2 = read_q15x2_ia(&pScr1);
 
       tapCnt = (srcBLen) >> 2U;
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
 
         /* Read four samples from smaller buffer */
-        y1 = read_q15x2_ia ((q15_t **) &pIn2);
-        y2 = read_q15x2_ia ((q15_t **) &pIn2);
+        y1 = read_q15x2_ia((q15_t **)&pIn2);
+        y2 = read_q15x2_ia((q15_t **)&pIn2);
 
         /* multiply and accumlate */
         acc0 = __SMLAD(x1, y1, acc0);
@@ -245,7 +236,7 @@ arm_status arm_conv_partial_fast_opt_q15(
         acc1 = __SMLADX(x3, y1, acc1);
 
         /* Read next two samples from scratch1 buffer */
-        x1 = read_q15x2_ia (&pScr1);
+        x1 = read_q15x2_ia(&pScr1);
 
         /* multiply and accumlate */
         acc0 = __SMLAD(x2, y2, acc0);
@@ -261,7 +252,7 @@ arm_status arm_conv_partial_fast_opt_q15(
         acc3 = __SMLADX(x3, y1, acc3);
         acc1 = __SMLADX(x3, y2, acc1);
 
-        x2 = read_q15x2_ia (&pScr1);
+        x2 = read_q15x2_ia(&pScr1);
 
 #ifndef ARM_MATH_BIG_ENDIAN
         x3 = __PKHBT(x2, x1, 0);
@@ -276,14 +267,14 @@ arm_status arm_conv_partial_fast_opt_q15(
         tapCnt--;
       }
 
-      /* Update scratch pointer for remaining samples of smaller length sequence */
+      /* Update scratch pointer for remaining samples of smaller length sequence
+       */
       pScr1 -= 4U;
 
       /* apply same above for remaining samples of smaller length sequence */
-      tapCnt = (srcBLen) & 3U;
+      tapCnt = (srcBLen)&3U;
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* accumlate the results */
         acc0 += (*pScr1++ * *pIn2);
         acc1 += (*pScr1++ * *pIn2);
@@ -299,12 +290,16 @@ arm_status arm_conv_partial_fast_opt_q15(
       blkCnt--;
 
       /* Store the results in the accumulators in the destination buffer. */
-#ifndef  ARM_MATH_BIG_ENDIAN
-      write_q15x2_ia (&pOut, __PKHBT(__SSAT((acc0 >> 15), 16), __SSAT((acc1 >> 15), 16), 16));
-      write_q15x2_ia (&pOut, __PKHBT(__SSAT((acc2 >> 15), 16), __SSAT((acc3 >> 15), 16), 16));
+#ifndef ARM_MATH_BIG_ENDIAN
+      write_q15x2_ia(&pOut, __PKHBT(__SSAT((acc0 >> 15), 16),
+                                    __SSAT((acc1 >> 15), 16), 16));
+      write_q15x2_ia(&pOut, __PKHBT(__SSAT((acc2 >> 15), 16),
+                                    __SSAT((acc3 >> 15), 16), 16));
 #else
-      write_q15x2_ia (&pOut, __PKHBT(__SSAT((acc1 >> 15), 16), __SSAT((acc0 >> 15), 16), 16));
-      write_q15x2_ia (&pOut, __PKHBT(__SSAT((acc3 >> 15), 16), __SSAT((acc2 >> 15), 16), 16));
+      write_q15x2_ia(&pOut, __PKHBT(__SSAT((acc1 >> 15), 16),
+                                    __SSAT((acc0 >> 15), 16), 16));
+      write_q15x2_ia(&pOut, __PKHBT(__SSAT((acc3 >> 15), 16),
+                                    __SSAT((acc2 >> 15), 16), 16));
 #endif /* #ifndef  ARM_MATH_BIG_ENDIAN */
 
       /* Initialization of inputB pointer */
@@ -324,8 +319,7 @@ arm_status arm_conv_partial_fast_opt_q15(
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
     /* Calculate convolution for remaining samples of Bigger length sequence */
-    while (blkCnt > 0)
-    {
+    while (blkCnt > 0) {
       /* Initialze temporary scratch pointer as scratch1 */
       pScr1 = pScratch1;
 
@@ -334,13 +328,12 @@ arm_status arm_conv_partial_fast_opt_q15(
 
       tapCnt = (srcBLen) >> 1U;
 
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* Read next two samples from scratch1 buffer */
-        x1 = read_q15x2_ia (&pScr1);
+        x1 = read_q15x2_ia(&pScr1);
 
         /* Read two samples from smaller buffer */
-        y1 = read_q15x2_ia ((q15_t **) &pIn2);
+        y1 = read_q15x2_ia((q15_t **)&pIn2);
 
         /* multiply and accumlate */
         acc0 = __SMLAD(x1, y1, acc0);
@@ -349,11 +342,10 @@ arm_status arm_conv_partial_fast_opt_q15(
         tapCnt--;
       }
 
-      tapCnt = (srcBLen) & 1U;
+      tapCnt = (srcBLen)&1U;
 
       /* apply same above for remaining samples of smaller length sequence */
-      while (tapCnt > 0U)
-      {
+      while (tapCnt > 0U) {
         /* accumlate the results */
         acc0 += (*pScr1++ * *pIn2++);
 
@@ -365,13 +357,12 @@ arm_status arm_conv_partial_fast_opt_q15(
 
       /* The result is in 2.30 format.  Convert to 1.15 with saturation.
        ** Then store the output in the destination buffer. */
-      *pOut++ = (q15_t) (__SSAT((acc0 >> 15), 16));
+      *pOut++ = (q15_t)(__SSAT((acc0 >> 15), 16));
 
       /* Initialization of inputB pointer */
       pIn2 = py;
 
       pScratch1 += 1U;
-
     }
 
     /* Set status as ARM_MATH_SUCCESS */

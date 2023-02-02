@@ -25,12 +25,11 @@
 
 #include "rtx_lib.h"
 
-
 //  ==== Service Calls ====
 
 /// Wait for Timeout (Time Delay).
 /// \note API identical to osDelay
-static osStatus_t svcRtxDelay (uint32_t ticks) {
+static osStatus_t svcRtxDelay(uint32_t ticks) {
 
   if (ticks != 0U) {
     if (osRtxThreadWaitEnter(osRtxThreadWaitingDelay, ticks)) {
@@ -45,12 +44,12 @@ static osStatus_t svcRtxDelay (uint32_t ticks) {
 
 /// Wait until specified time.
 /// \note API identical to osDelayUntil
-static osStatus_t svcRtxDelayUntil (uint32_t ticks) {
+static osStatus_t svcRtxDelayUntil(uint32_t ticks) {
 
   ticks -= osRtxInfo.kernel.tick;
   if ((ticks == 0U) || (ticks > 0x7FFFFFFFU)) {
     EvrRtxDelayError((int32_t)osErrorParameter);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return osErrorParameter;
   }
 
@@ -64,16 +63,15 @@ static osStatus_t svcRtxDelayUntil (uint32_t ticks) {
 }
 
 //  Service Calls definitions
-//lint ++flb "Library Begin" [MISRA Note 11]
-SVC0_1(Delay,      osStatus_t, uint32_t)
+// lint ++flb "Library Begin" [MISRA Note 11]
+SVC0_1(Delay, osStatus_t, uint32_t)
 SVC0_1(DelayUntil, osStatus_t, uint32_t)
-//lint --flb "Library End"
-
+// lint --flb "Library End"
 
 //  ==== Public API ====
 
 /// Wait for Timeout (Time Delay).
-osStatus_t osDelay (uint32_t ticks) {
+osStatus_t osDelay(uint32_t ticks) {
   osStatus_t status;
 
   EvrRtxDelay(ticks);
@@ -87,7 +85,7 @@ osStatus_t osDelay (uint32_t ticks) {
 }
 
 /// Wait until specified time.
-osStatus_t osDelayUntil (uint32_t ticks) {
+osStatus_t osDelayUntil(uint32_t ticks) {
   osStatus_t status;
 
   EvrRtxDelayUntil(ticks);

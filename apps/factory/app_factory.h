@@ -15,8 +15,9 @@
  ****************************************************************************/
 #ifndef __APP_FACTORY_H__
 #define __APP_FACTORY_H__
-
-#define APP_FACTORY_TRACE(s,...) TRACE(s, ##__VA_ARGS__)
+#include <stdbool.h>
+#include <stdint.h>
+#define APP_FACTORY_TRACE(s, ...) TRACE(s, ##__VA_ARGS__)
 
 void app_factorymode_result_set(bool result);
 

@@ -39,7 +39,8 @@
 
 /**
   @brief         Processing function for the Q31 sparse FIR filter.
-  @param[in]     S           points to an instance of the Q31 sparse FIR structure
+  @param[in]     S           points to an instance of the Q31 sparse FIR
+  structure
   @param[in]     pSrc        points to the block of input data
   @param[out]    pDst        points to the block of output data
   @param[in]     pScratchIn  points to a temporary buffer of size blockSize
@@ -47,56 +48,53 @@
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The function is implemented using an internal 32-bit accumulator.
-                   The 1.31 x 1.31 multiplications are truncated to 2.30 format.
-                   This leads to loss of precision on the intermediate multiplications and provides only a single guard bit.
-                   If the accumulator result overflows, it wraps around rather than saturate.
-                   In order to avoid overflows the input signal or coefficients must be scaled down by log2(numTaps) bits.
+                   The function is implemented using an internal 32-bit
+  accumulator. The 1.31 x 1.31 multiplications are truncated to 2.30 format.
+                   This leads to loss of precision on the intermediate
+  multiplications and provides only a single guard bit. If the accumulator
+  result overflows, it wraps around rather than saturate. In order to avoid
+  overflows the input signal or coefficients must be scaled down by
+  log2(numTaps) bits.
  */
 
-void arm_fir_sparse_q31(
-        arm_fir_sparse_instance_q31 * S,
-  const q31_t * pSrc,
-        q31_t * pDst,
-        q31_t * pScratchIn,
-        uint32_t blockSize)
-{
-        q31_t *pState = S->pState;                     /* State pointer */
-  const q31_t *pCoeffs = S->pCoeffs;                   /* Coefficient pointer */
-        q31_t *px;                                     /* Scratch buffer pointer */
-        q31_t *py = pState;                            /* Temporary pointers for state buffer */
-        q31_t *pb = pScratchIn;                        /* Temporary pointers for scratch buffer */
-        q31_t *pOut;                                   /* Destination pointer */
-        int32_t *pTapDelay = S->pTapDelay;             /* Pointer to the array containing offset of the non-zero tap values. */
-        uint32_t delaySize = S->maxDelay + blockSize;  /* state length */
-        uint16_t numTaps = S->numTaps;                 /* Number of filter coefficients in the filter  */
-        int32_t readIndex;                             /* Read index of the state buffer */
-        uint32_t tapCnt, blkCnt;                       /* loop counters */
-        q31_t coeff = *pCoeffs++;                      /* Read the first coefficient value */
-        q31_t in;
-        q63_t out;                                     /* Temporary output variable */
-
+void arm_fir_sparse_q31(arm_fir_sparse_instance_q31 *S, const q31_t *pSrc,
+                        q31_t *pDst, q31_t *pScratchIn, uint32_t blockSize) {
+  q31_t *pState = S->pState;         /* State pointer */
+  const q31_t *pCoeffs = S->pCoeffs; /* Coefficient pointer */
+  q31_t *px;                         /* Scratch buffer pointer */
+  q31_t *py = pState;                /* Temporary pointers for state buffer */
+  q31_t *pb = pScratchIn;            /* Temporary pointers for scratch buffer */
+  q31_t *pOut;                       /* Destination pointer */
+  int32_t *pTapDelay = S->pTapDelay; /* Pointer to the array containing offset
+                                        of the non-zero tap values. */
+  uint32_t delaySize = S->maxDelay + blockSize; /* state length */
+  uint16_t numTaps =
+      S->numTaps;           /* Number of filter coefficients in the filter  */
+  int32_t readIndex;        /* Read index of the state buffer */
+  uint32_t tapCnt, blkCnt;  /* loop counters */
+  q31_t coeff = *pCoeffs++; /* Read the first coefficient value */
+  q31_t in;
+  q63_t out; /* Temporary output variable */
 
   /* BlockSize of Input samples are copied into the state buffer */
   /* StateIndex points to the starting position to write in the state buffer */
-  arm_circularWrite_f32((int32_t *) py, delaySize, &S->stateIndex, 1,
-                        (int32_t *) pSrc, 1, blockSize);
+  arm_circularWrite_f32((int32_t *)py, delaySize, &S->stateIndex, 1,
+                        (int32_t *)pSrc, 1, blockSize);
 
   /* Read Index, from where the state buffer should be read, is calculated. */
-  readIndex = (int32_t) (S->stateIndex - blockSize) - *pTapDelay++;
+  readIndex = (int32_t)(S->stateIndex - blockSize) - *pTapDelay++;
 
   /* Wraparound of readIndex */
-  if (readIndex < 0)
-  {
-    readIndex += (int32_t) delaySize;
+  if (readIndex < 0) {
+    readIndex += (int32_t)delaySize;
   }
 
   /* Working pointer for state buffer is updated */
   py = pState;
 
   /* blockSize samples are read from the state buffer */
-  arm_circularRead_f32((int32_t *) py, delaySize, &readIndex, 1,
-                       (int32_t *) pb, (int32_t *) pb, blockSize, 1, blockSize);
+  arm_circularRead_f32((int32_t *)py, delaySize, &readIndex, 1, (int32_t *)pb,
+                       (int32_t *)pb, blockSize, 1, blockSize);
 
   /* Working pointer for the scratch buffer of state values */
   px = pb;
@@ -104,22 +102,20 @@ void arm_fir_sparse_q31(
   /* Working pointer for scratch buffer of output values */
   pOut = pDst;
 
-
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time. */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Perform Multiplications and store in destination buffer */
-    *pOut++ = (q31_t) (((q63_t) *px++ * coeff) >> 32);
+    *pOut++ = (q31_t)(((q63_t)*px++ * coeff) >> 32);
 
-    *pOut++ = (q31_t) (((q63_t) *px++ * coeff) >> 32);
+    *pOut++ = (q31_t)(((q63_t)*px++ * coeff) >> 32);
 
-    *pOut++ = (q31_t) (((q63_t) *px++ * coeff) >> 32);
+    *pOut++ = (q31_t)(((q63_t)*px++ * coeff) >> 32);
 
-    *pOut++ = (q31_t) (((q63_t) *px++ * coeff) >> 32);
+    *pOut++ = (q31_t)(((q63_t)*px++ * coeff) >> 32);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -135,10 +131,9 @@ void arm_fir_sparse_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Perform Multiplication and store in destination buffer */
-    *pOut++ = (q31_t) (((q63_t) *px++ * coeff) >> 32);
+    *pOut++ = (q31_t)(((q63_t)*px++ * coeff) >> 32);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -149,25 +144,23 @@ void arm_fir_sparse_q31(
   coeff = *pCoeffs++;
 
   /* Read Index, from where the state buffer should be read, is calculated. */
-  readIndex = (int32_t) (S->stateIndex - blockSize) - *pTapDelay++;
+  readIndex = (int32_t)(S->stateIndex - blockSize) - *pTapDelay++;
 
   /* Wraparound of readIndex */
-  if (readIndex < 0)
-  {
-    readIndex += (int32_t) delaySize;
+  if (readIndex < 0) {
+    readIndex += (int32_t)delaySize;
   }
 
   /* Loop over the number of taps. */
-  tapCnt = (uint32_t) numTaps - 2U;
+  tapCnt = (uint32_t)numTaps - 2U;
 
-  while (tapCnt > 0U)
-  {
+  while (tapCnt > 0U) {
     /* Working pointer for state buffer is updated */
     py = pState;
 
     /* blockSize samples are read from the state buffer */
-    arm_circularRead_f32((int32_t *) py, delaySize, &readIndex, 1,
-                         (int32_t *) pb, (int32_t *) pb, blockSize, 1, blockSize);
+    arm_circularRead_f32((int32_t *)py, delaySize, &readIndex, 1, (int32_t *)pb,
+                         (int32_t *)pb, blockSize, 1, blockSize);
 
     /* Working pointer for the scratch buffer of state values */
     px = pb;
@@ -175,30 +168,28 @@ void arm_fir_sparse_q31(
     /* Working pointer for scratch buffer of output values */
     pOut = pDst;
 
-
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
     /* Loop unrolling: Compute 4 outputs at a time. */
     blkCnt = blockSize >> 2U;
 
-    while (blkCnt > 0U)
-    {
+    while (blkCnt > 0U) {
       /* Perform Multiply-Accumulate */
       out = *pOut;
-      out += ((q63_t) *px++ * coeff) >> 32;
-      *pOut++ = (q31_t) (out);
+      out += ((q63_t)*px++ * coeff) >> 32;
+      *pOut++ = (q31_t)(out);
 
       out = *pOut;
-      out += ((q63_t) *px++ * coeff) >> 32;
-      *pOut++ = (q31_t) (out);
+      out += ((q63_t)*px++ * coeff) >> 32;
+      *pOut++ = (q31_t)(out);
 
       out = *pOut;
-      out += ((q63_t) *px++ * coeff) >> 32;
-      *pOut++ = (q31_t) (out);
+      out += ((q63_t)*px++ * coeff) >> 32;
+      *pOut++ = (q31_t)(out);
 
       out = *pOut;
-      out += ((q63_t) *px++ * coeff) >> 32;
-      *pOut++ = (q31_t) (out);
+      out += ((q63_t)*px++ * coeff) >> 32;
+      *pOut++ = (q31_t)(out);
 
       /* Decrement loop counter */
       blkCnt--;
@@ -214,12 +205,11 @@ void arm_fir_sparse_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-    while (blkCnt > 0U)
-    {
+    while (blkCnt > 0U) {
       /* Perform Multiply-Accumulate */
       out = *pOut;
-      out += ((q63_t) *px++ * coeff) >> 32;
-      *pOut++ = (q31_t) (out);
+      out += ((q63_t)*px++ * coeff) >> 32;
+      *pOut++ = (q31_t)(out);
 
       /* Decrement loop counter */
       blkCnt--;
@@ -230,12 +220,11 @@ void arm_fir_sparse_q31(
     coeff = *pCoeffs++;
 
     /* Read Index, from where the state buffer should be read, is calculated. */
-    readIndex = (int32_t) (S->stateIndex - blockSize) - *pTapDelay++;
+    readIndex = (int32_t)(S->stateIndex - blockSize) - *pTapDelay++;
 
     /* Wraparound of readIndex */
-    if (readIndex < 0)
-    {
-      readIndex += (int32_t) delaySize;
+    if (readIndex < 0) {
+      readIndex += (int32_t)delaySize;
     }
 
     /* Decrement tap loop counter */
@@ -248,8 +237,8 @@ void arm_fir_sparse_q31(
   py = pState;
 
   /* blockSize samples are read from the state buffer */
-  arm_circularRead_f32((int32_t *) py, delaySize, &readIndex, 1,
-                       (int32_t *) pb, (int32_t *) pb, blockSize, 1, blockSize);
+  arm_circularRead_f32((int32_t *)py, delaySize, &readIndex, 1, (int32_t *)pb,
+                       (int32_t *)pb, blockSize, 1, blockSize);
 
   /* Working pointer for the scratch buffer of state values */
   px = pb;
@@ -257,30 +246,28 @@ void arm_fir_sparse_q31(
   /* Working pointer for scratch buffer of output values */
   pOut = pDst;
 
-
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time. */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Perform Multiply-Accumulate */
     out = *pOut;
-    out += ((q63_t) * px++ * coeff) >> 32;
-    *pOut++ = (q31_t) (out);
+    out += ((q63_t)*px++ * coeff) >> 32;
+    *pOut++ = (q31_t)(out);
 
     out = *pOut;
-    out += ((q63_t) * px++ * coeff) >> 32;
-    *pOut++ = (q31_t) (out);
+    out += ((q63_t)*px++ * coeff) >> 32;
+    *pOut++ = (q31_t)(out);
 
     out = *pOut;
-    out += ((q63_t) * px++ * coeff) >> 32;
-    *pOut++ = (q31_t) (out);
+    out += ((q63_t)*px++ * coeff) >> 32;
+    *pOut++ = (q31_t)(out);
 
     out = *pOut;
-    out += ((q63_t) * px++ * coeff) >> 32;
-    *pOut++ = (q31_t) (out);
+    out += ((q63_t)*px++ * coeff) >> 32;
+    *pOut++ = (q31_t)(out);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -296,12 +283,11 @@ void arm_fir_sparse_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* Perform Multiply-Accumulate */
     out = *pOut;
-    out += ((q63_t) *px++ * coeff) >> 32;
-    *pOut++ = (q31_t) (out);
+    out += ((q63_t)*px++ * coeff) >> 32;
+    *pOut++ = (q31_t)(out);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -311,13 +297,12 @@ void arm_fir_sparse_q31(
   pOut = pDst;
 
   /* Output is converted into 1.31 format. */
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time. */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     in = *pOut << 1;
     *pOut++ = in;
     in = *pOut << 1;
@@ -341,15 +326,13 @@ void arm_fir_sparse_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     in = *pOut << 1;
     *pOut++ = in;
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

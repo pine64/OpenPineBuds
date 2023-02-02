@@ -9,12 +9,12 @@ ENV PATH="/root/.cargo/bin:$PATH"
 
 RUN apt-get update \
     && apt-get install -y \
-        bc \
-        build-essential \
-        curl \
-        git  \
-        libudev-dev \
-        pkg-config \
+    bc \
+    build-essential \
+    curl \
+    git  \
+    libudev-dev \
+    pkg-config \
     && curl https://sh.rustup.rs -sSf | bash -s -- -y \
     && git clone https://github.com/Ralim/bestool.git \
     && cd /usr/src/bestool/bestool/ \
@@ -26,19 +26,20 @@ WORKDIR /usr/src
 
 RUN apt-get update \
     && apt-get install -y \ 
-        bash \
-        bc \
-        bzip2 \
-        curl \
-        ffmpeg \
-        git \
-        make \
-        tar \
-        xxd \
+    bash \
+    bc \
+    bzip2 \
+    curl \
+    ffmpeg \
+    clang-format \ 
+    git \
+    make \
+    tar \
+    xxd \
     && git config --global --add safe.directory /src \
     && mkdir -pv /src \
     && curl \
-        https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-$(arch)-linux.tar.bz2 | tar -xj -C /src/
+    https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-$(arch)-linux.tar.bz2 | tar -xj -C /src/
 
 ENV PATH="${PATH}:/src/gcc-arm-none-eabi-9-2019-q4-major/bin"
 COPY --from=rust_build /usr/src/bestool/bestool/target/release/bestool /usr/local/bin/bestool

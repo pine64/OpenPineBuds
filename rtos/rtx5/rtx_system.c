@@ -25,13 +25,12 @@
 
 #include "rtx_lib.h"
 
-
 //  ==== Helper functions ====
 
 /// Put Object into ISR Queue.
 /// \param[in]  object          object.
 /// \return 1 - success, 0 - failure.
-static uint32_t isr_queue_put (os_object_t *object) {
+static uint32_t isr_queue_put(os_object_t *object) {
 #if (EXCLUSIVE_ACCESS == 0)
   uint32_t primask = __get_PRIMASK();
 #else
@@ -74,11 +73,11 @@ static uint32_t isr_queue_put (os_object_t *object) {
 
 /// Get Object from ISR Queue.
 /// \return object or NULL.
-static os_object_t *isr_queue_get (void) {
+static os_object_t *isr_queue_get(void) {
 #if (EXCLUSIVE_ACCESS != 0)
-  uint32_t     n;
+  uint32_t n;
 #endif
-  uint16_t     max;
+  uint16_t max;
   os_object_t *ret;
 
   max = osRtxInfo.isr_queue.max;
@@ -109,14 +108,13 @@ static os_object_t *isr_queue_get (void) {
   return ret;
 }
 
-
 //  ==== Library Functions ====
 
 /// Tick Handler.
-//lint -esym(714,osRtxTick_Handler) "Referenced by Exception handlers"
-//lint -esym(759,osRtxTick_Handler) "Prototype in header"
-//lint -esym(765,osRtxTick_Handler) "Global scope"
-void osRtxTick_Handler (void) {
+// lint -esym(714,osRtxTick_Handler) "Referenced by Exception handlers"
+// lint -esym(759,osRtxTick_Handler) "Prototype in header"
+// lint -esym(765,osRtxTick_Handler) "Global scope"
+void osRtxTick_Handler(void) {
   os_thread_t *thread;
 
   OS_Tick_AcknowledgeIRQ();
@@ -141,7 +139,7 @@ void osRtxTick_Handler (void) {
     if (osRtxInfo.thread.robin.thread != osRtxInfo.thread.run.next) {
       // Reset Round Robin
       osRtxInfo.thread.robin.thread = osRtxInfo.thread.run.next;
-      osRtxInfo.thread.robin.tick   = osRtxInfo.thread.robin.timeout;
+      osRtxInfo.thread.robin.tick = osRtxInfo.thread.robin.timeout;
     } else {
       if (osRtxInfo.thread.robin.tick != 0U) {
         osRtxInfo.thread.robin.tick--;
@@ -150,13 +148,14 @@ void osRtxTick_Handler (void) {
         // Round Robin Timeout
         if (osRtxKernelGetState() == osRtxKernelRunning) {
           thread = osRtxInfo.thread.ready.thread_list;
-          if ((thread != NULL) && (thread->priority == osRtxInfo.thread.robin.thread->priority)) {
+          if ((thread != NULL) &&
+              (thread->priority == osRtxInfo.thread.robin.thread->priority)) {
             osRtxThreadListRemove(thread);
             osRtxThreadReadyPut(osRtxInfo.thread.robin.thread);
             EvrRtxThreadPreempted(osRtxInfo.thread.robin.thread);
             osRtxThreadSwitch(thread);
             osRtxInfo.thread.robin.thread = thread;
-            osRtxInfo.thread.robin.tick   = osRtxInfo.thread.robin.timeout;
+            osRtxInfo.thread.robin.tick = osRtxInfo.thread.robin.timeout;
           }
         }
       }
@@ -165,10 +164,10 @@ void osRtxTick_Handler (void) {
 }
 
 /// Pending Service Call Handler.
-//lint -esym(714,osRtxPendSV_Handler) "Referenced by Exception handlers"
-//lint -esym(759,osRtxPendSV_Handler) "Prototype in header"
-//lint -esym(765,osRtxPendSV_Handler) "Global scope"
-void osRtxPendSV_Handler (void) {
+// lint -esym(714,osRtxPendSV_Handler) "Referenced by Exception handlers"
+// lint -esym(759,osRtxPendSV_Handler) "Prototype in header"
+// lint -esym(765,osRtxPendSV_Handler) "Global scope"
+void osRtxPendSV_Handler(void) {
   os_object_t *object;
 
   for (;;) {
@@ -177,24 +176,24 @@ void osRtxPendSV_Handler (void) {
       break;
     }
     switch (object->id) {
-      case osRtxIdThread:
-        osRtxInfo.post_process.thread(osRtxThreadObject(object));
-        break;
-      case osRtxIdEventFlags:
-        osRtxInfo.post_process.event_flags(osRtxEventFlagsObject(object));
-        break;
-      case osRtxIdSemaphore:
-        osRtxInfo.post_process.semaphore(osRtxSemaphoreObject(object));
-        break;
-      case osRtxIdMemoryPool:
-        osRtxInfo.post_process.memory_pool(osRtxMemoryPoolObject(object));
-        break;
-      case osRtxIdMessage:
-        osRtxInfo.post_process.message(osRtxMessageObject(object));
-        break;
-      default:
-        // Should never come here
-        break;
+    case osRtxIdThread:
+      osRtxInfo.post_process.thread(osRtxThreadObject(object));
+      break;
+    case osRtxIdEventFlags:
+      osRtxInfo.post_process.event_flags(osRtxEventFlagsObject(object));
+      break;
+    case osRtxIdSemaphore:
+      osRtxInfo.post_process.semaphore(osRtxSemaphoreObject(object));
+      break;
+    case osRtxIdMemoryPool:
+      osRtxInfo.post_process.memory_pool(osRtxMemoryPoolObject(object));
+      break;
+    case osRtxIdMessage:
+      osRtxInfo.post_process.message(osRtxMessageObject(object));
+      break;
+    default:
+      // Should never come here
+      break;
     }
   }
 
@@ -203,7 +202,7 @@ void osRtxPendSV_Handler (void) {
 
 /// Register post ISR processing.
 /// \param[in]  object          generic object.
-void osRtxPostProcess (os_object_t *object) {
+void osRtxPostProcess(os_object_t *object) {
 
   if (isr_queue_put(object) != 0U) {
     if (osRtxInfo.kernel.blocked == 0U) {

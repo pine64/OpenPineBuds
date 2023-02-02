@@ -25,41 +25,41 @@
 
 #include "rtx_lib.h"
 
-
 //  Memory Pool Header structure
 typedef struct {
-  uint32_t size;                // Memory Pool size
-  uint32_t used;                // Used Memory
+  uint32_t size; // Memory Pool size
+  uint32_t used; // Used Memory
 } mem_head_t;
 
 //  Memory Block Header structure
 typedef struct mem_block_s {
-  struct mem_block_s *next;     // Next Memory Block in list
-  uint32_t            info;     // Block Info or max used Memory (in last block)
+  struct mem_block_s *next; // Next Memory Block in list
+  uint32_t info;            // Block Info or max used Memory (in last block)
 } mem_block_t;
 
 //  Memory Block Info: Length = <31:2>:'00', Type = <1:0>
-#define MB_INFO_LEN_MASK        0xFFFFFFFCU     // Length mask
-#define MB_INFO_TYPE_MASK       0x00000003U     // Type mask
+#define MB_INFO_LEN_MASK 0xFFFFFFFCU  // Length mask
+#define MB_INFO_TYPE_MASK 0x00000003U // Type mask
 
 //  Memory Head Pointer
-__STATIC_INLINE mem_head_t *MemHeadPtr (void *mem) {
-  //lint -e{9079} -e{9087} "conversion from pointer to void to pointer to other type" [MISRA Note 6]
+__STATIC_INLINE mem_head_t *MemHeadPtr(void *mem) {
+  // lint -e{9079} -e{9087} "conversion from pointer to void to pointer to other
+  // type" [MISRA Note 6]
   return ((mem_head_t *)mem);
 }
 
 //  Memory Block Pointer
-__STATIC_INLINE mem_block_t *MemBlockPtr (void *mem, uint32_t offset) {
-  uint32_t     addr;
+__STATIC_INLINE mem_block_t *MemBlockPtr(void *mem, uint32_t offset) {
+  uint32_t addr;
   mem_block_t *ptr;
 
-  //lint --e{923} --e{9078} "cast between pointer and unsigned int" [MISRA Note 8]
+  // lint --e{923} --e{9078} "cast between pointer and unsigned int" [MISRA Note
+  // 8]
   addr = (uint32_t)mem + offset;
-  ptr  = (mem_block_t *)addr;
+  ptr = (mem_block_t *)addr;
 
   return ptr;
 }
-
 
 //  ==== Library functions ====
 
@@ -67,16 +67,16 @@ __STATIC_INLINE mem_block_t *MemBlockPtr (void *mem, uint32_t offset) {
 /// \param[in]  mem             pointer to memory pool.
 /// \param[in]  size            size of a memory pool in bytes.
 /// \return 1 - success, 0 - failure.
-__WEAK uint32_t osRtxMemoryInit (void *mem, uint32_t size) {
-  mem_head_t  *head;
+__WEAK uint32_t osRtxMemoryInit(void *mem, uint32_t size) {
+  mem_head_t *head;
   mem_block_t *ptr;
 
   // Check parameters
-  //lint -e{923} "cast from pointer to unsigned int" [MISRA Note 7]
+  // lint -e{923} "cast from pointer to unsigned int" [MISRA Note 7]
   if ((mem == NULL) || (((uint32_t)mem & 7U) != 0U) || ((size & 7U) != 0U) ||
-      (size < (sizeof(mem_head_t) + (2U*sizeof(mem_block_t))))) {
+      (size < (sizeof(mem_head_t) + (2U * sizeof(mem_block_t))))) {
     EvrRtxMemoryInit(mem, size, 0U);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return 0U;
   }
 
@@ -100,18 +100,19 @@ __WEAK uint32_t osRtxMemoryInit (void *mem, uint32_t size) {
 /// Allocate a memory block from a Memory Pool.
 /// \param[in]  mem             pointer to memory pool.
 /// \param[in]  size            size of a memory block in bytes.
-/// \param[in]  type            memory block type: 0 - generic, 1 - control block
-/// \return allocated memory block or NULL in case of no memory is available.
-__WEAK void *osRtxMemoryAlloc (void *mem, uint32_t size, uint32_t type) {
+/// \param[in]  type            memory block type: 0 - generic, 1 - control
+/// block \return allocated memory block or NULL in case of no memory is
+/// available.
+__WEAK void *osRtxMemoryAlloc(void *mem, uint32_t size, uint32_t type) {
   mem_block_t *ptr;
   mem_block_t *p, *p_new;
-  uint32_t     block_size;
-  uint32_t     hole_size;
+  uint32_t block_size;
+  uint32_t hole_size;
 
   // Check parameters
   if ((mem == NULL) || (size == 0U) || ((type & ~MB_INFO_TYPE_MASK) != 0U)) {
     EvrRtxMemoryAlloc(mem, size, type, NULL);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return NULL;
   }
 
@@ -123,8 +124,8 @@ __WEAK void *osRtxMemoryAlloc (void *mem, uint32_t size, uint32_t type) {
   // Search for hole big enough
   p = MemBlockPtr(mem, sizeof(mem_head_t));
   for (;;) {
-    //lint -e{923} -e{9078} "cast from pointer to unsigned int"
-    hole_size  = (uint32_t)p->next - (uint32_t)p;
+    // lint -e{923} -e{9078} "cast from pointer to unsigned int"
+    hole_size = (uint32_t)p->next - (uint32_t)p;
     hole_size -= p->info & MB_INFO_LEN_MASK;
     if (hole_size >= block_size) {
       // Hole found
@@ -134,7 +135,7 @@ __WEAK void *osRtxMemoryAlloc (void *mem, uint32_t size, uint32_t type) {
     if (p->next == NULL) {
       // Failed (end of list)
       EvrRtxMemoryAlloc(mem, size, type, NULL);
-      //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+      // lint -e{904} "Return statement before end of function" [MISRA Note 1]
       return NULL;
     }
   }
@@ -171,14 +172,14 @@ __WEAK void *osRtxMemoryAlloc (void *mem, uint32_t size, uint32_t type) {
 /// \param[in]  mem             pointer to memory pool.
 /// \param[in]  block           memory block to be returned to the memory pool.
 /// \return 1 - success, 0 - failure.
-__WEAK uint32_t osRtxMemoryFree (void *mem, void *block) {
+__WEAK uint32_t osRtxMemoryFree(void *mem, void *block) {
   const mem_block_t *ptr;
-        mem_block_t *p, *p_prev;
+  mem_block_t *p, *p_prev;
 
   // Check parameters
   if ((mem == NULL) || (block == NULL)) {
     EvrRtxMemoryFree(mem, block, 0U);
-    //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+    // lint -e{904} "Return statement before end of function" [MISRA Note 1]
     return 0U;
   }
 
@@ -195,7 +196,7 @@ __WEAK uint32_t osRtxMemoryFree (void *mem, void *block) {
     if (p == NULL) {
       // Not found
       EvrRtxMemoryFree(mem, block, 0U);
-      //lint -e{904} "Return statement before end of function" [MISRA Note 1]
+      // lint -e{904} "Return statement before end of function" [MISRA Note 1]
       return 0U;
     }
   }

@@ -15,6 +15,9 @@
  ****************************************************************************/
 #ifndef __APP_IBRT_A2DP__
 #define __APP_IBRT_A2DP__
+#include "a2dp_api.h"
+#include "app_tws_ibrt_cmd_sync_a2dp_status.h"
+#include <stdint.h>
 
 a2dp_stream_t *app_bt_get_mobile_a2dp_stream(uint32_t deviceId);
 int a2dp_ibrt_sync_set_status(ibrt_a2dp_status_t *a2dp_status);

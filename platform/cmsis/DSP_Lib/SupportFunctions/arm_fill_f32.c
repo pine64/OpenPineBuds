@@ -57,20 +57,15 @@
   @return        none
  */
 
-void arm_fill_f32(
-  float32_t value,
-  float32_t * pDst,
-  uint32_t blockSize)
-{
-  uint32_t blkCnt;                               /* Loop counter */
+void arm_fill_f32(float32_t value, float32_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = value */
 
     /* Fill value in destination buffer */
@@ -93,8 +88,7 @@ void arm_fill_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = value */
 
     /* Fill value in destination buffer */

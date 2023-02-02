@@ -45,15 +45,11 @@
   @return        none
  */
 
-void arm_fill_q15(
-  q15_t value,
-  q15_t * pDst,
-  uint32_t blockSize)
-{
-  uint32_t blkCnt;                               /* Loop counter */
+void arm_fill_q15(q15_t value, q15_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-  q31_t packedValue;                             /* value packed to 32 bits */
+#if defined(ARM_MATH_LOOPUNROLL)
+  q31_t packedValue; /* value packed to 32 bits */
 
   /* Packing two 16 bit values to 32 bit value in order to use SIMD */
   packedValue = __PKHBT(value, value, 16U);
@@ -61,13 +57,12 @@ void arm_fill_q15(
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = value */
 
     /* fill 2 times 2 samples at a time */
-    write_q15x2_ia (&pDst, packedValue);
-    write_q15x2_ia (&pDst, packedValue);
+    write_q15x2_ia(&pDst, packedValue);
+    write_q15x2_ia(&pDst, packedValue);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -83,8 +78,7 @@ void arm_fill_q15(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = value */
 
     /* Fill value in destination buffer */

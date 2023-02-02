@@ -39,7 +39,8 @@
   The underlying algorithm is used:
 
   <pre>
-      Result = pSrc[0] * pSrc[0] + pSrc[1] * pSrc[1] + pSrc[2] * pSrc[2] + ... + pSrc[blockSize-1] * pSrc[blockSize-1];
+      Result = pSrc[0] * pSrc[0] + pSrc[1] * pSrc[1] + pSrc[2] * pSrc[2] + ... +
+  pSrc[blockSize-1] * pSrc[blockSize-1];
   </pre>
 
   There are separate functions for floating point, Q31, Q15, and Q7 data types.
@@ -58,22 +59,18 @@
   @return        none
  */
 
-void arm_power_f32(
-  const float32_t * pSrc,
-        uint32_t blockSize,
-        float32_t * pResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t sum = 0.0f;                          /* Temporary result storage */
-        float32_t in;                                  /* Temporary variable to store input value */
+void arm_power_f32(const float32_t *pSrc, uint32_t blockSize,
+                   float32_t *pResult) {
+  uint32_t blkCnt;      /* Loop counter */
+  float32_t sum = 0.0f; /* Temporary result storage */
+  float32_t in;         /* Temporary variable to store input value */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A[0] * A[0] + A[1] * A[1] + ... + A[blockSize-1] * A[blockSize-1] */
 
     /* Compute Power and store result in a temporary variable, sum. */
@@ -103,8 +100,7 @@ void arm_power_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = A[0] * A[0] + A[1] * A[1] + ... + A[blockSize-1] * A[blockSize-1] */
 
     /* Compute Power and store result in a temporary variable, sum. */

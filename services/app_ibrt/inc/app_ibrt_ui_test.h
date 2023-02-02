@@ -15,19 +15,18 @@
  ****************************************************************************/
 #ifndef __APP_IBRT_UI_TEST_H__
 #define __APP_IBRT_UI_TEST_H__
+#include "app_key.h"
 #include <stdint.h>
-
 #if defined(IBRT)
 
 typedef void (*app_uart_test_function_handle)(void);
 
-typedef struct
-{
-    const char* string;
-    app_uart_test_function_handle function;
+typedef struct {
+  const char *string;
+  app_uart_test_function_handle function;
 } app_uart_handle_t;
 
-app_uart_test_function_handle app_ibrt_ui_find_uart_handle(unsigned char* buf);
+app_uart_test_function_handle app_ibrt_ui_find_uart_handle(unsigned char *buf);
 
 void app_ibrt_ui_test_key_init(void);
 

@@ -45,39 +45,34 @@
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The function is implemented using a 32-bit internal accumulator.
-                   The input is represented in 1.7 format and is accumulated in a 32-bit
-                   accumulator in 25.7 format.
-                   There is no risk of internal overflow with this approach, and the
-                   full precision of intermediate result is preserved.
-                   Finally, the accumulator is truncated to yield a result of 1.7 format.
+                   The function is implemented using a 32-bit internal
+  accumulator. The input is represented in 1.7 format and is accumulated in a
+  32-bit accumulator in 25.7 format. There is no risk of internal overflow with
+  this approach, and the full precision of intermediate result is preserved.
+                   Finally, the accumulator is truncated to yield a result
+  of 1.7 format.
  */
 
-void arm_mean_q7(
-  const q7_t * pSrc,
-        uint32_t blockSize,
-        q7_t * pResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q31_t sum = 0;                                 /* Temporary result storage */
+void arm_mean_q7(const q7_t *pSrc, uint32_t blockSize, q7_t *pResult) {
+  uint32_t blkCnt; /* Loop counter */
+  q31_t sum = 0;   /* Temporary result storage */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-        q31_t in;
+#if defined(ARM_MATH_LOOPUNROLL)
+  q31_t in;
 #endif
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
-    in = read_q7x4_ia ((q7_t **) &pSrc);
+    in = read_q7x4_ia((q7_t **)&pSrc);
     sum += ((in << 24U) >> 24U);
     sum += ((in << 16U) >> 24U);
-    sum += ((in <<  8U) >> 24U);
-    sum +=  (in >> 24U);
+    sum += ((in << 8U) >> 24U);
+    sum += (in >> 24U);
 
     /* Decrement the loop counter */
     blkCnt--;
@@ -93,8 +88,7 @@ void arm_mean_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
     sum += *pSrc++;
 
@@ -104,7 +98,7 @@ void arm_mean_q7(
 
   /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) / blockSize  */
   /* Store result to destination */
-  *pResult = (q7_t) (sum / (int32_t) blockSize);
+  *pResult = (q7_t)(sum / (int32_t)blockSize);
 }
 
 /**

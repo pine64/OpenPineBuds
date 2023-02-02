@@ -34,4 +34,3 @@
 #include "arm_sin_q31.c"
 #include "arm_sqrt_q15.c"
 #include "arm_sqrt_q31.c"
-

@@ -32,17 +32,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
-#include "RTX_Conf.h"
-#include "rt_Task.h"
 #include "rt_System.h"
+#include "RTX_Conf.h"
 #include "rt_Event.h"
+#include "rt_HAL_CM.h"
 #include "rt_List.h"
 #include "rt_Mailbox.h"
-#include "rt_Semaphore.h"
-#include "rt_Time.h"
 #include "rt_Robin.h"
-#include "rt_HAL_CM.h"
+#include "rt_Semaphore.h"
+#include "rt_Task.h"
+#include "rt_Time.h"
+#include "rt_TypeDef.h"
 
 #include "hal_sleep.h"
 #include "hal_timer.h"
@@ -63,26 +63,26 @@ int os_tick_irqn;
 
 static volatile BIT os_lock;
 static volatile BIT os_psh_flag;
-static          U8  pend_flags;
-static          U32 systick_lock_tick;
-static          U32 systick_lock_ts;
+static U8 pend_flags;
+static U32 systick_lock_tick;
+static U32 systick_lock_ts;
 
 /*----------------------------------------------------------------------------
  *      Global Functions
  *---------------------------------------------------------------------------*/
 
-#if defined (__CC_ARM)
-__asm void $$RTX$$version (void) {
-   /* Export a version number symbol for a version control. */
+#if defined(__CC_ARM)
+__asm void $$RTX$$version(void) {
+  /* Export a version number symbol for a version control. */
 
-                EXPORT  __RL_RTX_VER
+  EXPORT __RL_RTX_VER
 
-__RL_RTX_VER    EQU     0x450
+      __RL_RTX_VER EQU 0x450
 }
 #endif
 
 /*--------------------------- rt_suspend ------------------------------------*/
-U32 rt_suspend (void) {
+U32 rt_suspend(void) {
   /* Suspend OS scheduler */
   U32 delta = 0xFFFF;
   U32 start_tick;
@@ -92,13 +92,14 @@ U32 rt_suspend (void) {
   rt_tsk_lock();
   systick_lock_tick = NVIC_ST_CURRENT;
   systick_lock_ts = hal_sys_timer_get();
-  if (start_tick != 0 && (systick_lock_tick == 0 || start_tick < systick_lock_tick)) {
+  if (start_tick != 0 &&
+      (systick_lock_tick == 0 || start_tick < systick_lock_tick)) {
 #if defined(DEBUG_SLEEP) && (DEBUG_SLEEP >= 1)
-      TRACE(6,"[%u/0x%X][%2u/%u] rt_suspend corner case: %02u -> %02u",
-        TICKS_TO_MS(hal_sys_timer_get()), hal_sys_timer_get(), NVIC_ST_CURRENT, os_time,
-        start_tick, systick_lock_tick);
+    TRACE(6, "[%u/0x%X][%2u/%u] rt_suspend corner case: %02u -> %02u",
+          TICKS_TO_MS(hal_sys_timer_get()), hal_sys_timer_get(),
+          NVIC_ST_CURRENT, os_time, start_tick, systick_lock_tick);
 #endif
-      pend_flags |= 1;
+    pend_flags |= 1;
   }
   if (pend_flags) {
     delta = 0;
@@ -121,7 +122,8 @@ U32 rt_suspend (void) {
   }
 #else
   if (os_tmr.next) {
-    if (os_tmr.tcnt < delta) delta = os_tmr.tcnt;
+    if (os_tmr.tcnt < delta)
+      delta = os_tmr.tcnt;
   }
 #endif
 
@@ -129,22 +131,23 @@ U32 rt_suspend (void) {
 }
 
 /*--------------------------- rt_resume -------------------------------------*/
-void rt_resume (U32 sleep_time) {
+void rt_resume(U32 sleep_time) {
   /* Resume OS scheduler after suspend */
-  //P_TCB next;
-  U32   delta;
-  U32   resume_ts;
-  U32   unlock_ts;
-  U32   systick_remain;
-  U32   sleep_ticks;
-  U8    tick_running = 0;
+  // P_TCB next;
+  U32 delta;
+  U32 resume_ts;
+  U32 unlock_ts;
+  U32 systick_remain;
+  U32 sleep_ticks;
+  U8 tick_running = 0;
   const U32 reload = (NVIC_ST_RELOAD + 1);
 
   __disable_irq();
   resume_ts = hal_sys_timer_get();
   __enable_irq();
 
-  sleep_ticks = (resume_ts - systick_lock_ts) * (OS_CLOCK_NOMINAL / CONFIG_SYSTICK_HZ_NOMINAL);
+  sleep_ticks = (resume_ts - systick_lock_ts) *
+                (OS_CLOCK_NOMINAL / CONFIG_SYSTICK_HZ_NOMINAL);
   if (systick_lock_tick == 0) {
     sleep_time = sleep_ticks / reload;
     systick_remain = reload - sleep_ticks % reload;
@@ -177,12 +180,13 @@ _inc_sleep_time:
     if (os_dly.p_dlnk) {
       delta = sleep_time;
       if (delta >= os_dly.delta_time) {
-        delta   -= os_dly.delta_time;
+        delta -= os_dly.delta_time;
         os_time += os_dly.delta_time;
         os_dly.delta_time = 1;
         while (os_dly.p_dlnk) {
           rt_dec_dly();
-          if (delta == 0) break;
+          if (delta == 0)
+            break;
           delta--;
           os_time++;
         }
@@ -192,7 +196,7 @@ _inc_sleep_time:
         }
         rt_psh_req();
       } else {
-        os_time           += delta;
+        os_time += delta;
         os_dly.delta_time -= delta;
       }
     } else {
@@ -211,11 +215,12 @@ _inc_sleep_time:
     if (os_tmr.next) {
       delta = sleep_time;
       if (delta >= os_tmr.tcnt) {
-        delta   -= os_tmr.tcnt;
+        delta -= os_tmr.tcnt;
         os_tmr.tcnt = 1;
         while (os_tmr.next) {
           rt_tmr_tick();
-          if (delta == 0) break;
+          if (delta == 0)
+            break;
           delta--;
         }
       } else {
@@ -234,9 +239,11 @@ _inc_sleep_time:
 
 #if defined(DEBUG_SLEEP) && (DEBUG_SLEEP >= 1)
   if (sleep_time > 0) {
-    TRACE(7,"[%u/0x%X][%2u/%u] rt_resume: sleep_ticks=%u sleep_time=%u systick_remain=%u",
-      TICKS_TO_MS(hal_sys_timer_get()), hal_sys_timer_get(), NVIC_ST_CURRENT, os_time,
-      sleep_ticks, sleep_time, systick_remain);
+    TRACE(7,
+          "[%u/0x%X][%2u/%u] rt_resume: sleep_ticks=%u sleep_time=%u "
+          "systick_remain=%u",
+          TICKS_TO_MS(hal_sys_timer_get()), hal_sys_timer_get(),
+          NVIC_ST_CURRENT, os_time, sleep_ticks, sleep_time, systick_remain);
   }
 #endif
 
@@ -251,12 +258,15 @@ _task_unlock:
   // systick_remain value range: [1, reload]
   if (sleep_ticks >= systick_remain) {
 #if defined(DEBUG_SLEEP) && (DEBUG_SLEEP >= 1)
-    TRACE(6,"[%u/0x%X][%2u/%u] rt_resume corner case: sleep_ticks=%u systick_remain=%u",
-      TICKS_TO_MS(hal_sys_timer_get()), hal_sys_timer_get(), NVIC_ST_CURRENT, os_time,
-      sleep_ticks, systick_remain);
+    TRACE(6,
+          "[%u/0x%X][%2u/%u] rt_resume corner case: sleep_ticks=%u "
+          "systick_remain=%u",
+          TICKS_TO_MS(hal_sys_timer_get()), hal_sys_timer_get(),
+          NVIC_ST_CURRENT, os_time, sleep_ticks, systick_remain);
     // Update timestamp since traces also consume time
     unlock_ts = hal_sys_timer_get();
-    sleep_ticks = (unlock_ts - resume_ts) * (OS_CLOCK_NOMINAL / CONFIG_SYSTICK_HZ_NOMINAL);
+    sleep_ticks = (unlock_ts - resume_ts) *
+                  (OS_CLOCK_NOMINAL / CONFIG_SYSTICK_HZ_NOMINAL);
 #endif
     delta = sleep_ticks - systick_remain;
     sleep_time = delta / reload + 1;
@@ -270,10 +280,11 @@ _task_unlock:
         systick_remain = 0;
       }
       if (systick_remain) {
-        NVIC_ST_RELOAD  = systick_remain;
+        NVIC_ST_RELOAD = systick_remain;
         NVIC_ST_CURRENT = 0;
-        while (NVIC_ST_CURRENT == 0);
-        NVIC_ST_RELOAD  = reload - 1;
+        while (NVIC_ST_CURRENT == 0)
+          ;
+        NVIC_ST_RELOAD = reload - 1;
       } else {
         NVIC_ST_CURRENT = 0;
       }
@@ -287,71 +298,67 @@ _task_unlock:
   }
 }
 
-
 /*--------------------------- rt_tsk_lock -----------------------------------*/
 
-void rt_tsk_lock (void) {
+void rt_tsk_lock(void) {
   /* Prevent task switching by locking out scheduler */
   if (os_tick_irqn < 0) {
     OS_LOCK();
     os_lock = __TRUE;
-    OS_UNPEND (&pend_flags);
+    OS_UNPEND(&pend_flags);
   } else {
     OS_X_LOCK(os_tick_irqn);
     os_lock = __TRUE;
-    OS_X_UNPEND (&pend_flags);
+    OS_X_UNPEND(&pend_flags);
   }
 }
 
-
 /*--------------------------- rt_tsk_unlock ---------------------------------*/
 
-void rt_tsk_unlock (void) {
+void rt_tsk_unlock(void) {
   /* Unlock scheduler and re-enable task switching */
   if (os_tick_irqn < 0) {
     OS_UNLOCK();
     os_lock = __FALSE;
-    OS_PEND (pend_flags, os_psh_flag);
+    OS_PEND(pend_flags, os_psh_flag);
     os_psh_flag = __FALSE;
   } else {
     OS_X_UNLOCK(os_tick_irqn);
     os_lock = __FALSE;
-    OS_X_PEND (pend_flags, os_psh_flag);
+    OS_X_PEND(pend_flags, os_psh_flag);
     os_psh_flag = __FALSE;
   }
   // Allow cpu sleep
   hal_cpu_wake_unlock(HAL_CPU_WAKE_LOCK_USER_RTOS);
 }
 
-
 /*--------------------------- rt_psh_req ------------------------------------*/
 
-void rt_psh_req (void) {
+void rt_psh_req(void) {
   /* Initiate a post service handling request if required. */
   if (os_lock == __FALSE) {
-    OS_PEND_IRQ ();
-  }
-  else {
+    OS_PEND_IRQ();
+  } else {
     os_psh_flag = __TRUE;
-    // Prohibit cpu sleep when an OS service request is enqueued during os lock (rt_suspend)
+    // Prohibit cpu sleep when an OS service request is enqueued during os lock
+    // (rt_suspend)
     hal_cpu_wake_lock(HAL_CPU_WAKE_LOCK_USER_RTOS);
   }
 }
 
-
 /*--------------------------- rt_pop_req ------------------------------------*/
 
-void rt_pop_req (void) {
+void rt_pop_req(void) {
   /* Process an ISR post service requests. */
   struct OS_XCB *p_CB;
   P_TCB next;
-  U32  idx;
+  U32 idx;
 
   os_tsk.run->state = READY;
   if (os_tsk.run == &os_idle_TCB) {
-    rt_put_rdy_last (os_tsk.run);
+    rt_put_rdy_last(os_tsk.run);
   } else {
-    rt_put_rdy_first (os_tsk.run);
+    rt_put_rdy_first(os_tsk.run);
   }
 
   idx = os_psq->last;
@@ -359,44 +366,39 @@ void rt_pop_req (void) {
     p_CB = os_psq->q[idx].id;
     if (p_CB->cb_type == TCB) {
       /* Is of TCB type */
-      rt_evt_psh ((P_TCB)p_CB, (U16)os_psq->q[idx].arg);
-    }
-    else if (p_CB->cb_type == MCB) {
+      rt_evt_psh((P_TCB)p_CB, (U16)os_psq->q[idx].arg);
+    } else if (p_CB->cb_type == MCB) {
       /* Is of MCB type */
-      rt_mbx_psh ((P_MCB)p_CB, (void *)os_psq->q[idx].arg);
-    }
-    else {
+      rt_mbx_psh((P_MCB)p_CB, (void *)os_psq->q[idx].arg);
+    } else {
       /* Must be of SCB type */
-      rt_sem_psh ((P_SCB)p_CB);
+      rt_sem_psh((P_SCB)p_CB);
     }
-    if (++idx == os_psq->size) idx = 0;
-    rt_dec (&os_psq->count);
+    if (++idx == os_psq->size)
+      idx = 0;
+    rt_dec(&os_psq->count);
   }
   os_psq->last = idx;
 
-  next = rt_get_first (&os_rdy);
-  rt_switch_req (next);
+  next = rt_get_first(&os_rdy);
+  rt_switch_req(next);
 }
-
 
 /*--------------------------- os_tick_init ----------------------------------*/
 
-__weak int os_tick_init (void) {
+__weak int os_tick_init(void) {
   /* Initialize SysTick timer as system tick timer. */
-  rt_systick_init ();
-  return (-1);  /* Return IRQ number of SysTick timer */
+  rt_systick_init();
+  return (-1); /* Return IRQ number of SysTick timer */
 }
-
 
 /*--------------------------- os_tick_irqack --------------------------------*/
 
-__weak void os_tick_irqack (void) {
-  /* Acknowledge timer interrupt. */
+__weak void os_tick_irqack(void) { /* Acknowledge timer interrupt. */
 }
 
-
 /*--------------------------- rt_systick ------------------------------------*/
-void rt_systick (void) {
+void rt_systick(void) {
   /* Check for system clock update, suspend running task. */
   P_TCB next;
 
@@ -405,41 +407,41 @@ void rt_systick (void) {
 #endif
 
   os_tsk.run->state = READY;
-  rt_put_rdy_first (os_tsk.run);
+  rt_put_rdy_first(os_tsk.run);
 
   /* Check Round Robin timeout. */
-  rt_chk_robin ();
+  rt_chk_robin();
 
   /* Update delays. */
   os_time++;
-  rt_dec_dly ();
+  rt_dec_dly();
 
   /* Check the user timers. */
 #ifdef __CMSIS_RTOS
   sysTimerTick();
 #else
-  rt_tmr_tick ();
+  rt_tmr_tick();
 #endif
 
   /* Switch back to highest ready task */
-  next = rt_get_first (&os_rdy);
-  rt_switch_req (next);
+  next = rt_get_first(&os_rdy);
+  rt_switch_req(next);
 }
 
 /*--------------------------- rt_stk_check ----------------------------------*/
-__weak void rt_stk_check (void) {
-    /* Check for stack overflow. */
-    if (os_tsk.run->task_id == 0x01) {
-        // TODO: For the main thread the check should be done against the main heap pointer
-    } else {
-        if ((os_tsk.run->tsk_stack < (U32)os_tsk.run->stack) ||
-            (os_tsk.run->stack[0] != MAGIC_WORD)) {
-            os_error (OS_ERR_STK_OVF);
-        }
+__weak void rt_stk_check(void) {
+  /* Check for stack overflow. */
+  if (os_tsk.run->task_id == 0x01) {
+    // TODO: For the main thread the check should be done against the main heap
+    // pointer
+  } else {
+    if ((os_tsk.run->tsk_stack < (U32)os_tsk.run->stack) ||
+        (os_tsk.run->stack[0] != MAGIC_WORD)) {
+      os_error(OS_ERR_STK_OVF);
     }
+  }
 }
 
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

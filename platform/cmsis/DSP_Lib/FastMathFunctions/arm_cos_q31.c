@@ -26,8 +26,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @ingroup groupFastMath
@@ -39,25 +39,24 @@
  */
 
 /**
-  @brief         Fast approximation to the trigonometric cosine function for Q31 data.
+  @brief         Fast approximation to the trigonometric cosine function for Q31
+  data.
   @param[in]     x  Scaled input value in radians
   @return        cos(x)
 
-  The Q31 input value is in the range [0 +0.9999] and is mapped to a radian value in the range [0 2*PI).
+  The Q31 input value is in the range [0 +0.9999] and is mapped to a radian
+  value in the range [0 2*PI).
  */
 
-q31_t arm_cos_q31(
-  q31_t x)
-{
-  q31_t cosVal;                                  /* Temporary input, output variables */
-  int32_t index;                                 /* Index variable */
-  q31_t a, b;                                    /* Two nearest output values */
-  q31_t fract;                                   /* Temporary values for fractional values */
+q31_t arm_cos_q31(q31_t x) {
+  q31_t cosVal;  /* Temporary input, output variables */
+  int32_t index; /* Index variable */
+  q31_t a, b;    /* Two nearest output values */
+  q31_t fract;   /* Temporary values for fractional values */
 
   /* add 0.25 (pi/2) to read sine table */
   x = (uint32_t)x + 0x20000000;
-  if (x < 0)
-  { /* convert negative numbers to corresponding positive ones */
+  if (x < 0) { /* convert negative numbers to corresponding positive ones */
     x = (uint32_t)x + 0x80000000;
   }
 
@@ -69,11 +68,11 @@ q31_t arm_cos_q31(
 
   /* Read two nearest values of input value from the sin table */
   a = sinTable_q31[index];
-  b = sinTable_q31[index+1];
+  b = sinTable_q31[index + 1];
 
   /* Linear interpolation process */
-  cosVal = (q63_t) (0x80000000 - fract) * a >> 32;
-  cosVal = (q31_t) ((((q63_t) cosVal << 32) + ((q63_t) fract * b)) >> 32);
+  cosVal = (q63_t)(0x80000000 - fract) * a >> 32;
+  cosVal = (q31_t)((((q63_t)cosVal << 32) + ((q63_t)fract * b)) >> 32);
 
   /* Return output value */
   return (cosVal << 1);

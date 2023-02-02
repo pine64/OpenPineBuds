@@ -13,69 +13,66 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-#include "cmsis_os.h"
-#include "stdint.h"
 #include "app_spec_ostimer.h"
+#include "cmsis_os.h"
 #include "hal_trace.h"
-
+#include "stdint.h"
 
 /// Create timer
-osStatus app_spec_timer_create (SPEC_TIMER_CTX_T *spec_timer_ctx, const osTimerDef_t *timer_def, os_timer_type type, void *argument)
-{    
-    spec_timer_ctx->type     = type;
-    spec_timer_ctx->argument = argument;
-    spec_timer_ctx->timerid  = osTimerCreate(timer_def, type, spec_timer_ctx);
-    return spec_timer_ctx->timerid ? osOK: osErrorOS;
+osStatus app_spec_timer_create(SPEC_TIMER_CTX_T *spec_timer_ctx,
+                               const osTimerDef_t *timer_def,
+                               os_timer_type type, void *argument) {
+  spec_timer_ctx->type = type;
+  spec_timer_ctx->argument = argument;
+  spec_timer_ctx->timerid = osTimerCreate(timer_def, type, spec_timer_ctx);
+  return spec_timer_ctx->timerid ? osOK : osErrorOS;
 }
 
 /// Start or restart timer
-osStatus app_spec_timer_start (SPEC_TIMER_CTX_T *spec_timer_ctx, uint32_t millisec)
-{
-    osStatus status;
+osStatus app_spec_timer_start(SPEC_TIMER_CTX_T *spec_timer_ctx,
+                              uint32_t millisec) {
+  osStatus status;
 
-    //TRACE(1,"%s", __func__);
-    if (millisec > UINT16_MAX){
-        spec_timer_ctx->interval = millisec;
-        spec_timer_ctx->ctx = millisec;
-        status = osTimerStart(spec_timer_ctx->timerid, UINT16_MAX);
-    }else{        
-        spec_timer_ctx->interval = millisec;
-        spec_timer_ctx->ctx = millisec;
-        status = osTimerStart(spec_timer_ctx->timerid, (uint32_t)millisec);
-    }
+  // TRACE(1,"%s", __func__);
+  if (millisec > UINT16_MAX) {
+    spec_timer_ctx->interval = millisec;
+    spec_timer_ctx->ctx = millisec;
+    status = osTimerStart(spec_timer_ctx->timerid, UINT16_MAX);
+  } else {
+    spec_timer_ctx->interval = millisec;
+    spec_timer_ctx->ctx = millisec;
+    status = osTimerStart(spec_timer_ctx->timerid, (uint32_t)millisec);
+  }
 
-    return status;
+  return status;
 }
 
 /// Stop timer
-osStatus app_spec_timer_stop (SPEC_TIMER_CTX_T *spec_timer_ctx)
-{
+osStatus app_spec_timer_stop(SPEC_TIMER_CTX_T *spec_timer_ctx) {
   return osTimerStop(spec_timer_ctx->timerid);
 }
 
 /// Delete timer
-osStatus app_spec_timer_delete (SPEC_TIMER_CTX_T *spec_timer_ctx)
-{
+osStatus app_spec_timer_delete(SPEC_TIMER_CTX_T *spec_timer_ctx) {
   return osTimerDelete(spec_timer_ctx->timerid);
 }
 
-void app_spec_timer_handler(void const *para)
-{
-    SPEC_TIMER_CTX_T *spec_timer_ctx = (SPEC_TIMER_CTX_T *)para;
+void app_spec_timer_handler(void const *para) {
+  SPEC_TIMER_CTX_T *spec_timer_ctx = (SPEC_TIMER_CTX_T *)para;
 
-    if (spec_timer_ctx->ctx > UINT16_MAX){
-        spec_timer_ctx->ctx -= UINT16_MAX;
-        if (spec_timer_ctx->ctx > UINT16_MAX){
-            osTimerStart(spec_timer_ctx->timerid, UINT16_MAX);
-        }else{
-            osTimerStart(spec_timer_ctx->timerid, spec_timer_ctx->ctx);
-        }
-    }else{
-        (*spec_timer_ctx->ptimer)(spec_timer_ctx->argument);
-        if (spec_timer_ctx->type == osTimerPeriodic){
-            app_spec_timer_start(spec_timer_ctx, spec_timer_ctx->interval);
-        }
+  if (spec_timer_ctx->ctx > UINT16_MAX) {
+    spec_timer_ctx->ctx -= UINT16_MAX;
+    if (spec_timer_ctx->ctx > UINT16_MAX) {
+      osTimerStart(spec_timer_ctx->timerid, UINT16_MAX);
+    } else {
+      osTimerStart(spec_timer_ctx->timerid, spec_timer_ctx->ctx);
     }
+  } else {
+    (*spec_timer_ctx->ptimer)(spec_timer_ctx->argument);
+    if (spec_timer_ctx->type == osTimerPeriodic) {
+      app_spec_timer_start(spec_timer_ctx, spec_timer_ctx->interval);
+    }
+  }
 }
 
 #if 0

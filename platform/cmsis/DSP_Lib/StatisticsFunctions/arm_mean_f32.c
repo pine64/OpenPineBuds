@@ -35,11 +35,12 @@
 /**
   @defgroup mean Mean
 
-  Calculates the mean of the input vector. Mean is defined as the average of the elements in the vector.
-  The underlying algorithm is used:
+  Calculates the mean of the input vector. Mean is defined as the average of the
+  elements in the vector. The underlying algorithm is used:
 
   <pre>
-      Result = (pSrc[0] + pSrc[1] + pSrc[2] + ... + pSrc[blockSize-1]) / blockSize;
+      Result = (pSrc[0] + pSrc[1] + pSrc[2] + ... + pSrc[blockSize-1]) /
+  blockSize;
   </pre>
 
   There are separate functions for floating-point, Q31, Q15, and Q7 data types.
@@ -58,21 +59,17 @@
   @return        none
  */
 
-void arm_mean_f32(
-  const float32_t * pSrc,
-        uint32_t blockSize,
-        float32_t * pResult)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        float32_t sum = 0.0f;                          /* Temporary result storage */
+void arm_mean_f32(const float32_t *pSrc, uint32_t blockSize,
+                  float32_t *pResult) {
+  uint32_t blkCnt;      /* Loop counter */
+  float32_t sum = 0.0f; /* Temporary result storage */
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
     sum += *pSrc++;
 
@@ -96,8 +93,7 @@ void arm_mean_f32(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (A[0] + A[1] + A[2] + ... + A[blockSize-1]) */
     sum += *pSrc++;
 

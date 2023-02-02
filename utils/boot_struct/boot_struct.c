@@ -13,10 +13,10 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-#include "tool_msg.h"
-#include "reboot_param.h"
-#include "norflash_cfg.h"
 #include "hal_cmu.h"
+#include "norflash_cfg.h"
+#include "reboot_param.h"
+#include "tool_msg.h"
 
 extern const char sys_build_info[];
 
@@ -31,96 +31,86 @@ extern const unsigned int system_info;
 #undef PROGRAMMER
 #endif
 
-#define BOOT_STRUCT_LOC                 __attribute((section(".boot_struct")))
+#define BOOT_STRUCT_LOC __attribute((section(".boot_struct")))
 
 #ifdef USER_SECURE_BOOT
-#define DEFAULT_BUILD_INFO              ((uint32_t)&system_info)
+#define DEFAULT_BUILD_INFO ((uint32_t)&system_info)
 #else
-#define DEFAULT_BUILD_INFO              ((uint32_t)sys_build_info)
+#define DEFAULT_BUILD_INFO ((uint32_t)sys_build_info)
 #endif
 
-#define DEFAULT_CODE_SIG                \
-    {                                   \
-        .code_size = 0,                 \
-        .sig_len = SIG_LEN,             \
-    }
+#define DEFAULT_CODE_SIG                                                       \
+  { .code_size = 0, .sig_len = SIG_LEN, }
 
 #ifdef SIMU
-#define DEFAULT_NORFLASH_SAMDLY         0x1
-#define DEFAULT_NORFLASH_MOD_CLK        HAL_CMU_FREQ_26M
-#define DEFAULT_NORFLASH_RDCMD          0x03
+#define DEFAULT_NORFLASH_SAMDLY 0x1
+#define DEFAULT_NORFLASH_MOD_CLK HAL_CMU_FREQ_26M
+#define DEFAULT_NORFLASH_RDCMD 0x03
 #else
-#define DEFAULT_NORFLASH_SAMDLY         0x2
+#define DEFAULT_NORFLASH_SAMDLY 0x2
 // Select 26M for 40M crystal case
-#define DEFAULT_NORFLASH_MOD_CLK        HAL_CMU_FREQ_104M
+#define DEFAULT_NORFLASH_MOD_CLK HAL_CMU_FREQ_104M
 // Below 50M: 0x03, Above 50M: 0x0B
-#define DEFAULT_NORFLASH_RDCMD          0x0B
+#define DEFAULT_NORFLASH_RDCMD 0x0B
 #endif
 
-#define DEFAULT_NORFLASH_CFG            \
-    {                                   \
-        .neg_phase = 0,                 \
-        .pos_neg   = 0,                 \
-        .cmdquad   = 0,                 \
-        .div       = 0x2,               \
-        .samdly    = DEFAULT_NORFLASH_SAMDLY, \
-        .dualmode  = 1,                 \
-        .holdpin   = 0,                 \
-        .wprpin    = 0,                 \
-        .quadmode  = 0,                 \
-        .mod_clk   = DEFAULT_NORFLASH_MOD_CLK, \
-        .spiruen   = 0,                 \
-        .spirden   = 0,                 \
-        .dualiocmd = 0xBB,              \
-        .rdcmd     = DEFAULT_NORFLASH_RDCMD, \
-        .frdcmd    = 0x0B,              \
-        .qrdcmd    = 0xEB,              \
-    }
+#define DEFAULT_NORFLASH_CFG                                                   \
+  {                                                                            \
+    .neg_phase = 0, .pos_neg = 0, .cmdquad = 0, .div = 0x2,                    \
+    .samdly = DEFAULT_NORFLASH_SAMDLY, .dualmode = 1, .holdpin = 0,            \
+    .wprpin = 0, .quadmode = 0, .mod_clk = DEFAULT_NORFLASH_MOD_CLK,           \
+    .spiruen = 0, .spirden = 0, .dualiocmd = 0xBB,                             \
+    .rdcmd = DEFAULT_NORFLASH_RDCMD, .frdcmd = 0x0B, .qrdcmd = 0xEB,           \
+  }
 
 #ifdef SECURE_BOOT_V1
 
 #ifdef PROGRAMMER
 
 struct programmer_boot_struct_t {
-    struct boot_struct_v1_t boot_struct;
-    struct code_sig_struct_t code_sig_struct;
+  struct boot_struct_v1_t boot_struct;
+  struct code_sig_struct_t code_sig_struct;
 };
 
 const struct programmer_boot_struct_t BOOT_STRUCT_LOC programmer_boot_struct = {
-    .boot_struct = {
-        .hdr = {
-            .magic = BOOT_MAGIC_NUMBER,
-            .security = 1,
-            .hash_type = BOOT_HASH_TYPE_SHA256,
-            .key_type = BOOT_KEY_TYPE_RSA2048,
-            .key_len = KEY_LEN,
-            .sig_len = SIG_LEN,
-            .build_info_start = ((uint32_t)sys_build_info),
+    .boot_struct =
+        {
+            .hdr =
+                {
+                    .magic = BOOT_MAGIC_NUMBER,
+                    .security = 1,
+                    .hash_type = BOOT_HASH_TYPE_SHA256,
+                    .key_type = BOOT_KEY_TYPE_RSA2048,
+                    .key_len = KEY_LEN,
+                    .sig_len = SIG_LEN,
+                    .build_info_start = ((uint32_t)sys_build_info),
+                },
         },
-    },
     .code_sig_struct = DEFAULT_CODE_SIG,
 };
 
 #elif defined(SECURE_BOOT)
 
 struct secure_boot_struct_t {
-    struct boot_struct_v1_t boot_struct;
-    struct code_sig_struct_t code_sig_struct;
-    struct norflash_cfg_struct_t norflash_cfg;
+  struct boot_struct_v1_t boot_struct;
+  struct code_sig_struct_t code_sig_struct;
+  struct norflash_cfg_struct_t norflash_cfg;
 };
 
 const struct secure_boot_struct_t BOOT_STRUCT_LOC secure_boot_struct = {
-    .boot_struct = {
-        .hdr = {
-            .magic = ~0UL,
-            .security = 1,
-            .hash_type = BOOT_HASH_TYPE_SHA256,
-            .key_type = BOOT_KEY_TYPE_RSA2048,
-            .key_len = KEY_LEN,
-            .sig_len = SIG_LEN,
-            .build_info_start = DEFAULT_BUILD_INFO,
+    .boot_struct =
+        {
+            .hdr =
+                {
+                    .magic = ~0UL,
+                    .security = 1,
+                    .hash_type = BOOT_HASH_TYPE_SHA256,
+                    .key_type = BOOT_KEY_TYPE_RSA2048,
+                    .key_len = KEY_LEN,
+                    .sig_len = SIG_LEN,
+                    .build_info_start = DEFAULT_BUILD_INFO,
+                },
         },
-    },
     .code_sig_struct = DEFAULT_CODE_SIG,
     .norflash_cfg = DEFAULT_NORFLASH_CFG,
 };
@@ -140,48 +130,54 @@ const struct boot_hdr_v1_t BOOT_STRUCT_LOC boot_struct = {
 #ifdef PROGRAMMER
 
 union programmer_boot_struct_t {
-    // To keep compatible with the old download tools when downloadig non-secure images
-    struct {
-        struct boot_struct_v1_t dummy;
-        struct code_sig_struct_t code_sig_struct;
-    } s_v1;
-    struct {
-        struct boot_struct_t boot_struct;
-        struct code_sig_struct_t code_sig_struct;
-    } s;
+  // To keep compatible with the old download tools when downloadig non-secure
+  // images
+  struct {
+    struct boot_struct_v1_t dummy;
+    struct code_sig_struct_t code_sig_struct;
+  } s_v1;
+  struct {
+    struct boot_struct_t boot_struct;
+    struct code_sig_struct_t code_sig_struct;
+  } s;
 };
 
 const union programmer_boot_struct_t BOOT_STRUCT_LOC programmer_boot_struct = {
-    .s = {
-        .boot_struct = {
-            .hdr = {
-                .magic = BOOT_MAGIC_NUMBER,
-                .security = 1,
-                .version = BOOT_STRUCT_VERSION,
-                .build_info_start = ((uint32_t)sys_build_info),
-            },
+    .s =
+        {
+            .boot_struct =
+                {
+                    .hdr =
+                        {
+                            .magic = BOOT_MAGIC_NUMBER,
+                            .security = 1,
+                            .version = BOOT_STRUCT_VERSION,
+                            .build_info_start = ((uint32_t)sys_build_info),
+                        },
+                },
+            .code_sig_struct = DEFAULT_CODE_SIG,
         },
-        .code_sig_struct = DEFAULT_CODE_SIG,
-    },
 };
 
 #elif defined(SECURE_BOOT)
 
 struct secure_boot_struct_t {
-    struct boot_struct_t boot_struct;
-    struct code_sig_struct_t code_sig_struct;
-    struct norflash_cfg_struct_t norflash_cfg;
+  struct boot_struct_t boot_struct;
+  struct code_sig_struct_t code_sig_struct;
+  struct norflash_cfg_struct_t norflash_cfg;
 };
 
 const struct secure_boot_struct_t BOOT_STRUCT_LOC secure_boot_struct = {
-    .boot_struct = {
-        .hdr = {
-            .magic = ~0UL,
-            .security = 1,
-            .version = BOOT_STRUCT_VERSION,
-            .build_info_start = DEFAULT_BUILD_INFO,
+    .boot_struct =
+        {
+            .hdr =
+                {
+                    .magic = ~0UL,
+                    .security = 1,
+                    .version = BOOT_STRUCT_VERSION,
+                    .build_info_start = DEFAULT_BUILD_INFO,
+                },
         },
-    },
     .code_sig_struct = DEFAULT_CODE_SIG,
     .norflash_cfg = DEFAULT_NORFLASH_CFG,
 };
@@ -210,4 +206,3 @@ const struct boot_hdr_t BOOT_STRUCT_LOC boot_struct = {
 #endif
 
 struct REBOOT_PARAM_T REBOOT_PARAM_LOC reboot_param;
-

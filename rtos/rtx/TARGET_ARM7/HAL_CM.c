@@ -32,10 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
 #include "RTX_Conf.h"
 #include "rt_HAL_CM.h"
-
+#include "rt_TypeDef.h"
 
 /*----------------------------------------------------------------------------
  *      Global Variables
@@ -49,12 +48,11 @@ BIT dbg_msg;
  *      Functions
  *---------------------------------------------------------------------------*/
 
-
 /*--------------------------- rt_init_stack ---------------------------------*/
 
-void rt_init_stack (P_TCB p_TCB, FUNCP task_body) {
+void rt_init_stack(P_TCB p_TCB, FUNCP task_body) {
   /* Prepare TCB and saved context for a first time start of a task. */
-  U32 *stk,i,size;
+  U32 *stk, i, size;
 
   /* Prepare a complete interrupt frame for first task start */
   size = p_TCB->priv_stack >> 2;
@@ -93,20 +91,19 @@ void rt_init_stack (P_TCB p_TCB, FUNCP task_body) {
    We want to do stack/heap collision detection instead.
   */
   if (p_TCB->task_id != 0x01)
-      p_TCB->stack[0] = MAGIC_WORD;
+    p_TCB->stack[0] = MAGIC_WORD;
 }
-
 
 /*--------------------------- rt_ret_val ----------------------------------*/
 
-static __inline U32 *rt_ret_regs (P_TCB p_TCB) {
+static __inline U32 *rt_ret_regs(P_TCB p_TCB) {
   /* Get pointer to task return value registers (R0..R3) in Stack */
 
   /* Stack Frame: CPSR,R0-R13,PC */
   return (U32 *)(p_TCB->tsk_stack + TCB_STACK_R0_OFFSET_BYTES);
 }
 
-void rt_ret_val (P_TCB p_TCB, U32 v0) {
+void rt_ret_val(P_TCB p_TCB, U32 v0) {
   U32 *ret;
 
   ret = rt_ret_regs(p_TCB);
@@ -121,13 +118,11 @@ void rt_ret_val2(P_TCB p_TCB, U32 v0, U32 v1) {
   ret[1] = v1;
 }
 
-
 /*--------------------------- dbg_init --------------------------------------*/
 
 #ifdef DBG_MSG
-void dbg_init (void) {
-  if ((DEMCR & DEMCR_TRCENA)     &&
-      (ITM_CONTROL & ITM_ITMENA) &&
+void dbg_init(void) {
+  if ((DEMCR & DEMCR_TRCENA) && (ITM_CONTROL & ITM_ITMENA) &&
       (ITM_ENABLE & (1UL << 31))) {
     dbg_msg = __TRUE;
   }
@@ -137,10 +132,12 @@ void dbg_init (void) {
 /*--------------------------- dbg_task_notify -------------------------------*/
 
 #ifdef DBG_MSG
-void dbg_task_notify (P_TCB p_tcb, BOOL create) {
-  while (ITM_PORT31_U32 == 0);
+void dbg_task_notify(P_TCB p_tcb, BOOL create) {
+  while (ITM_PORT31_U32 == 0)
+    ;
   ITM_PORT31_U32 = (U32)p_tcb->ptask;
-  while (ITM_PORT31_U32 == 0);
+  while (ITM_PORT31_U32 == 0)
+    ;
   ITM_PORT31_U16 = (create << 8) | p_tcb->task_id;
 }
 #endif
@@ -148,14 +145,13 @@ void dbg_task_notify (P_TCB p_tcb, BOOL create) {
 /*--------------------------- dbg_task_switch -------------------------------*/
 
 #ifdef DBG_MSG
-void dbg_task_switch (U32 task_id) {
-  while (ITM_PORT31_U32 == 0);
+void dbg_task_switch(U32 task_id) {
+  while (ITM_PORT31_U32 == 0)
+    ;
   ITM_PORT31_U8 = task_id;
 }
 #endif
 
-
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

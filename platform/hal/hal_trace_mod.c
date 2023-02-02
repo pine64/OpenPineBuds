@@ -17,16 +17,13 @@
 #include "plat_types.h"
 
 #undef _LOG_MODULE_DEF_A
-#define _LOG_MODULE_DEF_A(p, m)             # m
+#define _LOG_MODULE_DEF_A(p, m) #m
 
-static const char * mod_desc[] = {
-    _LOG_MODULE_LIST
-};
+static const char *mod_desc[] = {_LOG_MODULE_LIST};
 
-const char *hal_trace_get_log_module_desc(enum LOG_MODULE_T module)
-{
-    if (module < ARRAY_SIZE(mod_desc)) {
-        return mod_desc[module];
-    }
-    return NULL;
+const char *hal_trace_get_log_module_desc(enum LOG_MODULE_T module) {
+  if (module < ARRAY_SIZE(mod_desc)) {
+    return mod_desc[module];
+  }
+  return NULL;
 }

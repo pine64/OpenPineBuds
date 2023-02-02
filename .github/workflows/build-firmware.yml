@@ -1,0 +1,17 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-firmware:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/pine64/openpinebuds:latest-sdk
+    steps:
+      - name: Build the main firmware
+        run: cd /usr/src/ && ./build.sh || cat /usr/src/log.txt
+
+      - name: Archive produced firmware
+        uses: actions/upload-artifact@v3
+        with:
+          path: /usr/src/out/open_source/open_source.bin

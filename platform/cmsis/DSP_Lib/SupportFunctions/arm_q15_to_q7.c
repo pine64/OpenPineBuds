@@ -51,33 +51,28 @@
   </pre>
  */
 
-void arm_q15_to_q7(
-  const q15_t * pSrc,
-        q7_t * pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-  const q15_t *pIn = pSrc;                             /* Source pointer */
+void arm_q15_to_q7(const q15_t *pSrc, q7_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;         /* Loop counter */
+  const q15_t *pIn = pSrc; /* Source pointer */
 
-#if defined (ARM_MATH_LOOPUNROLL) && defined (ARM_MATH_DSP)
-        q31_t in1, in2;
-        q31_t out1, out2;
+#if defined(ARM_MATH_LOOPUNROLL) && defined(ARM_MATH_DSP)
+  q31_t in1, in2;
+  q31_t out1, out2;
 #endif
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (q7_t) A >> 8 */
 
     /* Convert from q15 to q7 and store result in destination buffer */
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
 
-    in1 = read_q15x2_ia ((q15_t **) &pIn);
-    in2 = read_q15x2_ia ((q15_t **) &pIn);
+    in1 = read_q15x2_ia((q15_t **)&pIn);
+    in2 = read_q15x2_ia((q15_t **)&pIn);
 
 #ifndef ARM_MATH_BIG_ENDIAN
 
@@ -92,25 +87,26 @@ void arm_q15_to_q7(
 #endif /* #ifndef ARM_MATH_BIG_ENDIAN */
 
     /* rotate packed value by 24 */
-    out2 = ((uint32_t) out2 << 8) | ((uint32_t) out2 >> 24);
+    out2 = ((uint32_t)out2 << 8) | ((uint32_t)out2 >> 24);
 
     /* anding with 0xff00ff00 to get two 8 bit values */
     out1 = out1 & 0xFF00FF00;
     /* anding with 0x00ff00ff to get two 8 bit values */
     out2 = out2 & 0x00FF00FF;
 
-    /* oring two values(contains two 8 bit values) to get four packed 8 bit values */
+    /* oring two values(contains two 8 bit values) to get four packed 8 bit
+     * values */
     out1 = out1 | out2;
 
     /* store 4 samples at a time to destiantion buffer */
-    write_q7x4_ia (&pDst, out1);
+    write_q7x4_ia(&pDst, out1);
 
 #else
 
-    *pDst++ = (q7_t) (*pIn++ >> 8);
-    *pDst++ = (q7_t) (*pIn++ >> 8);
-    *pDst++ = (q7_t) (*pIn++ >> 8);
-    *pDst++ = (q7_t) (*pIn++ >> 8);
+    *pDst++ = (q7_t)(*pIn++ >> 8);
+    *pDst++ = (q7_t)(*pIn++ >> 8);
+    *pDst++ = (q7_t)(*pIn++ >> 8);
+    *pDst++ = (q7_t)(*pIn++ >> 8);
 
 #endif /* #if defined (ARM_MATH_DSP) */
 
@@ -128,17 +124,15 @@ void arm_q15_to_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = (q7_t) A >> 8 */
 
     /* Convert from q15 to q7 and store result in destination buffer */
-    *pDst++ = (q7_t) (*pIn++ >> 8);
+    *pDst++ = (q7_t)(*pIn++ >> 8);
 
     /* Decrement loop counter */
     blkCnt--;
   }
-
 }
 
 /**

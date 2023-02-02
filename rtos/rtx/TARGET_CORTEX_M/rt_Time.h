@@ -31,7 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
-
+#include "rt_TypeDef.h"
 // </h>
 // <h>SysTick Timer Configuration
 // ==============================
@@ -40,21 +40,21 @@
 //   <i> Defines the timer clock value.
 //   <i> Default: 6000000  (6MHz)
 #ifdef CALIB_SLOW_TIMER
- #define OS_CLOCK         (CONFIG_SYSTICK_HZ * (OS_CLOCK_NOMINAL / CONFIG_SYSTICK_HZ_NOMINAL))
+#define OS_CLOCK                                                               \
+  (CONFIG_SYSTICK_HZ * (OS_CLOCK_NOMINAL / CONFIG_SYSTICK_HZ_NOMINAL))
 #else
- #define OS_CLOCK         OS_CLOCK_NOMINAL
+#define OS_CLOCK OS_CLOCK_NOMINAL
 #endif
 
 /* Variables */
 extern U32 os_time;
 
 /* Functions */
-extern U32  rt_time_get (void);
-extern void rt_dly_wait (U16 delay_time);
-extern void rt_itv_set  (U16 interval_time);
-extern void rt_itv_wait (void);
+extern U32 rt_time_get(void);
+extern void rt_dly_wait(U16 delay_time);
+extern void rt_itv_set(U16 interval_time);
+extern void rt_itv_wait(void);
 
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

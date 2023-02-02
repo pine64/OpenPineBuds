@@ -34,7 +34,6 @@
 
 #include "cmsis_os.h"
 
-
 /*----------------------------------------------------------------------------
  *      RTX User configuration part BEGIN
  *---------------------------------------------------------------------------*/
@@ -49,40 +48,40 @@
 //       counting "main", but not counting "osTimerThread"
 //   <i> Default: 6
 #ifndef OS_TASKCNT
-#  if  defined(TARGET_LPC2368) || defined(TARGET_LPC2460)
-#    define OS_TASKCNT         14
-#  else
-#    error "no target defined"
-#  endif
+#if defined(TARGET_LPC2368) || defined(TARGET_LPC2460)
+#define OS_TASKCNT 14
+#else
+#error "no target defined"
+#endif
 #endif
 
 //   <o>Scheduler (+ interrupts) stack size [bytes] <64-4096:8><#/4>
 #ifndef OS_SCHEDULERSTKSIZE
-#  if  defined(TARGET_LPC2368)  ||  defined(TARGET_LPC2460)
-#      define OS_SCHEDULERSTKSIZE    (136*2)
-#  else
-#    error "no target defined"
-#  endif
+#if defined(TARGET_LPC2368) || defined(TARGET_LPC2460)
+#define OS_SCHEDULERSTKSIZE (136 * 2)
+#else
+#error "no target defined"
+#endif
 #endif
 
 //   <o>Idle stack size [bytes] <64-4096:8><#/4>
 //   <i> Defines default stack size for the Idle thread.
 #ifndef OS_IDLESTKSIZE
- #define OS_IDLESTKSIZE         136
+#define OS_IDLESTKSIZE 136
 #endif
 
 //   <o>Timer Thread stack size [bytes] <64-4096:8><#/4>
 //   <i> Defines stack size for Timer thread.
 //   <i> Default: 200
 #ifndef OS_TIMERSTKSZ
- #define OS_TIMERSTKSZ  WORDS_STACK_SIZE
+#define OS_TIMERSTKSZ WORDS_STACK_SIZE
 #endif
 
 // <q>Check for stack overflow
 // <i> Includes the stack checking code for stack overflow.
 // <i> Note that additional code reduces the Kernel performance.
 #ifndef OS_STKCHECK
- #define OS_STKCHECK    1
+#define OS_STKCHECK 1
 #endif
 
 // <o>Processor mode for thread execution
@@ -90,7 +89,7 @@
 //   <1=> Privileged mode
 // <i> Default: Privileged mode
 #ifndef OS_RUNPRIV
- #define OS_RUNPRIV     1
+#define OS_RUNPRIV 1
 #endif
 
 // </h>
@@ -101,22 +100,22 @@
 //   <i> Defines the timer clock value.
 //   <i> Default: 6000000  (6MHz)
 #ifndef OS_CLOCK
-#  if defined(TARGET_LPC2368)
-#    define OS_CLOCK       96000000
+#if defined(TARGET_LPC2368)
+#define OS_CLOCK 96000000
 
-#  elif defined(TARGET_LPC2460)
-#    define OS_CLOCK       72000000
+#elif defined(TARGET_LPC2460)
+#define OS_CLOCK 72000000
 
-#  else
-#    error "no target defined"
-#  endif
+#else
+#error "no target defined"
+#endif
 #endif
 
 //   <o>Timer tick value [us] <1-1000000>
 //   <i> Defines the timer tick value.
 //   <i> Default: 1000  (1ms)
 #ifndef OS_TICK
- #define OS_TICK        1000
+#define OS_TICK 1000
 #endif
 
 // </h>
@@ -129,14 +128,14 @@
 //
 // <i> Enables Round-Robin Thread switching.
 #ifndef OS_ROBIN
- #define OS_ROBIN       1
+#define OS_ROBIN 1
 #endif
 
 //   <o>Round-Robin Timeout [ticks] <1-1000>
 //   <i> Defines how long a thread will execute before a thread switch.
 //   <i> Default: 5
 #ifndef OS_ROBINTOUT
- #define OS_ROBINTOUT   5
+#define OS_ROBINTOUT 5
 #endif
 
 // </e>
@@ -145,7 +144,7 @@
 // ==============
 //   <i> Enables user Timers
 #ifndef OS_TIMERS
- #define OS_TIMERS      1
+#define OS_TIMERS 1
 #endif
 
 //   <o>Timer Thread Priority
@@ -158,14 +157,14 @@
 //   <i> Defines priority for Timer Thread
 //   <i> Default: High
 #ifndef OS_TIMERPRIO
- #define OS_TIMERPRIO   5
+#define OS_TIMERPRIO 5
 #endif
 
 //   <o>Timer Callback Queue size <1-32>
 //   <i> Number of concurrent active timer callback functions.
 //   <i> Default: 4
 #ifndef OS_TIMERCBQSZ
- #define OS_TIMERCBQS   4
+#define OS_TIMERCBQS 4
 #endif
 
 // </e>
@@ -179,7 +178,7 @@
 //   <i> when they are called from the interrupt handler.
 //   <i> Default: 16 entries
 #ifndef OS_FIFOSZ
- #define OS_FIFOSZ      16
+#define OS_FIFOSZ 16
 #endif
 
 // </h>
@@ -191,29 +190,28 @@
 //  Define max. number system mutexes that are used to protect
 //  the arm standard runtime library. For microlib they are not used.
 #ifndef OS_MUTEXCNT
- #define OS_MUTEXCNT    12
+#define OS_MUTEXCNT 12
 #endif
 
 /*----------------------------------------------------------------------------
  *      RTX User configuration part END
  *---------------------------------------------------------------------------*/
 
-#define OS_TRV          ((uint32_t)(((double)OS_CLOCK*(double)OS_TICK)/1E6)-1)
-
+#define OS_TRV ((uint32_t)(((double)OS_CLOCK * (double)OS_TICK) / 1E6) - 1)
 
 /*----------------------------------------------------------------------------
  *      OS Idle daemon
  *---------------------------------------------------------------------------*/
-void os_idle_demon (void) {
+void os_idle_demon(void) {
   /* The idle demon is a system thread, running when no other thread is      */
   /* ready to run.                                                           */
 
   /* Sleep: ideally, we should put the chip to sleep.
-     Unfortunately, this usually requires disconnecting the interface chip (debugger).
-     This can be done, but it would break the local file system.
+     Unfortunately, this usually requires disconnecting the interface chip
+     (debugger). This can be done, but it would break the local file system.
   */
   for (;;) {
-      // sleep();
+    // sleep();
   }
 }
 
@@ -222,16 +220,16 @@ void os_idle_demon (void) {
  *---------------------------------------------------------------------------*/
 extern void mbed_die(void);
 
-void os_error (uint32_t err_code) {
-    /* This function is called when a runtime error is detected. Parameter     */
-    /* 'err_code' holds the runtime error code (defined in RTX_Conf.h).      */
-    mbed_die();
+void os_error(uint32_t err_code) {
+  /* This function is called when a runtime error is detected. Parameter     */
+  /* 'err_code' holds the runtime error code (defined in RTX_Conf.h).      */
+  mbed_die();
 }
 
 void sysThreadError(osStatus status) {
-    if (status != osOK) {
-        mbed_die();
-    }
+  if (status != osOK) {
+    mbed_die();
+  }
 }
 
 /*----------------------------------------------------------------------------
@@ -243,4 +241,3 @@ void sysThreadError(osStatus status) {
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

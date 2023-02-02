@@ -32,36 +32,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *---------------------------------------------------------------------------*/
 
-#include "rt_TypeDef.h"
-#include "RTX_Conf.h"
-#include "rt_System.h"
 #include "rt_MemBox.h"
+#include "RTX_Conf.h"
 #include "rt_HAL_CM.h"
+#include "rt_System.h"
+#include "rt_TypeDef.h"
 
 /*----------------------------------------------------------------------------
  *      Global Functions
  *---------------------------------------------------------------------------*/
 
-
 /*--------------------------- _init_box -------------------------------------*/
 
-int _init_box  (void *box_mem, U32 box_size, U32 blk_size) {
+int _init_box(void *box_mem, U32 box_size, U32 blk_size) {
   /* Initialize memory block system, returns 0 if OK, 1 if fails. */
   void *end;
   void *blk;
   void *next;
-  U32  sizeof_bm;
+  U32 sizeof_bm;
 
   /* Create memory structure. */
   if (blk_size & BOX_ALIGN_8) {
     /* Memory blocks 8-byte aligned. */
     blk_size = ((blk_size & ~BOX_ALIGN_8) + 7) & ~7;
-    sizeof_bm = (sizeof (struct OS_BM) + 7) & ~7;
-  }
-  else {
+    sizeof_bm = (sizeof(struct OS_BM) + 7) & ~7;
+  } else {
     /* Memory blocks 4-byte aligned. */
     blk_size = (blk_size + 3) & ~3;
-    sizeof_bm = sizeof (struct OS_BM);
+    sizeof_bm = sizeof(struct OS_BM);
   }
   if (blk_size == 0) {
     return (1);
@@ -70,17 +68,18 @@ int _init_box  (void *box_mem, U32 box_size, U32 blk_size) {
     return (1);
   }
   /* Create a Memory structure. */
-  blk = ((U8 *) box_mem) + sizeof_bm;
-  ((P_BM) box_mem)->free = blk;
-  end = ((U8 *) box_mem) + box_size;
-  ((P_BM) box_mem)->end      = end;
-  ((P_BM) box_mem)->blk_size = blk_size;
+  blk = ((U8 *)box_mem) + sizeof_bm;
+  ((P_BM)box_mem)->free = blk;
+  end = ((U8 *)box_mem) + box_size;
+  ((P_BM)box_mem)->end = end;
+  ((P_BM)box_mem)->blk_size = blk_size;
 
   /* Link all free blocks using offsets. */
-  end = ((U8 *) end) - blk_size;
-  while (1)  {
-    next = ((U8 *) blk) + blk_size;
-    if (next > end)  break;
+  end = ((U8 *)end) - blk_size;
+  while (1) {
+    next = ((U8 *)blk) + blk_size;
+    if (next > end)
+      break;
     *((void **)blk) = next;
     blk = next;
   }
@@ -91,42 +90,42 @@ int _init_box  (void *box_mem, U32 box_size, U32 blk_size) {
 
 /*--------------------------- rt_alloc_box ----------------------------------*/
 
-void *rt_alloc_box (void *box_mem) {
+void *rt_alloc_box(void *box_mem) {
   /* Allocate a memory block and return start address. */
   void **free;
 #ifndef __USE_EXCLUSIVE_ACCESS
-  int  irq_dis;
+  int irq_dis;
 
-  irq_dis = __disable_irq ();
-  free = ((P_BM) box_mem)->free;
+  irq_dis = __disable_irq();
+  free = ((P_BM)box_mem)->free;
   if (free) {
-    ((P_BM) box_mem)->free = *free;
+    ((P_BM)box_mem)->free = *free;
   }
-  if (!irq_dis) __enable_irq ();
+  if (!irq_dis)
+    __enable_irq();
 #else
   do {
-    if ((free = (void **)__ldrex(&((P_BM) box_mem)->free)) == 0) {
+    if ((free = (void **)__ldrex(&((P_BM)box_mem)->free)) == 0) {
       __clrex();
       break;
     }
-  } while (__strex((U32)*free, &((P_BM) box_mem)->free));
+  } while (__strex((U32)*free, &((P_BM)box_mem)->free));
 #endif
   return (free);
 }
 
-
 /*--------------------------- _calloc_box -----------------------------------*/
 
-void *_calloc_box (void *box_mem)  {
+void *_calloc_box(void *box_mem) {
   /* Allocate a 0-initialized memory block and return start address. */
   void *free;
   U32 *p;
   U32 i;
 
-  free = _alloc_box (box_mem);
-  if (free)  {
+  free = _alloc_box(box_mem);
+  if (free) {
     p = free;
-    for (i = ((P_BM) box_mem)->blk_size; i; i -= 4)  {
+    for (i = ((P_BM)box_mem)->blk_size; i; i -= 4) {
       *p = 0;
       p++;
     }
@@ -134,28 +133,29 @@ void *_calloc_box (void *box_mem)  {
   return (free);
 }
 
-
 /*--------------------------- rt_free_box -----------------------------------*/
 
-int rt_free_box (void *box_mem, void *box) {
-  /* Free a memory block, returns 0 if OK, 1 if box does not belong to box_mem */
+int rt_free_box(void *box_mem, void *box) {
+  /* Free a memory block, returns 0 if OK, 1 if box does not belong to box_mem
+   */
 #ifndef __USE_EXCLUSIVE_ACCESS
   int irq_dis;
 #endif
 
-  if (box < box_mem || box >= ((P_BM) box_mem)->end) {
+  if (box < box_mem || box >= ((P_BM)box_mem)->end) {
     return (1);
   }
 
 #ifndef __USE_EXCLUSIVE_ACCESS
-  irq_dis = __disable_irq ();
-  *((void **)box) = ((P_BM) box_mem)->free;
-  ((P_BM) box_mem)->free = box;
-  if (!irq_dis) __enable_irq ();
+  irq_dis = __disable_irq();
+  *((void **)box) = ((P_BM)box_mem)->free;
+  ((P_BM)box_mem)->free = box;
+  if (!irq_dis)
+    __enable_irq();
 #else
   do {
-    *((void **)box) = (void *)__ldrex(&((P_BM) box_mem)->free);
-  } while (__strex ((U32)box, &((P_BM) box_mem)->free));
+    *((void **)box) = (void *)__ldrex(&((P_BM)box_mem)->free);
+  } while (__strex((U32)box, &((P_BM)box_mem)->free));
 #endif
   return (0);
 }
@@ -163,4 +163,3 @@ int rt_free_box (void *box_mem, void *box) {
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/
-

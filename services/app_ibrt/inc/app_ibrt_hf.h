@@ -16,6 +16,8 @@
 #ifndef __APP_IBRT_HF__
 #define __APP_IBRT_HF__
 
+#include "app_tws_ibrt_cmd_sync_hfp_status.h"
+#include "hfp_api.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

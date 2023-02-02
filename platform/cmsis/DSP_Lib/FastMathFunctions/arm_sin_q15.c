@@ -26,8 +26,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @ingroup groupFastMath
@@ -39,20 +39,20 @@
  */
 
 /**
-  @brief         Fast approximation to the trigonometric sine function for Q15 data.
+  @brief         Fast approximation to the trigonometric sine function for Q15
+  data.
   @param[in]     x  Scaled input value in radians
   @return        sin(x)
 
-  The Q15 input value is in the range [0 +0.9999] and is mapped to a radian value in the range [0 2*PI).
+  The Q15 input value is in the range [0 +0.9999] and is mapped to a radian
+  value in the range [0 2*PI).
  */
 
-q15_t arm_sin_q15(
-  q15_t x)
-{
-  q15_t sinVal;                                  /* Temporary input, output variables */
-  int32_t index;                                 /* Index variable */
-  q15_t a, b;                                    /* Two nearest output values */
-  q15_t fract;                                   /* Temporary values for fractional values */
+q15_t arm_sin_q15(q15_t x) {
+  q15_t sinVal;  /* Temporary input, output variables */
+  int32_t index; /* Index variable */
+  q15_t a, b;    /* Two nearest output values */
+  q15_t fract;   /* Temporary values for fractional values */
 
   /* Calculate the nearest index */
   index = (uint32_t)x >> FAST_MATH_Q15_SHIFT;
@@ -62,11 +62,11 @@ q15_t arm_sin_q15(
 
   /* Read two nearest values of input value from the sin table */
   a = sinTable_q15[index];
-  b = sinTable_q15[index+1];
+  b = sinTable_q15[index + 1];
 
   /* Linear interpolation process */
-  sinVal = (q31_t) (0x8000 - fract) * a >> 16;
-  sinVal = (q15_t) ((((q31_t) sinVal << 16) + ((q31_t) fract * b)) >> 16);
+  sinVal = (q31_t)(0x8000 - fract) * a >> 16;
+  sinVal = (q15_t)((((q31_t)sinVal << 16) + ((q31_t)fract * b)) >> 16);
 
   /* Return output value */
   return (sinVal << 1);

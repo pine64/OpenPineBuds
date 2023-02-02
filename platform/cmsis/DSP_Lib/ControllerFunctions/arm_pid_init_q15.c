@@ -42,25 +42,23 @@
   @return        none
 
   @par           Details
-                   The <code>resetStateFlag</code> specifies whether to set state to zero or not. \n
-                   The function computes the structure fields: <code>A0</code>, <code>A1</code> <code>A2</code>
-                   using the proportional gain( \c Kp), integral gain( \c Ki) and derivative gain( \c Kd)
-                   also sets the state variables to all zeros.
+                   The <code>resetStateFlag</code> specifies whether to set
+  state to zero or not. \n The function computes the structure fields:
+  <code>A0</code>, <code>A1</code> <code>A2</code> using the proportional gain(
+  \c Kp), integral gain( \c Ki) and derivative gain( \c Kd) also sets the state
+  variables to all zeros.
  */
 
-void arm_pid_init_q15(
-  arm_pid_instance_q15 * S,
-  int32_t resetStateFlag)
-{
+void arm_pid_init_q15(arm_pid_instance_q15 *S, int32_t resetStateFlag) {
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
 
   /* Derived coefficient A0 */
   S->A0 = __QADD16(__QADD16(S->Kp, S->Ki), S->Kd);
 
   /* Derived coefficients and pack into A1 */
 
-#ifndef  ARM_MATH_BIG_ENDIAN
+#ifndef ARM_MATH_BIG_ENDIAN
   S->A1 = __PKHBT(-__QADD16(__QADD16(S->Kd, S->Kd), S->Kp), S->Kd, 16);
 #else
   S->A1 = __PKHBT(S->Kd, -__QADD16(__QADD16(S->Kd, S->Kd), S->Kp), 16);
@@ -68,26 +66,24 @@ void arm_pid_init_q15(
 
 #else
 
-  q31_t temp;                                    /* to store the sum */
+  q31_t temp; /* to store the sum */
 
   /* Derived coefficient A0 */
   temp = S->Kp + S->Ki + S->Kd;
-  S->A0 = (q15_t) __SSAT(temp, 16);
+  S->A0 = (q15_t)__SSAT(temp, 16);
 
   /* Derived coefficients and pack into A1 */
   temp = -(S->Kd + S->Kd + S->Kp);
-  S->A1 = (q15_t) __SSAT(temp, 16);
+  S->A1 = (q15_t)__SSAT(temp, 16);
   S->A2 = S->Kd;
 
 #endif /* #if defined (ARM_MATH_DSP) */
 
   /* Check whether state needs reset or not */
-  if (resetStateFlag)
-  {
+  if (resetStateFlag) {
     /* Reset state to zero, The size will be always 3 samples */
     memset(S->state, 0, 3U * sizeof(q15_t));
   }
-
 }
 
 /**

@@ -45,15 +45,11 @@
   @return        none
  */
 
-void arm_fill_q7(
-  q7_t value,
-  q7_t * pDst,
-  uint32_t blockSize)
-{
-  uint32_t blkCnt;                               /* Loop counter */
+void arm_fill_q7(q7_t value, q7_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt; /* Loop counter */
 
-#if defined (ARM_MATH_LOOPUNROLL)
-  q31_t packedValue;                             /* value packed to 32 bits */
+#if defined(ARM_MATH_LOOPUNROLL)
+  q31_t packedValue; /* value packed to 32 bits */
 
   /* Packing four 8 bit values to 32 bit value in order to use SIMD */
   packedValue = __PACKq7(value, value, value, value);
@@ -61,12 +57,11 @@ void arm_fill_q7(
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = value */
 
     /* fill 4 samples at a time */
-    write_q7x4_ia (&pDst, packedValue);
+    write_q7x4_ia(&pDst, packedValue);
 
     /* Decrement loop counter */
     blkCnt--;
@@ -82,8 +77,7 @@ void arm_fill_q7(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  while (blkCnt > 0U)
-  {
+  while (blkCnt > 0U) {
     /* C = value */
 
     /* Fill value in destination buffer */

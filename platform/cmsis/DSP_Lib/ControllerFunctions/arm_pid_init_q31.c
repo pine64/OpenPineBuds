@@ -42,18 +42,16 @@
   @return        none
 
   @par           Details
-                   The <code>resetStateFlag</code> specifies whether to set state to zero or not. \n
-                   The function computes the structure fields: <code>A0</code>, <code>A1</code> <code>A2</code>
-                   using the proportional gain( \c Kp), integral gain( \c Ki) and derivative gain( \c Kd)
-                   also sets the state variables to all zeros.
+                   The <code>resetStateFlag</code> specifies whether to set
+  state to zero or not. \n The function computes the structure fields:
+  <code>A0</code>, <code>A1</code> <code>A2</code> using the proportional gain(
+  \c Kp), integral gain( \c Ki) and derivative gain( \c Kd) also sets the state
+  variables to all zeros.
  */
 
-void arm_pid_init_q31(
-  arm_pid_instance_q31 * S,
-  int32_t resetStateFlag)
-{
+void arm_pid_init_q31(arm_pid_instance_q31 *S, int32_t resetStateFlag) {
 
-#if defined (ARM_MATH_DSP)
+#if defined(ARM_MATH_DSP)
 
   /* Derived coefficient A0 */
   S->A0 = __QADD(__QADD(S->Kp, S->Ki), S->Kd);
@@ -63,15 +61,15 @@ void arm_pid_init_q31(
 
 #else
 
-  q31_t temp;                                    /* to store the sum */
+  q31_t temp; /* to store the sum */
 
   /* Derived coefficient A0 */
-  temp = clip_q63_to_q31((q63_t) S->Kp + S->Ki);
-  S->A0 = clip_q63_to_q31((q63_t) temp + S->Kd);
+  temp = clip_q63_to_q31((q63_t)S->Kp + S->Ki);
+  S->A0 = clip_q63_to_q31((q63_t)temp + S->Kd);
 
   /* Derived coefficient A1 */
-  temp = clip_q63_to_q31((q63_t) S->Kd + S->Kd);
-  S->A1 = -clip_q63_to_q31((q63_t) temp + S->Kp);
+  temp = clip_q63_to_q31((q63_t)S->Kd + S->Kd);
+  S->A1 = -clip_q63_to_q31((q63_t)temp + S->Kp);
 
 #endif /* #if defined (ARM_MATH_DSP) */
 
@@ -79,12 +77,10 @@ void arm_pid_init_q31(
   S->A2 = S->Kd;
 
   /* Check whether state needs reset or not */
-  if (resetStateFlag)
-  {
+  if (resetStateFlag) {
     /* Reset state to zero, The size will be always 3 samples */
     memset(S->state, 0, 3U * sizeof(q31_t));
   }
-
 }
 
 /**

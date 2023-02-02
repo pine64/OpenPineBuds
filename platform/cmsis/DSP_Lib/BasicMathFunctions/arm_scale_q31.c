@@ -47,57 +47,52 @@
   @return        none
 
   @par           Scaling and Overflow Behavior
-                   The input data <code>*pSrc</code> and <code>scaleFract</code> are in 1.31 format.
-                   These are multiplied to yield a 2.62 intermediate result and this is shifted with saturation to 1.31 format.
+                   The input data <code>*pSrc</code> and <code>scaleFract</code>
+  are in 1.31 format. These are multiplied to yield a 2.62 intermediate result
+  and this is shifted with saturation to 1.31 format.
  */
 
-void arm_scale_q31(
-  const q31_t *pSrc,
-        q31_t scaleFract,
-        int8_t shift,
-        q31_t *pDst,
-        uint32_t blockSize)
-{
-        uint32_t blkCnt;                               /* Loop counter */
-        q31_t in, out;                                 /* Temporary variables */
-        int8_t kShift = shift + 1;                     /* Shift to apply after scaling */
-        int8_t sign = (kShift & 0x80);
+void arm_scale_q31(const q31_t *pSrc, q31_t scaleFract, int8_t shift,
+                   q31_t *pDst, uint32_t blockSize) {
+  uint32_t blkCnt;           /* Loop counter */
+  q31_t in, out;             /* Temporary variables */
+  int8_t kShift = shift + 1; /* Shift to apply after scaling */
+  int8_t sign = (kShift & 0x80);
 
-#if defined (ARM_MATH_LOOPUNROLL)
+#if defined(ARM_MATH_LOOPUNROLL)
 
   /* Loop unrolling: Compute 4 outputs at a time */
   blkCnt = blockSize >> 2U;
 
-  if (sign == 0U)
-  {
-    while (blkCnt > 0U)
-    {
+  if (sign == 0U) {
+    while (blkCnt > 0U) {
       /* C = A * scale */
 
       /* Scale input and store result in destination buffer. */
-      in = *pSrc++;                                /* read input from source */
-      in = ((q63_t) in * scaleFract) >> 32;        /* multiply input with scaler value */
-      out = in << kShift;                          /* apply shifting */
-      if (in != (out >> kShift))                   /* saturate the result */
+      in = *pSrc++; /* read input from source */
+      in =
+          ((q63_t)in * scaleFract) >> 32; /* multiply input with scaler value */
+      out = in << kShift;                 /* apply shifting */
+      if (in != (out >> kShift))          /* saturate the result */
         out = 0x7FFFFFFF ^ (in >> 31);
-      *pDst++ = out;                               /* Store result destination */
+      *pDst++ = out; /* Store result destination */
 
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in << kShift;
       if (in != (out >> kShift))
         out = 0x7FFFFFFF ^ (in >> 31);
       *pDst++ = out;
 
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in << kShift;
       if (in != (out >> kShift))
         out = 0x7FFFFFFF ^ (in >> 31);
       *pDst++ = out;
 
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in << kShift;
       if (in != (out >> kShift))
         out = 0x7FFFFFFF ^ (in >> 31);
@@ -106,31 +101,29 @@ void arm_scale_q31(
       /* Decrement loop counter */
       blkCnt--;
     }
-  }
-  else
-  {
-    while (blkCnt > 0U)
-    {
+  } else {
+    while (blkCnt > 0U) {
       /* C = A * scale */
 
       /* Scale input and store result in destination buffer. */
-      in = *pSrc++;                                /* read four inputs from source */
-      in = ((q63_t) in * scaleFract) >> 32;        /* multiply input with scaler value */
-      out = in >> -kShift;                         /* apply shifting */
-      *pDst++ = out;                               /* Store result destination */
+      in = *pSrc++; /* read four inputs from source */
+      in =
+          ((q63_t)in * scaleFract) >> 32; /* multiply input with scaler value */
+      out = in >> -kShift;                /* apply shifting */
+      *pDst++ = out;                      /* Store result destination */
 
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in >> -kShift;
       *pDst++ = out;
 
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in >> -kShift;
       *pDst++ = out;
 
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in >> -kShift;
       *pDst++ = out;
 
@@ -149,33 +142,28 @@ void arm_scale_q31(
 
 #endif /* #if defined (ARM_MATH_LOOPUNROLL) */
 
-  if (sign == 0U)
-  {
-    while (blkCnt > 0U)
-    {
+  if (sign == 0U) {
+    while (blkCnt > 0U) {
       /* C = A * scale */
 
       /* Scale input and store result in destination buffer. */
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in << kShift;
       if (in != (out >> kShift))
-          out = 0x7FFFFFFF ^ (in >> 31);
+        out = 0x7FFFFFFF ^ (in >> 31);
       *pDst++ = out;
 
       /* Decrement loop counter */
       blkCnt--;
     }
-  }
-  else
-  {
-    while (blkCnt > 0U)
-    {
+  } else {
+    while (blkCnt > 0U) {
       /* C = A * scale */
 
       /* Scale input and store result in destination buffer. */
       in = *pSrc++;
-      in = ((q63_t) in * scaleFract) >> 32;
+      in = ((q63_t)in * scaleFract) >> 32;
       out = in >> -kShift;
       *pDst++ = out;
 
@@ -183,7 +171,6 @@ void arm_scale_q31(
       blkCnt--;
     }
   }
-
 }
 
 /**

@@ -26,8 +26,8 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
 #include "arm_common_tables.h"
+#include "arm_math.h"
 
 /**
   @addtogroup LMS_NORM
@@ -36,7 +36,8 @@
 
 /**
   @brief         Initialization function for Q15 normalized LMS filter.
-  @param[in]     S         points to an instance of the Q15 normalized LMS filter structure.
+  @param[in]     S         points to an instance of the Q15 normalized LMS
+  filter structure.
   @param[in]     numTaps   number of filter coefficients.
   @param[in]     pCoeffs   points to coefficient buffer.
   @param[in]     pState    points to state buffer.
@@ -46,25 +47,20 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> points to the array of filter coefficients stored in time reversed order:
-  <pre>
-     {b[numTaps-1], b[numTaps-2], b[N-2], ..., b[1], b[0]}
+                   <code>pCoeffs</code> points to the array of filter
+  coefficients stored in time reversed order: <pre> {b[numTaps-1], b[numTaps-2],
+  b[N-2], ..., b[1], b[0]}
   </pre>
-                   The initial filter coefficients serve as a starting point for the adaptive filter.
-                   <code>pState</code> points to the array of state variables and size of array is
-                   <code>numTaps+blockSize-1</code> samples, where <code>blockSize</code> is the number of input samples processed
-                   by each call to <code>arm_lms_norm_q15()</code>.
+                   The initial filter coefficients serve as a starting point for
+  the adaptive filter. <code>pState</code> points to the array of state
+  variables and size of array is <code>numTaps+blockSize-1</code> samples, where
+  <code>blockSize</code> is the number of input samples processed by each call
+  to <code>arm_lms_norm_q15()</code>.
  */
 
-void arm_lms_norm_init_q15(
-        arm_lms_norm_instance_q15 * S,
-        uint16_t numTaps,
-        q15_t * pCoeffs,
-        q15_t * pState,
-        q15_t mu,
-        uint32_t blockSize,
-        uint8_t postShift)
-{
+void arm_lms_norm_init_q15(arm_lms_norm_instance_q15 *S, uint16_t numTaps,
+                           q15_t *pCoeffs, q15_t *pState, q15_t mu,
+                           uint32_t blockSize, uint8_t postShift) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 
@@ -84,7 +80,7 @@ void arm_lms_norm_init_q15(
   S->mu = mu;
 
   /* Initialize reciprocal pointer table */
-  S->recipTable = (q15_t *) armRecipTableQ15;
+  S->recipTable = (q15_t *)armRecipTableQ15;
 
   /* Initialise Energy to zero */
   S->energy = 0;

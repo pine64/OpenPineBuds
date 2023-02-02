@@ -39,7 +39,8 @@
 
 /**
   @brief         Initialization function for the floating-point FIR decimator.
-  @param[in,out] S          points to an instance of the floating-point FIR decimator structure
+  @param[in,out] S          points to an instance of the floating-point FIR
+  decimator structure
   @param[in]     numTaps    number of coefficients in the filter
   @param[in]     M          decimation factor
   @param[in]     pCoeffs    points to the filter coefficients
@@ -47,37 +48,33 @@
   @param[in]     blockSize  number of input samples to process per call
   @return        execution status
                    - \ref ARM_MATH_SUCCESS      : Operation successful
-                   - \ref ARM_MATH_LENGTH_ERROR : <code>blockSize</code> is not a multiple of <code>M</code>
+                   - \ref ARM_MATH_LENGTH_ERROR : <code>blockSize</code> is not
+  a multiple of <code>M</code>
 
   @par           Details
-                   <code>pCoeffs</code> points to the array of filter coefficients stored in time reversed order:
-  <pre>
-      {b[numTaps-1], b[numTaps-2], b[N-2], ..., b[1], b[0]}
+                   <code>pCoeffs</code> points to the array of filter
+  coefficients stored in time reversed order: <pre> {b[numTaps-1], b[numTaps-2],
+  b[N-2], ..., b[1], b[0]}
   </pre>
   @par
                    <code>pState</code> points to the array of state variables.
-                   <code>pState</code> is of length <code>numTaps+blockSize-1</code> words where <code>blockSize</code> is the number of input samples passed to <code>arm_fir_decimate_f32()</code>.
+                   <code>pState</code> is of length
+  <code>numTaps+blockSize-1</code> words where <code>blockSize</code> is the
+  number of input samples passed to <code>arm_fir_decimate_f32()</code>.
                    <code>M</code> is the decimation factor.
  */
 
-arm_status arm_fir_decimate_init_f32(
-        arm_fir_decimate_instance_f32 * S,
-        uint16_t numTaps,
-        uint8_t M,
-  const float32_t * pCoeffs,
-        float32_t * pState,
-        uint32_t blockSize)
-{
+arm_status arm_fir_decimate_init_f32(arm_fir_decimate_instance_f32 *S,
+                                     uint16_t numTaps, uint8_t M,
+                                     const float32_t *pCoeffs,
+                                     float32_t *pState, uint32_t blockSize) {
   arm_status status;
 
   /* The size of the input block must be a multiple of the decimation factor */
-  if ((blockSize % M) != 0U)
-  {
+  if ((blockSize % M) != 0U) {
     /* Set status as ARM_MATH_LENGTH_ERROR */
     status = ARM_MATH_LENGTH_ERROR;
-  }
-  else
-  {
+  } else {
     /* Assign filter taps */
     S->numTaps = numTaps;
 
@@ -97,7 +94,6 @@ arm_status arm_fir_decimate_init_f32(
   }
 
   return (status);
-
 }
 
 /**

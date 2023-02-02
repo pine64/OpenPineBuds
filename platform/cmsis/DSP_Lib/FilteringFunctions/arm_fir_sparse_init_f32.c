@@ -38,8 +38,10 @@
  */
 
 /**
-  @brief         Initialization function for the floating-point sparse FIR filter.
-  @param[in,out] S          points to an instance of the floating-point sparse FIR structure
+  @brief         Initialization function for the floating-point sparse FIR
+  filter.
+  @param[in,out] S          points to an instance of the floating-point sparse
+  FIR structure
   @param[in]     numTaps    number of nonzero coefficients in the filter
   @param[in]     pCoeffs    points to the array of filter coefficients
   @param[in]     pState     points to the state buffer
@@ -49,23 +51,19 @@
   @return        none
 
   @par           Details
-                   <code>pCoeffs</code> holds the filter coefficients and has length <code>numTaps</code>.
-                   <code>pState</code> holds the filter's state variables and must be of length
-                   <code>maxDelay + blockSize</code>, where <code>maxDelay</code>
-                   is the maximum number of delay line values.
-                   <code>blockSize</code> is the 
-                   number of samples processed by the <code>arm_fir_sparse_f32()</code> function.
+                   <code>pCoeffs</code> holds the filter coefficients and has
+  length <code>numTaps</code>. <code>pState</code> holds the filter's state
+  variables and must be of length <code>maxDelay + blockSize</code>, where
+  <code>maxDelay</code> is the maximum number of delay line values.
+                   <code>blockSize</code> is the
+                   number of samples processed by the
+  <code>arm_fir_sparse_f32()</code> function.
  */
 
-void arm_fir_sparse_init_f32(
-        arm_fir_sparse_instance_f32 * S,
-        uint16_t numTaps,
-  const float32_t * pCoeffs,
-        float32_t * pState,
-        int32_t * pTapDelay,
-        uint16_t maxDelay,
-        uint32_t blockSize)
-{
+void arm_fir_sparse_init_f32(arm_fir_sparse_instance_f32 *S, uint16_t numTaps,
+                             const float32_t *pCoeffs, float32_t *pState,
+                             int32_t *pTapDelay, uint16_t maxDelay,
+                             uint32_t blockSize) {
   /* Assign filter taps */
   S->numTaps = numTaps;
 
