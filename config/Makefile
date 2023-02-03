@@ -19,7 +19,6 @@ obj-y := $(obj-y:.S=.o)
 
 ccflags-y += \
 	-Iplatform/hal \
-	-Iplatform/drivers/usb/usb_dev/inc \
 	-Iservices/nv_section/aud_section \
 	-Iservices/nv_section/include \
 	-Iservices/multimedia/speech/inc \

@@ -11,7 +11,6 @@ endif
 
 ccflags-y += \
 	-Iapps/common \
-	-Iplatform/drivers/usb/usb_dev/inc \
 	-Iplatform/drivers/ana \
 	$(BT_IF_INCLUDES) \
 	-Iservices/communication/comminication_knowles \

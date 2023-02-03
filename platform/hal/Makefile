@@ -357,7 +357,6 @@ ifneq ($(DEBUG_PORT),)
 CFLAGS_hal_uart.o += -DDEBUG_PORT=$(DEBUG_PORT)
 endif
 
-CFLAGS_hal_usb.o += -Iplatform/drivers/usb/usb_dev/inc -Iutils/hwtimer_list
 
 ifeq ($(USB_ISO),1)
 CFLAGS_hal_usb.o += -DUSB_ISO

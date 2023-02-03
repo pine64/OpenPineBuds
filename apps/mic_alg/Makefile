@@ -30,7 +30,6 @@ ccflags-y +=  \
     -Iapps/i2c_sensor \
     -Iplatform/drivers/bt \
     -Iplatform/drivers/ana \
-    -Iplatform/drivers/usb/usb_dev/inc \
 	-Iapps/battery
 
 ifeq ($(AUDIO_RESAMPLE),1)

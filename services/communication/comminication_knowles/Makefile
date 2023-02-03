@@ -10,7 +10,6 @@ obj-y := $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
 
 subdir-ccflags-y += \
 	-Iapps/common \
-	-Iplatform/drivers/usb/usb_dev/inc \
 	-Iplatform/drivers/ana \
 	-Iutils/crc32 \
 	-Iservices/bt_app \

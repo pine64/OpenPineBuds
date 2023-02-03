@@ -18,7 +18,6 @@ ccflags-y +=  \
     -Iapps/key \
     -Iplatform/drivers/bt \
     -Iplatform/drivers/ana \
-    -Iplatform/drivers/usb/usb_dev/inc \
 	-Iapps/battery \
 	-Iservices/multimedia/audio/codec/sbc/inc \
 	-Iservices/multimedia/audio/codec/sbc/src/inc \

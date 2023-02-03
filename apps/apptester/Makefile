@@ -23,8 +23,6 @@ subdir-ccflags-y += \
 	-Iservices/multimedia/speech/inc \
     -Iservices/nv_section/include \
     -Iservices/nv_section/aud_section \
-	-Iplatform/drivers/usb/usb_dev/inc \
-	-Itests/anc_usb \
 	-Iutils/hwtimer_list
 
 CFLAGS_usb_audio_app.o += -DAUDIO_OUTPUT_VOLUME_DEFAULT=$(AUDIO_OUTPUT_VOLUME_DEFAULT)
@@ -58,9 +56,6 @@ ifeq ($(ADC_CH_SEP_BUFF),1)
 ANC_USB_CFG_FLAGS += -DADC_CH_SEP_BUFF
 endif
 
-include platform/drivers/usb/usb_dev/uaud_cfg_flags.mk
-
-platform/drivers/usb/usb_dev/uaud_cfg_flags.mk: ;
 
 ANC_USB_CFG_FLAGS += $(UAUD_CFG_FLAGS)
 
