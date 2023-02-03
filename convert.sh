@@ -4,7 +4,7 @@ txt_to_wav() {
   xxd -r -p $arg1 > out-$hash.sbc
   # sbcinfo out-$hash.sbc
   ffmpeg -y \
-    -v info         `# verbosity - other options are "quiet", "error", "panic"` \
+    -v quiet         `# verbosity - other options are "quiet", "error", "panic"` \
     -f sbc          `# accept SBC format` \
     -ac 1           `# audio channel: #1` \
     -i ./out-$hash.sbc    `# input file: out.raw` \
@@ -15,7 +15,7 @@ txt_to_wav() {
 audio_to_txt() {
   hash=$(echo $arg1 | md5sum | cut -d" " -f1)
   ffmpeg -y \
-    -v info            `# verbosity - other options are "quiet", "error", "panic"` \
+    -v quiet            `# verbosity - other options are "quiet", "error", "panic"` \
     -i $arg1           `#input file: $arg1` \
     -f sbc             `#output format: SBC` \
     -ar 16000          `# audio rate: 16 kHz` \
@@ -37,10 +37,10 @@ audio_to_txt() {
 
 audio_to_cpp() {
   hash=$(echo $arg1 | md5sum | cut -d" " -f1)
-  filename=$(out-$hash.sbc)
+  filename="out-$hash.sbc"
   varname=$(echo $arg1 | rev | cut -c5- | cut -d"/" -f1,2 | rev | tr '[:lower:]' '[:upper:]' | tr "/" _)
   ffmpeg -y \
-    -v info            `# verbosity - other options are "quiet", "error", "panic"` \
+    -v quiet            `# verbosity - other options are "quiet", "error", "panic"` \
     -i $arg1           `#input file: $arg1` \
     -f sbc             `#output format: SBC` \
     -ar 16000          `# audio rate: 16 kHz` \
