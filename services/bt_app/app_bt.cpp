@@ -288,140 +288,6 @@ void app_bt_accessmode_set(btif_accessible_mode_t mode) {
   osapi_unlock_stack();
 }
 
-#ifdef FPGA
-void app_bt_accessmode_set_for_test(btif_accessible_mode_t mode) {
-  const btif_access_mode_info_t info = {
-      BTIF_BT_DEFAULT_INQ_SCAN_INTERVAL, BTIF_BT_DEFAULT_INQ_SCAN_WINDOW,
-      BTIF_BT_DEFAULT_PAGE_SCAN_INTERVAL, BTIF_BT_DEFAULT_PAGE_SCAN_WINDOW};
-
-  TRACE(2, "%s %d", __func__, mode);
-  app_bt_ME_SetAccessibleMode_Fortest(mode, &info);
-}
-
-void app_bt_adv_mode_set_for_test(uint8_t en) {
-
-  TRACE(2, "%s %d", __func__, en);
-  app_bt_ME_Set_Advmode_Fortest(en);
-}
-
-void app_start_ble_adv_for_test(void) {
-  TRACE(1, "%s", __func__);
-
-  U8 adv_data[31];
-  U8 adv_data_len = 0;
-  U8 scan_rsp_data[31];
-  U8 scan_rsp_data_len = 0;
-
-  adv_data[adv_data_len++] = 2;
-  adv_data[adv_data_len++] = 0x01;
-  adv_data[adv_data_len++] = 0x1A;
-
-  adv_data[adv_data_len++] = 17;
-  adv_data[adv_data_len++] = 0xFF;
-
-  adv_data[adv_data_len++] = 0x9A;
-  adv_data[adv_data_len++] = 0x07;
-
-  adv_data[adv_data_len++] = 0x10;
-  adv_data[adv_data_len++] = 0x04;
-  adv_data[adv_data_len++] = 0x06;
-
-  adv_data[adv_data_len++] = 0x07;
-  adv_data[adv_data_len++] = 0x00;
-
-  adv_data[adv_data_len++] = 0x01;
-  adv_data[adv_data_len++] = 0x98;
-
-  adv_data[adv_data_len++] = 1;
-
-  adv_data[adv_data_len++] = 0xFF;
-  adv_data[adv_data_len++] = 0xFF;
-  adv_data[adv_data_len++] = 0xFF;
-  adv_data[adv_data_len++] = 0xFF;
-  adv_data[adv_data_len++] = 0xFF;
-  adv_data[adv_data_len++] = 0xFF;
-
-  // Get default Device Name (No name if not enough space)
-  const char *ble_name_in_nv = BLE_DEFAULT_NAME;
-  uint32_t nameLen = strlen(ble_name_in_nv);
-  // Get remaining space in the Advertising Data - 2 bytes are used for name
-  // length/flag
-  int8_t avail_space = 31 - adv_data_len;
-  if (avail_space - 2 >= (int8_t)nameLen) {
-    // Check if data can be added to the adv Data
-    adv_data[adv_data_len++] = nameLen + 1;
-    // Fill Device Name Flag
-    adv_data[adv_data_len++] = '\x09';
-    // Copy device name
-    memcpy(&adv_data[adv_data_len], ble_name_in_nv, nameLen);
-    // Update adv Data Length
-    adv_data_len += nameLen;
-    btif_me_ble_set_adv_data(adv_data_len, adv_data);
-
-    btif_adv_para_struct_t adv_para;
-    adv_para.interval_min = 32;
-    adv_para.interval_max = 32;
-    adv_para.adv_type = 0;
-    adv_para.own_addr_type = 0;
-    adv_para.peer_addr_type = 0;
-    adv_para.adv_chanmap = 0x07;
-    adv_para.adv_filter_policy = 0;
-    btif_me_ble_set_adv_parameters(&adv_para);
-    btif_me_set_ble_bd_address(ble_addr);
-    btif_me_ble_set_adv_en(1);
-  } else {
-    nameLen = avail_space - 2;
-    // Check if data can be added to the adv Data
-    adv_data[adv_data_len++] = nameLen + 1;
-    // Fill Device Name Flag
-    adv_data[adv_data_len++] = '\x08';
-    // Copy device name
-    memcpy(&adv_data[adv_data_len], ble_name_in_nv, nameLen);
-    // Update adv Data Length
-    adv_data_len += nameLen;
-    btif_me_ble_set_adv_data(adv_data_len, adv_data);
-
-    btif_adv_para_struct_t adv_para;
-    adv_para.interval_min = 256;
-    adv_para.interval_max = 256;
-    adv_para.adv_type = 0;
-    adv_para.own_addr_type = 0;
-    adv_para.peer_addr_type = 0;
-    adv_para.adv_chanmap = 0x07;
-    adv_para.adv_filter_policy = 0;
-    btif_me_ble_set_adv_parameters(&adv_para);
-    btif_me_set_ble_bd_address(ble_addr);
-
-    avail_space = 31;
-    nameLen = strlen(ble_name_in_nv);
-    if (avail_space - 2 < (int8_t)nameLen)
-      nameLen = avail_space - 2;
-
-    scan_rsp_data[scan_rsp_data_len++] = nameLen + 1;
-    // Fill Device Name Flag
-    scan_rsp_data[scan_rsp_data_len++] = '\x09';
-    // Copy device name
-    memcpy(&scan_rsp_data[scan_rsp_data_len], ble_name_in_nv, nameLen);
-    // Update Scan response Data Length
-    scan_rsp_data_len += nameLen;
-    btif_me_ble_set_scan_rsp_data(scan_rsp_data_len, scan_rsp_data);
-    btif_me_ble_set_adv_en(1);
-  }
-}
-
-void app_bt_write_controller_memory_for_test(uint32_t addr, uint32_t val,
-                                             uint8_t type) {
-  TRACE(2, "%s addr=0x%x val=0x%x type=%d", __func__, addr, val, type);
-  app_bt_ME_Write_Controller_Memory_Fortest(addr, val, type);
-}
-
-void app_bt_read_controller_memory_for_test(uint32_t addr, uint32_t len,
-                                            uint8_t type) {
-  TRACE(2, "%s addr=0x%x len=%x type=%d", __func__, addr, len, type);
-  app_bt_ME_Read_Controller_Memory_Fortest(addr, len, type);
-}
-#endif
-
 extern "C" uint8_t app_bt_get_act_cons(void) {
   int activeCons;
 
@@ -706,7 +572,7 @@ void app_bt_accessible_manager_process(const btif_event_t *Event) {
   case BTIF_BTEVENT_LINK_CONNECT_IND:
     TRACE(1, "BTEVENT_LINK_CONNECT_IND/CNF activeCons:%d",
           btif_me_get_activeCons());
-#if defined(__BTIF_EARPHONE__) && !defined(FPGA)
+#if defined(__BTIF_EARPHONE__)
     app_stop_10_second_timer(APP_PAIR_TIMER_ID);
 #endif
 #ifdef __BT_ONE_BRING_TWO__
@@ -771,7 +637,7 @@ void app_bt_accessible_manager_process(const btif_event_t *Event) {
 }
 
 #define APP_BT_SWITCHROLE_LIMIT (2)
-//#define __SET_OUR_AS_MASTER__
+// #define __SET_OUR_AS_MASTER__
 
 void app_bt_role_manager_process(const btif_event_t *Event) {
 #if defined(IBRT) || defined(APP_LINEIN_A2DP_SOURCE) ||                        \
@@ -1536,8 +1402,7 @@ void app_bt_global_handle(const btif_event_t *Event) {
     DUMP8("%02x ", btif_me_get_callback_event_rem_dev_bd_addr(Event),
           BTIF_BD_ADDR_SIZE);
 
-#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) &&            \
-    !defined(FPGA)
+#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
     if (btif_me_get_activeCons() == 0) {
       app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
     } else {
@@ -1596,8 +1461,7 @@ void app_bt_global_handle(const btif_event_t *Event) {
     // 05  auth error
     // 16  io cap reject.
 
-#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) &&            \
-    !defined(FPGA)
+#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
     if (btif_me_get_activeCons() == 0) {
       app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
     }
@@ -1836,17 +1700,13 @@ static int app_bt_handle_process(APP_MESSAGE_BODY *msg_body) {
     app_bt_accessmode_set(msg_body->message_Param0);
     if (msg_body->message_Param0 == BTIF_BAM_GENERAL_ACCESSIBLE &&
         old_access_mode != BTIF_BAM_GENERAL_ACCESSIBLE) {
-#ifndef FPGA
       // app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
 #ifdef MEDIA_PLAYER_SUPPORT
       app_voice_report(APP_STATUS_INDICATION_BOTHSCAN, 0);
 #endif
       app_start_10_second_timer(APP_PAIR_TIMER_ID);
-#endif
     } else {
-#ifndef FPGA
       // app_status_indication_set(APP_STATUS_INDICATION_PAGESCAN);
-#endif
     }
     break;
   default:
@@ -1860,7 +1720,6 @@ void *app_bt_profile_active_store_ptr_get(uint8_t *bdAddr) {
   static btdevice_profile device_profile = {true, false, true, 0};
   btdevice_profile *ptr;
 
-#ifndef FPGA
   nvrec_btdevicerecord *record = NULL;
   if (!nv_record_btdevicerecord_find((bt_bdaddr_t *)bdAddr, &record)) {
     uint32_t lock = nv_record_pre_write_operation();
@@ -1872,9 +1731,7 @@ void *app_bt_profile_active_store_ptr_get(uint8_t *bdAddr) {
     ptr->hfp_act = true;
     ptr->a2dp_act = true;
     nv_record_post_write_operation(lock);
-  } else
-#endif
-  {
+  } else {
     ptr = &device_profile;
     TRACE(1, "%s default", __func__);
   }
@@ -2063,11 +1920,11 @@ static void app_bt_profile_reconnect_handler(void const *param) {
       else if ((btdevice_plf_p->a2dp_act) &&
                (bt_profile_manager_p->a2dp_connect !=
                 bt_profile_connect_status_success)) {
-        TRACE(0, "try connect a2dp");
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager_p->has_connected);
-        app_bt_A2DP_OpenStream(bt_profile_manager_p->stream,
-                               &bt_profile_manager_p->rmt_addr);
+                TRACE(0, "try connect a2dp");
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager_p->has_connected);
+                app_bt_A2DP_OpenStream(bt_profile_manager_p->stream,
+                                       &bt_profile_manager_p->rmt_addr);
       }
     }
   }
@@ -2207,21 +2064,21 @@ void app_bt_profile_connect_manager_opening_reconnect(void) {
       btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(
           record1.bdAddr.address);
       if (!(btdevice_plf_p->hfp_act) && !(btdevice_plf_p->a2dp_act)) {
-        nv_record_ddbrec_delete((bt_bdaddr_t *)&record1.bdAddr);
-        find_invalid_record_cnt++;
+                nv_record_ddbrec_delete((bt_bdaddr_t *)&record1.bdAddr);
+                find_invalid_record_cnt++;
       }
     } else if (ret == 2) {
       btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(
           record1.bdAddr.address);
       if (!(btdevice_plf_p->hfp_act) && !(btdevice_plf_p->a2dp_act)) {
-        nv_record_ddbrec_delete((bt_bdaddr_t *)&record1.bdAddr);
-        find_invalid_record_cnt++;
+                nv_record_ddbrec_delete((bt_bdaddr_t *)&record1.bdAddr);
+                find_invalid_record_cnt++;
       }
       btdevice_plf_p = (btdevice_profile *)app_bt_profile_active_store_ptr_get(
           record2.bdAddr.address);
       if (!(btdevice_plf_p->hfp_act) && !(btdevice_plf_p->a2dp_act)) {
-        nv_record_ddbrec_delete((bt_bdaddr_t *)&record2.bdAddr);
-        find_invalid_record_cnt++;
+                nv_record_ddbrec_delete((bt_bdaddr_t *)&record2.bdAddr);
+                find_invalid_record_cnt++;
       }
     }
   } while (find_invalid_record_cnt);
@@ -2244,39 +2101,44 @@ void app_bt_profile_connect_manager_opening_reconnect(void) {
 
 #if defined(A2DP_LHDC_ON)
       if (btdevice_plf_p->a2dp_codectype == BTIF_AVDTP_CODEC_TYPE_NON_A2DP)
-        bt_profile_manager[BT_DEVICE_ID_1].stream =
-            app_bt_device.a2dp_lhdc_stream[BT_DEVICE_ID_1]->a2dp_stream;
+                bt_profile_manager[BT_DEVICE_ID_1].stream =
+                    app_bt_device.a2dp_lhdc_stream[BT_DEVICE_ID_1]->a2dp_stream;
       else
 #endif
 #if defined(A2DP_AAC_ON)
           if (btdevice_plf_p->a2dp_codectype ==
               BTIF_AVDTP_CODEC_TYPE_MPEG2_4_AAC)
-        bt_profile_manager[BT_DEVICE_ID_1].stream =
-            app_bt_device.a2dp_aac_stream[BT_DEVICE_ID_1]->a2dp_stream;
+                bt_profile_manager[BT_DEVICE_ID_1].stream =
+                    app_bt_device.a2dp_aac_stream[BT_DEVICE_ID_1]->a2dp_stream;
       else
 #endif
 #if defined(A2DP_LDAC_ON) // workaround for mate10 no a2dp issue when link back
-          if (btdevice_plf_p->a2dp_codectype ==
-              BTIF_AVDTP_CODEC_TYPE_NON_A2DP) {
-        // bt_profile_manager[BT_DEVICE_ID_1].stream =
-        // app_bt_device.a2dp_aac_stream[BT_DEVICE_ID_1]->a2dp_stream;
-        // btdevice_plf_p->a2dp_codectype = BTIF_AVDTP_CODEC_TYPE_MPEG2_4_AAC;
-        bt_profile_manager[BT_DEVICE_ID_1].stream =
-            app_bt_device.a2dp_ldac_stream[BT_DEVICE_ID_1]->a2dp_stream;
-        btdevice_plf_p->a2dp_codectype = BTIF_AVDTP_CODEC_TYPE_NON_A2DP;
-      } else
+                if (btdevice_plf_p->a2dp_codectype ==
+                    BTIF_AVDTP_CODEC_TYPE_NON_A2DP) {
+                  // bt_profile_manager[BT_DEVICE_ID_1].stream =
+                  // app_bt_device.a2dp_aac_stream[BT_DEVICE_ID_1]->a2dp_stream;
+                  // btdevice_plf_p->a2dp_codectype =
+                  // BTIF_AVDTP_CODEC_TYPE_MPEG2_4_AAC;
+                  bt_profile_manager[BT_DEVICE_ID_1].stream =
+                      app_bt_device.a2dp_ldac_stream[BT_DEVICE_ID_1]
+                          ->a2dp_stream;
+                  btdevice_plf_p->a2dp_codectype =
+                      BTIF_AVDTP_CODEC_TYPE_NON_A2DP;
+                } else
 #endif
 
 #if defined(A2DP_SCALABLE_ON)
-          if (btdevice_plf_p->a2dp_codectype == BTIF_AVDTP_CODEC_TYPE_NON_A2DP)
-        bt_profile_manager[BT_DEVICE_ID_1].stream =
-            app_bt_device.a2dp_scalable_stream[BT_DEVICE_ID_1]->a2dp_stream;
-      else
+                    if (btdevice_plf_p->a2dp_codectype ==
+                        BTIF_AVDTP_CODEC_TYPE_NON_A2DP)
+                  bt_profile_manager[BT_DEVICE_ID_1].stream =
+                      app_bt_device.a2dp_scalable_stream[BT_DEVICE_ID_1]
+                          ->a2dp_stream;
+                else
 #endif
-      {
-        bt_profile_manager[BT_DEVICE_ID_1].stream =
-            app_bt_device.a2dp_stream[BT_DEVICE_ID_1]->a2dp_stream;
-      }
+                {
+                  bt_profile_manager[BT_DEVICE_ID_1].stream =
+                      app_bt_device.a2dp_stream[BT_DEVICE_ID_1]->a2dp_stream;
+                }
 
       btif_a2dp_reset_stream_state(bt_profile_manager[BT_DEVICE_ID_1].stream);
 
@@ -2287,28 +2149,30 @@ void app_bt_profile_connect_manager_opening_reconnect(void) {
           &app_bt_device.hs_channel[BT_DEVICE_ID_1];
 #endif
       if (btdevice_plf_p->hfp_act) {
-        TRACE(0, "try connect hf");
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager[BT_DEVICE_ID_1].has_connected);
-        app_bt_HF_CreateServiceLink(
-            bt_profile_manager[BT_DEVICE_ID_1].chan,
-            (bt_bdaddr_t *)&bt_profile_manager[BT_DEVICE_ID_1].rmt_addr);
+                TRACE(0, "try connect hf");
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager[BT_DEVICE_ID_1].has_connected);
+                app_bt_HF_CreateServiceLink(
+                    bt_profile_manager[BT_DEVICE_ID_1].chan,
+                    (bt_bdaddr_t *)&bt_profile_manager[BT_DEVICE_ID_1]
+                        .rmt_addr);
       } else if (btdevice_plf_p->a2dp_act) {
-        TRACE(0, "try connect a2dp");
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager[BT_DEVICE_ID_1].has_connected);
-        app_bt_A2DP_OpenStream(bt_profile_manager[BT_DEVICE_ID_1].stream,
-                               &bt_profile_manager[BT_DEVICE_ID_1].rmt_addr);
+                TRACE(0, "try connect a2dp");
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager[BT_DEVICE_ID_1].has_connected);
+                app_bt_A2DP_OpenStream(
+                    bt_profile_manager[BT_DEVICE_ID_1].stream,
+                    &bt_profile_manager[BT_DEVICE_ID_1].rmt_addr);
       }
 
 #if defined(__HSP_ENABLE__)
       else if (btdevice_plf_p->hsp_act) {
-        TRACE(0, "try connect hs");
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager[BT_DEVICE_ID_1].has_connected);
-        app_bt_HS_CreateServiceLink(
-            bt_profile_manager[BT_DEVICE_ID_1].hs_chan,
-            &bt_profile_manager[BT_DEVICE_ID_1].rmt_addr);
+                TRACE(0, "try connect hs");
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager[BT_DEVICE_ID_1].has_connected);
+                app_bt_HS_CreateServiceLink(
+                    bt_profile_manager[BT_DEVICE_ID_1].hs_chan,
+                    &bt_profile_manager[BT_DEVICE_ID_1].rmt_addr);
       }
 #endif
     }
@@ -2325,26 +2189,27 @@ void app_bt_profile_connect_manager_opening_reconnect(void) {
 
 #if defined(A2DP_LHDC_ON)
       if (btdevice_plf_p->a2dp_codectype == BTIF_AVDTP_CODEC_TYPE_NON_A2DP)
-        bt_profile_manager[BT_DEVICE_ID_2].stream =
-            app_bt_device.a2dp_lhdc_stream[BT_DEVICE_ID_2]->a2dp_stream;
+                bt_profile_manager[BT_DEVICE_ID_2].stream =
+                    app_bt_device.a2dp_lhdc_stream[BT_DEVICE_ID_2]->a2dp_stream;
       else
 #endif
 #if defined(A2DP_AAC_ON)
           if (btdevice_plf_p->a2dp_codectype ==
               BTIF_AVDTP_CODEC_TYPE_MPEG2_4_AAC)
-        bt_profile_manager[BT_DEVICE_ID_2].stream =
-            app_bt_device.a2dp_aac_stream[BT_DEVICE_ID_2]->a2dp_stream;
+                bt_profile_manager[BT_DEVICE_ID_2].stream =
+                    app_bt_device.a2dp_aac_stream[BT_DEVICE_ID_2]->a2dp_stream;
       else
 #endif
 #if defined(A2DP_SCALABLE_ON)
           if (btdevice_plf_p->a2dp_codectype == BTIF_AVDTP_CODEC_TYPE_NON_A2DP)
-        bt_profile_manager[BT_DEVICE_ID_2].stream =
-            app_bt_device.a2dp_scalable_stream[BT_DEVICE_ID_2]->a2dp_stream;
+                bt_profile_manager[BT_DEVICE_ID_2].stream =
+                    app_bt_device.a2dp_scalable_stream[BT_DEVICE_ID_2]
+                        ->a2dp_stream;
       else
 #endif
       {
-        bt_profile_manager[BT_DEVICE_ID_2].stream =
-            app_bt_device.a2dp_stream[BT_DEVICE_ID_2]->a2dp_stream;
+                bt_profile_manager[BT_DEVICE_ID_2].stream =
+                    app_bt_device.a2dp_stream[BT_DEVICE_ID_2]->a2dp_stream;
       }
 
       btif_a2dp_reset_stream_state(bt_profile_manager[BT_DEVICE_ID_2].stream);
@@ -2403,7 +2268,7 @@ static int8_t app_bt_profile_reconnect_pending_process(void) {
     if (remDev != NULL) {
       cmgrHandler = btif_cmgr_get_acl_handler(remDev);
       if (btif_cmgr_is_audio_up(cmgrHandler) == 1)
-        return -1;
+                return -1;
     }
   }
   for (i = 0; i < BT_DEVICE_NUM; i++) {
@@ -2477,8 +2342,8 @@ static void app_bt_update_connectable_mode_after_connection_management(void) {
   if (isEnterConnetableOnlyState) {
     for (deviceId = 0; deviceId < BT_DEVICE_NUM; deviceId++) {
       if (!bt_profile_manager[deviceId].has_connected) {
-        app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-        return;
+                app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                return;
       }
     }
   }
@@ -2499,12 +2364,13 @@ static void app_bt_connectable_mode_stop_reconnecting_handler(void) {
           bt_profile_reconnect_null;
       bt_profile_manager[deviceId].reconnect_cnt = 0;
       if (bt_profile_manager[deviceId].connect_timer != NULL)
-        osTimerStop(bt_profile_manager[deviceId].connect_timer);
+                osTimerStop(bt_profile_manager[deviceId].connect_timer);
       remDev = btif_me_enumerate_remote_devices(deviceId);
       if (remDev != NULL) {
-        cmgrHandler = btif_cmgr_get_acl_handler(remDev);
-        btif_me_cancel_create_link(
-            btif_cmgr_get_cmgrhandler_remdev_bthandle(cmgrHandler), remDev);
+                cmgrHandler = btif_cmgr_get_acl_handler(remDev);
+                btif_me_cancel_create_link(
+                    btif_cmgr_get_cmgrhandler_remdev_bthandle(cmgrHandler),
+                    remDev);
       }
     }
   }
@@ -2532,41 +2398,41 @@ void app_bt_profile_connect_manager_hs(enum BT_DEVICE_ID_T id, HsChannel *Chan,
       TRACE(1, "%s HS_EVENT_SERVICE_CONNECTED", __func__);
       nv_record_btdevicerecord_set_hsp_profile_active_state(btdevice_plf_p,
                                                             true);
-#ifndef FPGA
       nv_record_touch_cause_flush();
-#endif
       bt_profile_manager[id].hsp_connect = bt_profile_connect_status_success;
       bt_profile_manager[id].reconnect_cnt = 0;
       bt_profile_manager[id].hs_chan = &app_bt_device.hs_channel[id];
       memcpy(bt_profile_manager[id].rmt_addr.address,
              Info->p.remDev->bdAddr.address, BTIF_BD_ADDR_SIZE);
       if (false == bt_profile_manager[id].has_connected) {
-        app_bt_resume_sniff_mode(id);
+                app_bt_resume_sniff_mode(id);
       }
       if (bt_profile_manager[id].reconnect_mode ==
           bt_profile_reconnect_openreconnecting) {
-        // do nothing
+                // do nothing
       } else if (bt_profile_manager[id].reconnect_mode ==
                  bt_profile_reconnect_reconnecting) {
-        if (btdevice_plf_p->a2dp_act && bt_profile_manager[id].a2dp_connect !=
-                                            bt_profile_connect_status_success) {
-          TRACE(0, "!!!continue connect a2dp\n");
-          app_bt_precheck_before_starting_connecting(
-              bt_profile_manager[id].has_connected);
-          app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
-                                 &bt_profile_manager[id].rmt_address);
-        }
+                if (btdevice_plf_p->a2dp_act &&
+                    bt_profile_manager[id].a2dp_connect !=
+                        bt_profile_connect_status_success) {
+                  TRACE(0, "!!!continue connect a2dp\n");
+                  app_bt_precheck_before_starting_connecting(
+                      bt_profile_manager[id].has_connected);
+                  app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
+                                         &bt_profile_manager[id].rmt_address);
+                }
       }
 #ifdef __AUTO_CONNECT_OTHER_PROFILE__
       else {
-        if (btdevice_plf_p->a2dp_act && bt_profile_manager[id].a2dp_connect !=
-                                            bt_profile_connect_status_success) {
-          bt_profile_manager[id].connect_timer_cb =
-              app_bt_profile_connect_a2dp_retry_timehandler;
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          osTimerStart(bt_profile_manager[id].connect_timer,
-                       APP_BT_PROFILE_CONNECT_RETRY_MS);
-        }
+                if (btdevice_plf_p->a2dp_act &&
+                    bt_profile_manager[id].a2dp_connect !=
+                        bt_profile_connect_status_success) {
+                  bt_profile_manager[id].connect_timer_cb =
+                      app_bt_profile_connect_a2dp_retry_timehandler;
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  osTimerStart(bt_profile_manager[id].connect_timer,
+                               APP_BT_PROFILE_CONNECT_RETRY_MS);
+                }
       }
 #endif
       break;
@@ -2576,44 +2442,47 @@ void app_bt_profile_connect_manager_hs(enum BT_DEVICE_ID_T id, HsChannel *Chan,
       bt_profile_manager[id].hsp_connect = bt_profile_connect_status_failure;
       if (bt_profile_manager[id].reconnect_mode ==
           bt_profile_reconnect_openreconnecting) {
-        if (++bt_profile_manager[id].reconnect_cnt <
-            APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT) {
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          profile_reconnect_enable = true;
-          bt_profile_manager[id].hfp_connect = bt_profile_connect_status_unknow;
-        }
+                if (++bt_profile_manager[id].reconnect_cnt <
+                    APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT) {
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  profile_reconnect_enable = true;
+                  bt_profile_manager[id].hfp_connect =
+                      bt_profile_connect_status_unknow;
+                }
       } else if (bt_profile_manager[id].reconnect_mode ==
                  bt_profile_reconnect_reconnecting) {
-        if (++bt_profile_manager[id].reconnect_cnt <
-            APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT) {
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          profile_reconnect_enable = true
-        } else {
-          app_bt_restore_reconnecting_idle_mode(id);
-          // bt_profile_manager[id].reconnect_mode = bt_profile_reconnect_null;
-        }
-        TRACE(2, "%s try to reconnect cnt:%d", __func__,
-              bt_profile_manager[id].reconnect_cnt);
+                if (++bt_profile_manager[id].reconnect_cnt <
+                    APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT) {
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  profile_reconnect_enable = true
+                } else {
+                  app_bt_restore_reconnecting_idle_mode(id);
+                  // bt_profile_manager[id].reconnect_mode =
+                  // bt_profile_reconnect_null;
+                }
+                TRACE(2, "%s try to reconnect cnt:%d", __func__,
+                      bt_profile_manager[id].reconnect_cnt);
 #if !defined(IBRT)
       } else if (Info->p.remDev->discReason == 0x8) {
-        bt_profile_manager[id].reconnect_mode =
-            bt_profile_reconnect_reconnecting;
-        app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-        TRACE(1, "%s try to reconnect", __func__);
-        if (app_bt_profile_reconnect_pending(id) != 0) {
-          profile_reconnect_enable = true;
-        }
+                bt_profile_manager[id].reconnect_mode =
+                    bt_profile_reconnect_reconnecting;
+                app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                TRACE(1, "%s try to reconnect", __func__);
+                if (app_bt_profile_reconnect_pending(id) != 0) {
+                  profile_reconnect_enable = true;
+                }
 #endif
       } else {
-        bt_profile_manager[id].hsp_connect = bt_profile_connect_status_unknow;
+                bt_profile_manager[id].hsp_connect =
+                    bt_profile_connect_status_unknow;
       }
 
       if (profile_reconnect_enable) {
 #ifdef __IAG_BLE_INCLUDE__
-        app_ble_refresh_adv_state(BLE_ADVERTISING_INTERVAL);
+                app_ble_refresh_adv_state(BLE_ADVERTISING_INTERVAL);
 #endif
-        osTimerStart(bt_profile_manager[id].connect_timer,
-                     APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
+                osTimerStart(bt_profile_manager[id].connect_timer,
+                             APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
       }
       break;
     default:
@@ -2674,44 +2543,46 @@ void app_bt_profile_connect_manager_hs(enum BT_DEVICE_ID_T id, HsChannel *Chan,
     if (btdevice_plf_p->hsp_act && bt_profile_manager[id].hsp_connect ==
                                        bt_profile_connect_status_success) {
       if (btdevice_plf_p->a2dp_act && !opening_a2dp_proc_final) {
-        TRACE(0, "!!!continue connect a2dp\n");
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager[id].has_connected);
-        app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
-                               &bt_profile_manager[id].rmt_addr);
+                TRACE(0, "!!!continue connect a2dp\n");
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager[id].has_connected);
+                app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
+                                       &bt_profile_manager[id].rmt_addr);
       }
     }
 
     if (bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null) {
       for (uint8_t i = 0; i < BT_DEVICE_NUM; i++) {
-        if (bt_profile_manager[i].reconnect_mode ==
-            bt_profile_reconnect_openreconnecting) {
-          TRACE(0, "!!!hs->start reconnect second device\n");
-          if ((btdevice_plf_p->hfp_act) &&
-              (!bt_profile_manager[i].hfp_connect)) {
-            TRACE(0, "try connect hf");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[i].has_connected);
-            app_bt_HF_CreateServiceLink(bt_profile_manager[i].chan,
-                                        &bt_profile_manager[i].rmt_addr);
-          } else if ((btdevice_plf_p->hsp_act) &&
-                     (!bt_profile_manager[i].hsp_connect)) {
-            TRACE(0, "try connect hs");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[i].has_connected);
-            app_bt_HS_CreateServiceLink(bt_profile_manager[i].hs_chan,
-                                        &bt_profile_manager[i].rmt_addr);
+                if (bt_profile_manager[i].reconnect_mode ==
+                    bt_profile_reconnect_openreconnecting) {
+                  TRACE(0, "!!!hs->start reconnect second device\n");
+                  if ((btdevice_plf_p->hfp_act) &&
+                      (!bt_profile_manager[i].hfp_connect)) {
+                    TRACE(0, "try connect hf");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[i].has_connected);
+                    app_bt_HF_CreateServiceLink(
+                        bt_profile_manager[i].chan,
+                        &bt_profile_manager[i].rmt_addr);
+                  } else if ((btdevice_plf_p->hsp_act) &&
+                             (!bt_profile_manager[i].hsp_connect)) {
+                    TRACE(0, "try connect hs");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[i].has_connected);
+                    app_bt_HS_CreateServiceLink(
+                        bt_profile_manager[i].hs_chan,
+                        &bt_profile_manager[i].rmt_addr);
 
-          } else if ((btdevice_plf_p->a2dp_act) &&
-                     (!bt_profile_manager[i].a2dp_connect)) {
-            TRACE(0, "try connect a2dp");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[i].has_connected);
-            app_bt_A2DP_OpenStream(bt_profile_manager[i].stream,
-                                   &bt_profile_manager[i].rmt_addr);
-          }
-          break;
-        }
+                  } else if ((btdevice_plf_p->a2dp_act) &&
+                             (!bt_profile_manager[i].a2dp_connect)) {
+                    TRACE(0, "try connect a2dp");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[i].has_connected);
+                    app_bt_A2DP_OpenStream(bt_profile_manager[i].stream,
+                                           &bt_profile_manager[i].rmt_addr);
+                  }
+                  break;
+                }
       }
     }
   }
@@ -2800,9 +2671,9 @@ void hfp_reconnecting_timer_stop_callback(const btif_event_t *event) {
     for (i = 0; i < BT_DEVICE_NUM; i++) {
       hfp_remote = &bt_profile_manager[i].rmt_addr;
       if (!strcmp((char *)hfp_remote, (char *)remote)) {
-        id = i;
-        TRACE(2, "%s: find bt device num = %d", __func__, id);
-        break;
+                id = i;
+                TRACE(2, "%s: find bt device num = %d", __func__, id);
+                break;
       }
     }
   }
@@ -2817,7 +2688,7 @@ void hfp_reconnecting_timer_stop_callback(const btif_event_t *event) {
       bt_profile_manager[id].saved_reconnect_mode = bt_profile_reconnect_null;
       bt_profile_manager[id].reconnect_cnt = 0;
       if (bt_profile_manager[id].connect_timer != NULL)
-        osTimerStop(bt_profile_manager[id].connect_timer);
+                osTimerStop(bt_profile_manager[id].connect_timer);
 
       TRACE(1, "%s: stop success", __func__);
     }
@@ -2853,9 +2724,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
       TRACE(1, "%s HF_EVENT_SERVICE_CONNECTED", __func__);
       nv_record_btdevicerecord_set_hfp_profile_active_state(btdevice_plf_p,
                                                             true);
-#ifndef FPGA
       nv_record_touch_cause_flush();
-#endif
       bt_profile_manager[id].hfp_connect = bt_profile_connect_status_success;
       bt_profile_manager[id].saved_reconnect_mode = bt_profile_reconnect_null;
       bt_profile_manager[id].reconnect_cnt = 0;
@@ -2863,7 +2732,7 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
       memcpy(bt_profile_manager[id].rmt_addr.address,
              ctx->remote_dev_bdaddr.address, BTIF_BD_ADDR_SIZE);
       if (false == bt_profile_manager[id].has_connected) {
-        app_bt_resume_sniff_mode(id);
+                app_bt_resume_sniff_mode(id);
       }
 
 #ifdef BTIF_DIP_DEVICE
@@ -2872,45 +2741,49 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
 
       if (bt_profile_manager[id].reconnect_mode ==
           bt_profile_reconnect_openreconnecting) {
-        // do nothing
+                // do nothing
       }
 #if defined(IBRT)
       else if (app_bt_ibrt_reconnect_mobile_profile_flag_get()) {
-        app_bt_ibrt_reconnect_mobile_profile_flag_clear();
+                app_bt_ibrt_reconnect_mobile_profile_flag_clear();
 #else
       else if (bt_profile_manager[id].reconnect_mode ==
                bt_profile_reconnect_reconnecting) {
 #endif
-        TRACE(2, "app_bt: a2dp_act in NV =%d,a2dp_connect=%d",
-              btdevice_plf_p->a2dp_act, bt_profile_manager[id].a2dp_connect);
-        if (btdevice_plf_p->a2dp_act && bt_profile_manager[id].a2dp_connect !=
-                                            bt_profile_connect_status_success) {
-          TRACE(0, "!!!continue connect a2dp\n");
-          app_bt_precheck_before_starting_connecting(
-              bt_profile_manager[id].has_connected);
-          app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
-                                 &bt_profile_manager[id].rmt_addr);
-        }
+                TRACE(2, "app_bt: a2dp_act in NV =%d,a2dp_connect=%d",
+                      btdevice_plf_p->a2dp_act,
+                      bt_profile_manager[id].a2dp_connect);
+                if (btdevice_plf_p->a2dp_act &&
+                    bt_profile_manager[id].a2dp_connect !=
+                        bt_profile_connect_status_success) {
+                  TRACE(0, "!!!continue connect a2dp\n");
+                  app_bt_precheck_before_starting_connecting(
+                      bt_profile_manager[id].has_connected);
+                  app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
+                                         &bt_profile_manager[id].rmt_addr);
+                }
       }
 #ifdef __AUTO_CONNECT_OTHER_PROFILE__
       else {
-        // befor auto connect a2dp profile, check whether a2dp is supported
-        if (btdevice_plf_p->a2dp_act && bt_profile_manager[id].a2dp_connect !=
-                                            bt_profile_connect_status_success) {
-          bt_profile_manager[id].connect_timer_cb =
-              app_bt_profile_connect_a2dp_retry_timehandler;
-          app_bt_accessmode_set(BAM_CONNECTABLE_ONLY);
-          osTimerStart(bt_profile_manager[id].connect_timer,
-                       APP_BT_PROFILE_CONNECT_RETRY_MS);
-        }
+                // befor auto connect a2dp profile, check whether a2dp is
+                // supported
+                if (btdevice_plf_p->a2dp_act &&
+                    bt_profile_manager[id].a2dp_connect !=
+                        bt_profile_connect_status_success) {
+                  bt_profile_manager[id].connect_timer_cb =
+                      app_bt_profile_connect_a2dp_retry_timehandler;
+                  app_bt_accessmode_set(BAM_CONNECTABLE_ONLY);
+                  osTimerStart(bt_profile_manager[id].connect_timer,
+                               APP_BT_PROFILE_CONNECT_RETRY_MS);
+                }
       }
 #endif
       break;
     case BTIF_HF_EVENT_SERVICE_DISCONNECTED:
       if (((ctx->disc_reason == 0) || (ctx->disc_reason == 19)) &&
           (p_ibrt_ctrl->current_role != IBRT_SLAVE)) {
-        once_event_case = 2;
-        startonce_delay_event_Timer_(1000);
+                once_event_case = 2;
+                startonce_delay_event_Timer_(1000);
       }
       // TRACE(3,"%s HF_EVENT_SERVICE_DISCONNECTED discReason:%d/%d",__func__,
       // Info->p.remDev->discReason, Info->p.remDev->discReason_saved);
@@ -2919,28 +2792,30 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
       bt_profile_manager[id].hfp_connect = bt_profile_connect_status_failure;
       if (bt_profile_manager[id].reconnect_mode ==
           bt_profile_reconnect_openreconnecting) {
-        if (++bt_profile_manager[id].reconnect_cnt <
-            APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT) {
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          profile_reconnect_enable = true;
-          bt_profile_manager[id].hfp_connect = bt_profile_connect_status_unknow;
-        }
+                if (++bt_profile_manager[id].reconnect_cnt <
+                    APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT) {
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  profile_reconnect_enable = true;
+                  bt_profile_manager[id].hfp_connect =
+                      bt_profile_connect_status_unknow;
+                }
       } else if (bt_profile_manager[id].reconnect_mode ==
                  bt_profile_reconnect_reconnecting) {
-        if (++bt_profile_manager[id].reconnect_cnt <
-            APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT) {
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          profile_reconnect_enable = true;
-        } else {
-          app_bt_restore_reconnecting_idle_mode(id);
-          // bt_profile_manager[id].reconnect_mode = bt_profile_reconnect_null;
-        }
-        TRACE(2, "%s try to reconnect cnt:%d", __func__,
-              bt_profile_manager[id].reconnect_cnt);
-        /*
-        }else if ((Info->p.remDev->discReason == 0x8)||
-              (Info->p.remDev->discReason_saved == 0x8)){
-              */
+                if (++bt_profile_manager[id].reconnect_cnt <
+                    APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT) {
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  profile_reconnect_enable = true;
+                } else {
+                  app_bt_restore_reconnecting_idle_mode(id);
+                  // bt_profile_manager[id].reconnect_mode =
+                  // bt_profile_reconnect_null;
+                }
+                TRACE(2, "%s try to reconnect cnt:%d", __func__,
+                      bt_profile_manager[id].reconnect_cnt);
+                /*
+                }else if ((Info->p.remDev->discReason == 0x8)||
+                      (Info->p.remDev->discReason_saved == 0x8)){
+                      */
       }
 #if !defined(IBRT)
 #if defined(ENHANCED_STACK)
@@ -2951,25 +2826,27 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
                (ctx->disc_reason == 0x0) || (ctx->disc_reason_saved == 0x0))
 #endif
       {
-        bt_profile_manager[id].reconnect_mode =
-            bt_profile_reconnect_reconnecting;
-        app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-        TRACE(2, "%s try to reconnect reason =%d", __func__, ctx->disc_reason);
-        if (app_bt_profile_reconnect_pending(id) != 0) {
-          profile_reconnect_enable = true;
-        }
+                bt_profile_manager[id].reconnect_mode =
+                    bt_profile_reconnect_reconnecting;
+                app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                TRACE(2, "%s try to reconnect reason =%d", __func__,
+                      ctx->disc_reason);
+                if (app_bt_profile_reconnect_pending(id) != 0) {
+                  profile_reconnect_enable = true;
+                }
       }
 #endif
       else {
-        bt_profile_manager[id].hfp_connect = bt_profile_connect_status_unknow;
+                bt_profile_manager[id].hfp_connect =
+                    bt_profile_connect_status_unknow;
       }
 
       if (profile_reconnect_enable) {
 #ifdef __IAG_BLE_INCLUDE__
-        app_ble_refresh_adv_state(BLE_ADVERTISING_INTERVAL);
+                app_ble_refresh_adv_state(BLE_ADVERTISING_INTERVAL);
 #endif
-        osTimerStart(bt_profile_manager[id].connect_timer,
-                     APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
+                osTimerStart(bt_profile_manager[id].connect_timer,
+                             APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
       }
       break;
     default:
@@ -2995,9 +2872,9 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
     if (bt_profile_manager[id].a2dp_connect !=
         bt_profile_connect_status_success) {
       if (btdevice_plf_p1->hfp_act && btdevice_plf_p1->a2dp_act) {
-        reconnect_a2dp_proc_final = false;
+                reconnect_a2dp_proc_final = false;
       } else {
-        reconnect_a2dp_proc_final = true;
+                reconnect_a2dp_proc_final = true;
       }
     }
     if (reconnect_hfp_proc_final && reconnect_a2dp_proc_final) {
@@ -3048,60 +2925,62 @@ void app_bt_profile_connect_manager_hf(enum BT_DEVICE_ID_T id,
            bt_profile_reconnect_openreconnecting) &&
           (bt_profile_manager[id].reconnect_cnt >=
            APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT)) {
-        app_bt_restore_reconnecting_idle_mode(id);
+                app_bt_restore_reconnecting_idle_mode(id);
       }
     }
 
     if (btdevice_plf_p1->hfp_act && bt_profile_manager[id].hfp_connect ==
                                         bt_profile_connect_status_success) {
       if (btdevice_plf_p1->a2dp_act && !opening_a2dp_proc_final) {
-        TRACE(1, "!!!continue connect a2dp %p\n",
-              bt_profile_manager[id].stream);
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager[id].has_connected);
-        app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
-                               &bt_profile_manager[id].rmt_addr);
+                TRACE(1, "!!!continue connect a2dp %p\n",
+                      bt_profile_manager[id].stream);
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager[id].has_connected);
+                app_bt_A2DP_OpenStream(bt_profile_manager[id].stream,
+                                       &bt_profile_manager[id].rmt_addr);
       }
     }
 
     if (bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null) {
       for (uint8_t i = 0; i < BT_DEVICE_NUM; i++) {
-        btdevice_profile *btdevice_plf_p_temp =
-            (btdevice_profile *)app_bt_profile_active_store_ptr_get(
-                (uint8_t *)bt_profile_manager[i].rmt_addr.address);
-        TRACE(3, "reconnect_mode:%d", bt_profile_manager[i].reconnect_mode);
-        if (bt_profile_manager[i].reconnect_mode ==
-            bt_profile_reconnect_openreconnecting) {
-          TRACE(0, "!!!hf->start reconnect second device\n");
-          if ((btdevice_plf_p_temp->hfp_act) &&
-              (!bt_profile_manager[i].hfp_connect)) {
-            TRACE(0, "try connect hf");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[id].has_connected);
-            app_bt_HF_CreateServiceLink(
-                bt_profile_manager[i].chan,
-                (bt_bdaddr_t *)&bt_profile_manager[i].rmt_addr);
-          }
+                btdevice_profile *btdevice_plf_p_temp =
+                    (btdevice_profile *)app_bt_profile_active_store_ptr_get(
+                        (uint8_t *)bt_profile_manager[i].rmt_addr.address);
+                TRACE(3, "reconnect_mode:%d",
+                      bt_profile_manager[i].reconnect_mode);
+                if (bt_profile_manager[i].reconnect_mode ==
+                    bt_profile_reconnect_openreconnecting) {
+                  TRACE(0, "!!!hf->start reconnect second device\n");
+                  if ((btdevice_plf_p_temp->hfp_act) &&
+                      (!bt_profile_manager[i].hfp_connect)) {
+                    TRACE(0, "try connect hf");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[id].has_connected);
+                    app_bt_HF_CreateServiceLink(
+                        bt_profile_manager[i].chan,
+                        (bt_bdaddr_t *)&bt_profile_manager[i].rmt_addr);
+                  }
 #if defined(__HSP_ENABLE__)
-          else if ((btdevice_plf_p_temp->hsp_act) &&
-                   (!bt_profile_manager[i].hsp_connect)) {
-            TRACE(0, "try connect hs");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[id].has_connected);
-            app_bt_HS_CreateServiceLink(bt_profile_manager[i].hs_chan,
-                                        &bt_profile_manager[i].rmt_addr);
-          }
+                  else if ((btdevice_plf_p_temp->hsp_act) &&
+                           (!bt_profile_manager[i].hsp_connect)) {
+                    TRACE(0, "try connect hs");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[id].has_connected);
+                    app_bt_HS_CreateServiceLink(
+                        bt_profile_manager[i].hs_chan,
+                        &bt_profile_manager[i].rmt_addr);
+                  }
 #endif
-          else if ((btdevice_plf_p_temp->a2dp_act) &&
-                   (!bt_profile_manager[i].a2dp_connect)) {
-            TRACE(0, "try connect a2dp");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[id].has_connected);
-            app_bt_A2DP_OpenStream(bt_profile_manager[i].stream,
-                                   &bt_profile_manager[i].rmt_addr);
-          }
-          break;
-        }
+                  else if ((btdevice_plf_p_temp->a2dp_act) &&
+                           (!bt_profile_manager[i].a2dp_connect)) {
+                    TRACE(0, "try connect a2dp");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[id].has_connected);
+                    app_bt_A2DP_OpenStream(bt_profile_manager[i].stream,
+                                           &bt_profile_manager[i].rmt_addr);
+                  }
+                  break;
+                }
       }
     }
   }
@@ -3237,13 +3116,11 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
                                                              true);
       nv_record_btdevicerecord_set_a2dp_profile_codec(
           btdevice_plf_p, Info->p.configReq->codec.codecType);
-#ifndef FPGA
       nv_record_touch_cause_flush();
-#endif
       if (bt_profile_manager[id].a2dp_connect ==
           bt_profile_connect_status_success) {
-        TRACE(0, "!!!a2dp has opened   force return ");
-        return;
+                TRACE(0, "!!!a2dp has opened   force return ");
+                return;
       }
       bt_profile_manager[id].a2dp_connect = bt_profile_connect_status_success;
       bt_profile_manager[id].reconnect_cnt = 0;
@@ -3255,7 +3132,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
              BTIF_BD_ADDR_SIZE);
       app_bt_record_latest_connected_service_device_id(id);
       if (false == bt_profile_manager[id].has_connected) {
-        app_bt_resume_sniff_mode(id);
+                app_bt_resume_sniff_mode(id);
       }
 
 #ifdef BTIF_DIP_DEVICE
@@ -3264,64 +3141,68 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
 
       if (bt_profile_manager[id].reconnect_mode ==
           bt_profile_reconnect_openreconnecting) {
-        // do nothing
+                // do nothing
       }
 
 #if defined(IBRT)
       else if (app_bt_ibrt_reconnect_mobile_profile_flag_get()) {
-        app_bt_ibrt_reconnect_mobile_profile_flag_clear();
+                app_bt_ibrt_reconnect_mobile_profile_flag_clear();
 #else
       else if (bt_profile_manager[id].reconnect_mode ==
                bt_profile_reconnect_reconnecting) {
 #endif
-        TRACE(2, "app_bt: hfp_act in NV =%d,a2dp_connect=%d",
-              btdevice_plf_p->hfp_act, bt_profile_manager[id].hfp_connect);
-        if (btdevice_plf_p->hfp_act && bt_profile_manager[id].hfp_connect !=
-                                           bt_profile_connect_status_success) {
-          if (btif_hf_check_rfcomm_l2cap_channel_is_creating(
-                  &bt_profile_manager[id].rmt_addr)) {
-            TRACE(0, "!!!remote is creating hfp after a2dp connected\n");
-          } else {
-            TRACE(0, "!!!continue connect hfp\n");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[id].has_connected);
-            app_bt_HF_CreateServiceLink(
-                bt_profile_manager[id].chan,
-                (bt_bdaddr_t *)&bt_profile_manager[id].rmt_addr);
-          }
-        }
+                TRACE(2, "app_bt: hfp_act in NV =%d,a2dp_connect=%d",
+                      btdevice_plf_p->hfp_act,
+                      bt_profile_manager[id].hfp_connect);
+                if (btdevice_plf_p->hfp_act &&
+                    bt_profile_manager[id].hfp_connect !=
+                        bt_profile_connect_status_success) {
+                  if (btif_hf_check_rfcomm_l2cap_channel_is_creating(
+                          &bt_profile_manager[id].rmt_addr)) {
+                    TRACE(0,
+                          "!!!remote is creating hfp after a2dp connected\n");
+                  } else {
+                    TRACE(0, "!!!continue connect hfp\n");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[id].has_connected);
+                    app_bt_HF_CreateServiceLink(
+                        bt_profile_manager[id].chan,
+                        (bt_bdaddr_t *)&bt_profile_manager[id].rmt_addr);
+                  }
+                }
 #if defined(__HSP_ENABLE__)
-        else if (btdevice_plf_p->hsp_act &&
-                 bt_profile_manager[id].hsp_connect !=
-                     bt_profile_connect_status_success) {
-          TRACE(0, "!!!continue connect hsp\n");
-          app_bt_precheck_before_starting_connecting(
-              bt_profile_manager[id].has_connected);
-          app_bt_HS_CreateServiceLink(bt_profile_manager[id].hs_chan,
-                                      &bt_profile_manager[id].rmt_addr);
-        }
+                else if (btdevice_plf_p->hsp_act &&
+                         bt_profile_manager[id].hsp_connect !=
+                             bt_profile_connect_status_success) {
+                  TRACE(0, "!!!continue connect hsp\n");
+                  app_bt_precheck_before_starting_connecting(
+                      bt_profile_manager[id].has_connected);
+                  app_bt_HS_CreateServiceLink(bt_profile_manager[id].hs_chan,
+                                              &bt_profile_manager[id].rmt_addr);
+                }
 #endif
       }
 #ifdef __AUTO_CONNECT_OTHER_PROFILE__
       else {
-        if (btdevice_plf_p->hfp_act && bt_profile_manager[id].hfp_connect !=
-                                           bt_profile_connect_status_success) {
-          bt_profile_manager[id].connect_timer_cb =
-              app_bt_profile_connect_hf_retry_timehandler;
-          app_bt_accessmode_set(BAM_CONNECTABLE_ONLY);
-          osTimerStart(bt_profile_manager[id].connect_timer,
-                       APP_BT_PROFILE_CONNECT_RETRY_MS);
-        }
+                if (btdevice_plf_p->hfp_act &&
+                    bt_profile_manager[id].hfp_connect !=
+                        bt_profile_connect_status_success) {
+                  bt_profile_manager[id].connect_timer_cb =
+                      app_bt_profile_connect_hf_retry_timehandler;
+                  app_bt_accessmode_set(BAM_CONNECTABLE_ONLY);
+                  osTimerStart(bt_profile_manager[id].connect_timer,
+                               APP_BT_PROFILE_CONNECT_RETRY_MS);
+                }
 #if defined(__HSP_ENABLE__)
-        else if (btdevice_plf_p->hsp_act &&
-                 bt_profile_manager[id].hsp_connect !=
-                     bt_profile_connect_status_success) {
-          bt_profile_manager[id].connect_timer_cb =
-              app_bt_profile_connect_hs_retry_timehandler;
-          app_bt_accessmode_set(BAM_CONNECTABLE_ONLY);
-          osTimerStart(bt_profile_manager[id].connect_timer,
-                       APP_BT_PROFILE_CONNECT_RETRY_MS);
-        }
+                else if (btdevice_plf_p->hsp_act &&
+                         bt_profile_manager[id].hsp_connect !=
+                             bt_profile_connect_status_success) {
+                  bt_profile_manager[id].connect_timer_cb =
+                      app_bt_profile_connect_hs_retry_timehandler;
+                  app_bt_accessmode_set(BAM_CONNECTABLE_ONLY);
+                  osTimerStart(bt_profile_manager[id].connect_timer,
+                               APP_BT_PROFILE_CONNECT_RETRY_MS);
+                }
 #endif
       }
 #endif
@@ -3335,22 +3216,23 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
             Info->discReason);
 
       if (Info->subevt != A2DP_CONN_CLOSED) {
-        TRACE(0, "do not need set access mode");
-        return;
+                TRACE(0, "do not need set access mode");
+                return;
       }
 
       if (Stream != NULL) {
-        if (btif_a2dp_get_remote_device(Stream) != NULL)
-          TRACE(2, "%s A2DP_EVENT_STREAM_CLOSED discReason2:%d", __func__,
-                btif_me_get_remote_device_disc_reason_saved(
-                    btif_a2dp_get_remote_device(Stream)));
+                if (btif_a2dp_get_remote_device(Stream) != NULL)
+                  TRACE(2, "%s A2DP_EVENT_STREAM_CLOSED discReason2:%d",
+                        __func__,
+                        btif_me_get_remote_device_disc_reason_saved(
+                            btif_a2dp_get_remote_device(Stream)));
       }
 
 #if defined(IBRT)
       if (app_bt_ibrt_reconnect_mobile_profile_flag_get()) {
-        app_bt_HF_CreateServiceLink(
-            bt_profile_manager[id].chan,
-            (bt_bdaddr_t *)&bt_profile_manager[id].rmt_addr);
+                app_bt_HF_CreateServiceLink(
+                    bt_profile_manager[id].chan,
+                    (bt_bdaddr_t *)&bt_profile_manager[id].rmt_addr);
       }
 #endif
 
@@ -3358,25 +3240,26 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
 
       if (bt_profile_manager[id].reconnect_mode ==
           bt_profile_reconnect_openreconnecting) {
-        if (++bt_profile_manager[id].reconnect_cnt <
-            APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT) {
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          profile_reconnect_enable = true;
-          bt_profile_manager[id].a2dp_connect =
-              bt_profile_connect_status_unknow;
-        }
+                if (++bt_profile_manager[id].reconnect_cnt <
+                    APP_BT_PROFILE_OPENNING_RECONNECT_RETRY_LIMIT_CNT) {
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  profile_reconnect_enable = true;
+                  bt_profile_manager[id].a2dp_connect =
+                      bt_profile_connect_status_unknow;
+                }
       } else if (bt_profile_manager[id].reconnect_mode ==
                  bt_profile_reconnect_reconnecting) {
-        if (++bt_profile_manager[id].reconnect_cnt <
-            APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT) {
-          app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-          profile_reconnect_enable = true;
-        } else {
-          app_bt_restore_reconnecting_idle_mode(id);
-          // bt_profile_manager[id].reconnect_mode = bt_profile_reconnect_null;
-        }
-        TRACE(2, "%s try to reconnect cnt:%d", __func__,
-              bt_profile_manager[id].reconnect_cnt);
+                if (++bt_profile_manager[id].reconnect_cnt <
+                    APP_BT_PROFILE_RECONNECT_RETRY_LIMIT_CNT) {
+                  app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                  profile_reconnect_enable = true;
+                } else {
+                  app_bt_restore_reconnecting_idle_mode(id);
+                  // bt_profile_manager[id].reconnect_mode =
+                  // bt_profile_reconnect_null;
+                }
+                TRACE(2, "%s try to reconnect cnt:%d", __func__,
+                      bt_profile_manager[id].reconnect_cnt);
       }
 #if !defined(IBRT)
 #if defined(ENHANCED_STACK)
@@ -3387,26 +3270,27 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
 #endif
                (btdevice_plf_p->a2dp_act) && (!btdevice_plf_p->hfp_act) &&
                (!btdevice_plf_p->hsp_act)) {
-        bt_profile_manager[id].reconnect_mode =
-            bt_profile_reconnect_reconnecting;
-        TRACE(2, "%s try to reconnect cnt:%d", __func__,
-              bt_profile_manager[id].reconnect_cnt);
-        app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
-        if (app_bt_profile_reconnect_pending(id) != 0) {
-          profile_reconnect_enable = true;
-        }
+                bt_profile_manager[id].reconnect_mode =
+                    bt_profile_reconnect_reconnecting;
+                TRACE(2, "%s try to reconnect cnt:%d", __func__,
+                      bt_profile_manager[id].reconnect_cnt);
+                app_bt_accessmode_set(BTIF_BAM_CONNECTABLE_ONLY);
+                if (app_bt_profile_reconnect_pending(id) != 0) {
+                  profile_reconnect_enable = true;
+                }
       }
 #endif
       else {
-        bt_profile_manager[id].a2dp_connect = bt_profile_connect_status_unknow;
+                bt_profile_manager[id].a2dp_connect =
+                    bt_profile_connect_status_unknow;
       }
 
       if (profile_reconnect_enable) {
 #ifdef __IAG_BLE_INCLUDE__
-        app_ble_refresh_adv_state(BLE_ADVERTISING_INTERVAL);
+                app_ble_refresh_adv_state(BLE_ADVERTISING_INTERVAL);
 #endif
-        osTimerStart(bt_profile_manager[id].connect_timer,
-                     APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
+                osTimerStart(bt_profile_manager[id].connect_timer,
+                             APP_BT_PROFILE_RECONNECT_RETRY_INTERVAL_MS);
       }
       break;
     default:
@@ -3428,7 +3312,7 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
       reconnect_hfp_proc_final = true;
       if (bt_profile_manager[id].hsp_connect ==
           bt_profile_connect_status_failure) {
-        reconnect_hfp_proc_final = false;
+                reconnect_hfp_proc_final = false;
       }
     }
 #endif
@@ -3477,63 +3361,64 @@ void app_bt_profile_connect_manager_a2dp(enum BT_DEVICE_ID_T id,
     if (btdevice_plf_p->a2dp_act && bt_profile_manager[id].a2dp_connect ==
                                         bt_profile_connect_status_success) {
       if (btdevice_plf_p->hfp_act && !opening_hfp_proc_final) {
-        if (btif_hf_check_rfcomm_l2cap_channel_is_creating(
-                &bt_profile_manager[id].rmt_addr)) {
-          TRACE(0, "!!!remote is creating hf after a2dp connected\n");
-        } else {
-          TRACE(0, "!!!continue connect hf\n");
-          app_bt_precheck_before_starting_connecting(
-              bt_profile_manager[id].has_connected);
-          app_bt_HF_CreateServiceLink(
-              bt_profile_manager[id].chan,
-              (bt_bdaddr_t *)&bt_profile_manager[id].rmt_addr);
-        }
+                if (btif_hf_check_rfcomm_l2cap_channel_is_creating(
+                        &bt_profile_manager[id].rmt_addr)) {
+                  TRACE(0, "!!!remote is creating hf after a2dp connected\n");
+                } else {
+                  TRACE(0, "!!!continue connect hf\n");
+                  app_bt_precheck_before_starting_connecting(
+                      bt_profile_manager[id].has_connected);
+                  app_bt_HF_CreateServiceLink(
+                      bt_profile_manager[id].chan,
+                      (bt_bdaddr_t *)&bt_profile_manager[id].rmt_addr);
+                }
       }
 #if defined(__HSP_ENABLE)
       else if (btdevice_plf_p->hsp_act && !opening_hfp_hsp_proc_final) {
-        TRACE(0, "!!!continue connect hs\n");
-        app_bt_precheck_before_starting_connecting(
-            bt_profile_manager[id].has_connected);
-        app_bt_HS_CreateServiceLink(bt_profile_manager[id].hs_chan,
-                                    &bt_profile_manager[id].rmt_addr);
+                TRACE(0, "!!!continue connect hs\n");
+                app_bt_precheck_before_starting_connecting(
+                    bt_profile_manager[id].has_connected);
+                app_bt_HS_CreateServiceLink(bt_profile_manager[id].hs_chan,
+                                            &bt_profile_manager[id].rmt_addr);
       }
 #endif
     }
 
     if (bt_profile_manager[id].reconnect_mode == bt_profile_reconnect_null) {
       for (uint8_t i = 0; i < BT_DEVICE_NUM; i++) {
-        if (bt_profile_manager[i].reconnect_mode ==
-            bt_profile_reconnect_openreconnecting) {
-          TRACE(1, "!!!a2dp->start reconnect device %d\n", i);
-          if ((btdevice_plf_p->hfp_act) &&
-              (!bt_profile_manager[i].hfp_connect)) {
-            TRACE(0, "try connect hf");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[i].has_connected);
-            app_bt_HF_CreateServiceLink(
-                bt_profile_manager[i].chan,
-                (bt_bdaddr_t *)&bt_profile_manager[i].rmt_addr);
-          }
+                if (bt_profile_manager[i].reconnect_mode ==
+                    bt_profile_reconnect_openreconnecting) {
+                  TRACE(1, "!!!a2dp->start reconnect device %d\n", i);
+                  if ((btdevice_plf_p->hfp_act) &&
+                      (!bt_profile_manager[i].hfp_connect)) {
+                    TRACE(0, "try connect hf");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[i].has_connected);
+                    app_bt_HF_CreateServiceLink(
+                        bt_profile_manager[i].chan,
+                        (bt_bdaddr_t *)&bt_profile_manager[i].rmt_addr);
+                  }
 #if defined(__HSP_ENABLE__)
-          else if ((btdevice_plf_p->hsp_act) &&
-                   (!bt_profile_manager[i].hsp_connect)) {
-            TRACE(0, "try connect hs");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[i].has_connected);
-            app_bt_HS_CreateServiceLink(bt_profile_manager[i].hs_chan,
-                                        &bt_profile_manager[i].rmt_addr);
-          }
+                  else if ((btdevice_plf_p->hsp_act) &&
+                           (!bt_profile_manager[i].hsp_connect)) {
+                    TRACE(0, "try connect hs");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[i].has_connected);
+                    app_bt_HS_CreateServiceLink(
+                        bt_profile_manager[i].hs_chan,
+                        &bt_profile_manager[i].rmt_addr);
+                  }
 #endif
-          else if ((btdevice_plf_p->a2dp_act) &&
-                   (!bt_profile_manager[i].a2dp_connect)) {
-            TRACE(0, "try connect a2dp");
-            app_bt_precheck_before_starting_connecting(
-                bt_profile_manager[i].has_connected);
-            app_bt_A2DP_OpenStream(bt_profile_manager[i].stream,
-                                   &bt_profile_manager[i].rmt_addr);
-          }
-          break;
-        }
+                  else if ((btdevice_plf_p->a2dp_act) &&
+                           (!bt_profile_manager[i].a2dp_connect)) {
+                    TRACE(0, "try connect a2dp");
+                    app_bt_precheck_before_starting_connecting(
+                        bt_profile_manager[i].has_connected);
+                    app_bt_A2DP_OpenStream(bt_profile_manager[i].stream,
+                                           &bt_profile_manager[i].rmt_addr);
+                  }
+                  break;
+                }
       }
     }
   }
@@ -3661,9 +3546,10 @@ bt_status_t LinkDisconnectDirectly(bool PowerOffFlag) {
   if (p_ibrt_ctrl->init_done) {
     if (IBRT_MASTER == p_ibrt_ctrl->current_role) {
       if (app_tws_ibrt_mobile_link_connected()) {
-        // should check return status
-        app_tws_ibrt_disconnect_connection(
-            btif_me_get_remote_device_by_handle(p_ibrt_ctrl->mobile_conhandle));
+                // should check return status
+                app_tws_ibrt_disconnect_connection(
+                    btif_me_get_remote_device_by_handle(
+                        p_ibrt_ctrl->mobile_conhandle));
       }
     }
     if (app_tws_ibrt_tws_link_connected()) {
@@ -4479,30 +4365,32 @@ uint32_t app_bt_restore_spp_app_ctx(uint8_t *buf, uint32_t buf_len,
       switch (app_id) {
 #ifdef __INTERCONNECTION__
       case BTIF_APP_SPP_CLIENT_CCMP_ID:
-        app_ccmp_client_open((uint8_t *)SppServiceSearchReq,
-                             app_interconnection_get_length(), 0, 1);
-        device = (struct spp_device *)btif_spp_get_device(
-            BTIF_APP_SPP_CLIENT_CCMP_ID);
-        device->spp_callback = ccmp_callback;
-        // device->_channel = chnl; //restore in btif_spp_profile_restore_ctx
-        device->sppUsedFlag = 1;
-        break;
+                app_ccmp_client_open((uint8_t *)SppServiceSearchReq,
+                                     app_interconnection_get_length(), 0, 1);
+                device = (struct spp_device *)btif_spp_get_device(
+                    BTIF_APP_SPP_CLIENT_CCMP_ID);
+                device->spp_callback = ccmp_callback;
+                // device->_channel = chnl; //restore in
+                // btif_spp_profile_restore_ctx
+                device->sppUsedFlag = 1;
+                break;
 
       case BTIF_APP_SPP_CLIENT_RED_ID:
-        app_spp_client_open((uint8_t *)SppServiceSearchReq,
-                            app_interconnection_get_length(), 1);
-        device = (struct spp_device *)btif_spp_get_device(
-            BTIF_APP_SPP_CLIENT_RED_ID);
-        device->spp_callback = spp_client_callback;
-        // device->_channel = chnl; //restore in btif_spp_profile_restore_ctx
-        device->sppUsedFlag = 1;
-        break;
+                app_spp_client_open((uint8_t *)SppServiceSearchReq,
+                                    app_interconnection_get_length(), 1);
+                device = (struct spp_device *)btif_spp_get_device(
+                    BTIF_APP_SPP_CLIENT_RED_ID);
+                device->spp_callback = spp_client_callback;
+                // device->_channel = chnl; //restore in
+                // btif_spp_profile_restore_ctx
+                device->sppUsedFlag = 1;
+                break;
 #endif
 
       default:
-        ASSERT(device, "%s NULL spp client device app_id=0x%x", __func__,
-               app_id);
-        break;
+                ASSERT(device, "%s NULL spp client device app_id=0x%x",
+                       __func__, app_id);
+                break;
       }
     } else {
       ASSERT(device, "%s NULL spp server device app_id=0x%x", __func__, app_id);
@@ -5084,16 +4972,16 @@ void app_bt_active_mode_set(BT_LINK_ACTIVE_MODE_KEEPER_USER_E user,
     for (uint8_t devId = 0; devId < BT_DEVICE_NUM; devId++) {
       uint32_t lock = int_lock_global();
       if (bt_link_active_mode_bits[devId] > 0) {
-        isAlreadyInActiveMode = true;
+                isAlreadyInActiveMode = true;
       } else {
-        isAlreadyInActiveMode = false;
+                isAlreadyInActiveMode = false;
       }
       bt_link_active_mode_bits[devId] |= (1 << user);
       int_unlock_global(lock);
 
       if (!isAlreadyInActiveMode) {
-        app_bt_stop_sniff(devId);
-        app_bt_stay_active(devId);
+                app_bt_stop_sniff(devId);
+                app_bt_stay_active(devId);
       }
     }
   }
@@ -5129,15 +5017,15 @@ void app_bt_active_mode_clear(BT_LINK_ACTIVE_MODE_KEEPER_USER_E user,
     for (uint8_t devId = 0; devId < BT_DEVICE_NUM; devId++) {
       uint32_t lock = int_lock_global();
       if (0 == bt_link_active_mode_bits[devId]) {
-        isAlreadyAllowSniff = true;
+                isAlreadyAllowSniff = true;
       } else {
-        isAlreadyAllowSniff = false;
+                isAlreadyAllowSniff = false;
       }
       bt_link_active_mode_bits[devId] &= (~(1 << user));
       int_unlock_global(lock);
 
       if (!isAlreadyAllowSniff) {
-        app_bt_allow_sniff(devId);
+                app_bt_allow_sniff(devId);
       }
     }
   }
@@ -5157,10 +5045,10 @@ int8_t app_bt_get_rssi(void) {
     remDev = btif_me_enumerate_remote_devices(i);
     if (remDev) {
       if (btif_me_get_remote_device_hci_handle(remDev)) {
-        rssi = bt_drv_reg_op_read_rssi_in_dbm(
-            btif_me_get_remote_device_hci_handle(remDev), &tws_agc);
-        rssi = bt_drv_reg_op_rssi_correction(rssi);
-        TRACE(1, " headset to mobile RSSI:%d dBm", rssi);
+                rssi = bt_drv_reg_op_read_rssi_in_dbm(
+                    btif_me_get_remote_device_hci_handle(remDev), &tws_agc);
+                rssi = bt_drv_reg_op_rssi_correction(rssi);
+                TRACE(1, " headset to mobile RSSI:%d dBm", rssi);
       }
     }
   }
@@ -5178,10 +5066,10 @@ int8_t app_tile_get_ble_rssi(void) {
     remDev = btif_me_enumerate_remote_devices(i);
     if (remDev) {
       if (app_tile_ble_get_connection_index() != BLE_INVALID_CONNECTION_INDEX) {
-        rssi = bt_drv_reg_op_read_ble_rssi_in_dbm(
-            app_tile_ble_get_connection_index(), &tws_agc);
-        rssi = bt_drv_reg_op_rssi_correction(rssi);
-        TRACE(1, " headset to mobile RSSI:%d dBm", rssi);
+                rssi = bt_drv_reg_op_read_ble_rssi_in_dbm(
+                    app_tile_ble_get_connection_index(), &tws_agc);
+                rssi = bt_drv_reg_op_rssi_correction(rssi);
+                TRACE(1, " headset to mobile RSSI:%d dBm", rssi);
       }
     }
   }

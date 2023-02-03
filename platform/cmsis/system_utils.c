@@ -88,11 +88,7 @@ void BOOT_TEXT_FLASH_LOC BootInit(void) {
     *dst = 0;
   }
 
-#ifdef FPGA
-  hal_cmu_fpga_setup();
-#else
   hal_cmu_setup();
-#endif
 
   for (dst = __sram_text_data_start__, src = __sram_text_data_start_flash__;
        src < __sram_text_data_end_flash__; dst++, src++) {

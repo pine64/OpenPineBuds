@@ -89,10 +89,7 @@ static const struct HAL_NORFLASH_CONFIG_T norflash_cfg = {
     .source_clk = HAL_NORFLASH_SPEED_52M,
     .speed = HAL_NORFLASH_SPEED_52M,
 #else
-#ifdef FPGA
-    .source_clk = HAL_NORFLASH_SPEED_13M * 2,
-    .speed = HAL_NORFLASH_SPEED_13M,
-#elif defined(FLASH_LOW_SPEED)
+#if defined(FLASH_LOW_SPEED)
     .source_clk = HAL_NORFLASH_SPEED_26M * 2,
     .speed = HAL_NORFLASH_SPEED_26M,
 #elif defined(OSC_26M_X4_AUD2BB)

@@ -186,7 +186,6 @@ int app_ibrt_nvrecord_choice_mobile_addr(bt_bdaddr_t *mobile_addr,
 
 *****************************************************************************/
 bt_status_t app_ibrt_nvrecord_get_mobile_addr(bt_bdaddr_t *mobile_addr) {
-#if !defined(FPGA)
   btif_device_record_t record1;
   btif_device_record_t record2;
   btif_device_record_t record;
@@ -219,20 +218,6 @@ bt_status_t app_ibrt_nvrecord_get_mobile_addr(bt_bdaddr_t *mobile_addr) {
       }
     }
   }
-#else
-#if 0 // for fpga test reconnect phone
-    ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-
-    uint8_t nv_slave_connect_addr[] = {0xaf,0x55,0x68,0x68,0x76,0x7c};//huawei
-    //uint8_t nv_slave_connect_addr[] = {0x62, 0xb2, 0x60, 0x37, 0xab, 0x20};//LJH iphone
-    memcpy(mobile_addr, &nv_slave_connect_addr[0], BTIF_BD_ADDR_SIZE);
-
-    if (p_ibrt_ctrl->nv_role == IBRT_SLAVE)
-    {
-        return BT_STS_SUCCESS;
-    }
-#endif
-#endif
   return BT_STS_FAILED;
 }
 /*****************************************************************************

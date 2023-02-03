@@ -152,32 +152,6 @@ int tgt_hardware_setup(void) {
 void rom_utils_init(void);
 #endif
 
-#ifdef FPGA
-uint32_t a2dp_audio_more_data(uint8_t *buf, uint32_t len);
-uint32_t a2dp_audio_init(void);
-extern "C" void app_audio_manager_open(void);
-extern "C" void app_bt_init(void);
-extern "C" uint32_t hal_iomux_init(const struct HAL_IOMUX_PIN_FUNCTION_MAP *map,
-                                   uint32_t count);
-void app_overlay_open(void);
-
-extern "C" void BesbtInit(void);
-extern "C" int app_os_init(void);
-extern "C" uint32_t af_open(void);
-extern "C" int list_init(void);
-extern "C" void app_audio_open(void);
-
-volatile uint32_t ddddd = 0;
-
-#if defined(AAC_TEST)
-#include "app_overlay.h"
-int decode_aac_frame_test(unsigned char *pcm_buffer, unsigned int pcm_len);
-#define AAC_TEST_PCM_BUFF_LEN (4096)
-unsigned char aac_test_pcm_buff[AAC_TEST_PCM_BUFF_LEN];
-#endif
-
-#endif
-
 #if defined(_AUTO_TEST_)
 extern int32_t at_Init(void);
 #endif
@@ -260,7 +234,6 @@ int main(void) {
 
   hal_iomux_ispi_access_init();
 
-#ifndef FPGA
   uint8_t flash_id[HAL_NORFLASH_DEVICE_ID_LEN];
   hal_norflash_get_id(HAL_NORFLASH_ID_0, flash_id, ARRAY_SIZE(flash_id));
   TRACE(3, "FLASH_ID: %02X-%02X-%02X", flash_id[0], flash_id[1], flash_id[2]);
@@ -285,7 +258,6 @@ int main(void) {
               actualFlashSize);
     ASSERT(false, " ");
   }
-#endif
 
   pmu_open();
 
@@ -305,36 +277,6 @@ int main(void) {
 #ifdef VOICE_DATAPATH
   app_audio_buffer_check();
 #endif
-
-#ifdef FPGA
-
-  TRACE(0, "\n[best of best of best...]\n");
-  TRACE(1, "\n[ps: w4 0x%x,2]", &ddddd);
-
-  ddddd = 1;
-  while (ddddd == 1)
-    ;
-  TRACE(0, "bt start");
-
-  list_init();
-
-  app_os_init();
-  app_bt_init();
-  a2dp_audio_init();
-
-  af_open();
-  app_audio_open();
-  app_audio_manager_open();
-  app_overlay_open();
-
-#if defined(AAC_TEST)
-  app_overlay_select(APP_OVERLAY_A2DP_AAC);
-  decode_aac_frame_test(aac_test_pcm_buff, AAC_TEST_PCM_BUFF_LEN);
-#endif
-
-  SAFE_PROGRAM_STOP();
-
-#else // !FPGA
 
 #ifdef __FACTORY_MODE_SUPPORT__
   if (bootmode & HAL_SW_BOOTMODE_FACTORY) {
@@ -410,8 +352,6 @@ int main(void) {
 #endif
     hal_cmu_sys_reboot();
   }
-
-#endif // !FPGA
 
   return 0;
 }

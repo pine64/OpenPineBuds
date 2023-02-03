@@ -58,9 +58,7 @@ endif
 
 obj-y += nv_section/
 
-ifneq ($(FPGA),1)
 obj-y += nvrecord/
-endif
 
 ifeq ($(VOICE_RECOGNITION),1)
 obj-y += voice_recognition/
@@ -76,11 +74,7 @@ endif
 
 ifeq ($(OTA_ENABLE),1)
 ifeq ($(IBRT),1)
-ifeq ($(FPGA_IBRT_OTA),1)
-obj-y += fpga_ibrt_ota/
-else
 obj-y += ibrt_ota/
-endif
 else
 endif
 ifeq ($(OTA_ENABLE), 1)

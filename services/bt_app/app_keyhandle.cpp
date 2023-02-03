@@ -13,7 +13,7 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-//#include "mbed.h"
+// #include "mbed.h"
 #include "analog.h"
 #include "audioflinger.h"
 #include "cmsis.h"
@@ -1179,9 +1179,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
               if((app_bt_device.hfchan_call[current_device_id] == BTIF_HF_CALL_ACTIVE)&&(app_bt_device.hfchan_call[another_device_id] != BTIF_HF_CALL_ACTIVE)
                 &&(app_bt_device.hfchan_callSetup[another_device_id] == BTIF_HF_CALL_SETUP_IN)){//A is active, B is incoming call
                 TRACE(2,"HFP_KEY_DUAL_HF_HOLD_CURR_ANSWER_ANOTHER: current=%d, g_current_device_id=%d",app_bt_device.curr_hf_channel_id, current_device_id);
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 //hfp_handle_key(HFP_KEY_DUAL_HF_HOLD_CURR_ANSWER_ANOTHER); //hold and answer
                 //app_bt_device.curr_hf_channel_id = another_device_id;
                 btif_hf_answer_call(app_bt_device.hf_channel[another_device_id]);
@@ -1191,9 +1189,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
                      (app_bt_device.hfchan_callSetup[current_device_id] == BTIF_HF_CALL_SETUP_IN))
             {
                 TRACE(2,"HFP_KEY_DUAL_HF_HOLD_CURR_ANSWER_ANOTHER: current=%d, g_current_device_id=%d",app_bt_device.curr_hf_channel_id, current_device_id);
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 btif_hf_answer_call(app_bt_device.hf_channel[current_device_id]);
                 btif_hf_call_hold(app_bt_device.hf_channel[another_device_id], BTIF_HF_HOLD_HOLD_ACTIVE_CALLS, 0);
             } else if (app_bt_device.hfchan_call[current_device_id] == BTIF_HF_CALL_ACTIVE &&
@@ -1201,9 +1197,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
                      app_bt_device.hf_callheld[another_device_id] == BTIF_HF_CALL_HELD_NO_ACTIVE)
             {
                 TRACE(0,"!!!!1switch hold call and active call\n");
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 btif_hf_call_hold(app_bt_device.hf_channel[current_device_id], BTIF_HF_HOLD_HOLD_ACTIVE_CALLS, 0);
                 btif_hf_call_hold(app_bt_device.hf_channel[another_device_id], BTIF_HF_HOLD_HOLD_ACTIVE_CALLS, 0);
             } else if (app_bt_device.hfchan_call[another_device_id] == BTIF_HF_CALL_ACTIVE &&
@@ -1211,17 +1205,13 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
                      app_bt_device.hf_callheld[current_device_id] == BTIF_HF_CALL_HELD_NO_ACTIVE)
             {
                 TRACE(0,"!!!!2switch hold call and active call\n");
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 btif_hf_call_hold(app_bt_device.hf_channel[another_device_id], BTIF_HF_HOLD_HOLD_ACTIVE_CALLS, 0);
                 btif_hf_call_hold(app_bt_device.hf_channel[current_device_id], BTIF_HF_HOLD_HOLD_ACTIVE_CALLS, 0);
             } else if((app_bt_device.hfchan_call[current_device_id] == BTIF_HF_CALL_ACTIVE)&&(app_bt_device.hfchan_call[another_device_id] == BTIF_HF_CALL_ACTIVE)
                 &&(app_bt_device.hfchan_callSetup[current_device_id] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_callSetup[another_device_id] == BTIF_HF_CALL_SETUP_NONE)){//A is active, B is active
                 TRACE(2,"AB is active: current=%d, g_current_device_id=%d",app_bt_device.curr_hf_channel_id, current_device_id);
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 if (bt_get_sco_number()>1){
 #ifdef __HF_KEEP_ONE_ALIVE__
                     bt_key_hf_channel_switch_active(current_device_id, another_device_id);
@@ -1237,9 +1227,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
             } else if((app_bt_device.hfchan_call[current_device_id] == BTIF_HF_CALL_ACTIVE)&&(app_bt_device.hfchan_call[another_device_id] == BTIF_HF_CALL_ACTIVE)
                 &&((app_bt_device.hfchan_callSetup[current_device_id] == BTIF_HF_CALL_SETUP_IN)||(app_bt_device.hfchan_callSetup[another_device_id] == BTIF_HF_CALL_SETUP_IN))){
                 TRACE(2,"AB is active and incoming call: current=%d, g_current_device_id=%d",app_bt_device.curr_hf_channel_id, current_device_id);
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 if (bt_get_sco_number()>1){
 #ifdef __HF_KEEP_ONE_ALIVE__
                     bt_key_hf_channel_switch_active(current_device_id, another_device_id);
@@ -1256,9 +1244,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
                 ((app_bt_device.hfchan_call[BT_DEVICE_ID_2] == BTIF_HF_CALL_ACTIVE)&&(app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE))){
 //three call
                 TRACE(0,"three way call");
-#ifndef FPGA
                 app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                 hfp_handle_key(HFP_KEY_THREEWAY_HOLD_AND_ANSWER);
 #if 0
                 if(app_bt_device.phone_earphone_mark == 0){
@@ -1283,9 +1269,7 @@ void bt_key_handle_func_key(enum APP_KEY_EVENT_T event)
                     (((app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_1] == BTIF_HF_CALL_NONE)&&(btif_get_hf_chan_state(app_bt_device.hf_channel[BT_DEVICE_ID_2]) == BTIF_HF_STATE_CLOSED))||
                     //(((app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_1] == BTIF_HF_CALL_NONE)&&(app_bt_device.hf_channel[BT_DEVICE_ID_2].state == BTIF_HF_STATE_CLOSED))||
                     ((app_bt_device.hfchan_callSetup[BT_DEVICE_ID_1] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_1] == BTIF_HF_CALL_NONE)&&(app_bt_device.hfchan_callSetup[BT_DEVICE_ID_2] == BTIF_HF_CALL_SETUP_NONE)&&(app_bt_device.hfchan_call[BT_DEVICE_ID_2] == BTIF_HF_CALL_NONE)))){
-#ifndef FPGA
                     app_voice_report(APP_STATUS_INDICATION_WARNING, 0);
-#endif
                     open_siri_flag = 1;
             }
 #endif
@@ -1360,7 +1344,7 @@ void bt_key_handle_down_key(enum APP_KEY_EVENT_T event) {
     break;
   }
 }
-#else //#elif defined(__APP_KEY_FN_STYLE_B__)
+#else // #elif defined(__APP_KEY_FN_STYLE_B__)
 void bt_key_handle_up_key(enum APP_KEY_EVENT_T event) {
   TRACE(1, "%s", __func__);
   switch (event) {

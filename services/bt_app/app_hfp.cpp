@@ -520,7 +520,7 @@ bool app_hfp_cur_chnl_is_on_3_way_calling(void) {
   return true;
 }
 #endif
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
 static void hfp_app_status_indication(enum BT_DEVICE_ID_T chan_id,
                                       struct hfp_context *ctx) {
 #ifdef __BT_ONE_BRING_TWO__
@@ -699,9 +699,7 @@ void hfp_volume_local_set(enum BT_DEVICE_ID_T id, int8_t vol) {
 #if defined(NEW_NV_RECORD_ENABLED)
     nv_record_btdevicevolume_set_hfp_vol(app_bt_stream_volume_get_ptr(), vol);
 #endif
-#ifndef FPGA
     nv_record_touch_cause_flush();
-#endif
   }
 }
 
@@ -746,7 +744,7 @@ static void hfp_connected_ind_handler(hf_chan_handle_t chan,
   TRACE(1, "::HF_EVENT_SERVICE_CONNECTED  Chan_id:%d\n", chan_id_flag.id);
   app_bt_device.phone_earphone_mark = 1;
 
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
   if (ctx->state == BTIF_HF_STATE_OPEN) {
     ////report connected voice
     app_bt_device.hf_conn_flag[chan_id_flag.id] = 1;
@@ -801,7 +799,7 @@ static void hfp_disconnected_ind_handler(hf_chan_handle_t chan,
 #if defined(HFP_1_6_ENABLE)
   btif_hf_set_negotiated_codec(chan, BTIF_HF_SCO_CODEC_CVSD);
 #endif
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
   if (app_bt_device.hf_conn_flag[chan_id_flag.id]) {
     ////report device disconnected voice
     app_bt_device.hf_conn_flag[chan_id_flag.id] = 0;
@@ -951,7 +949,7 @@ static void hfp_call_ind_handler(hf_chan_handle_t chan,
 #endif
   }
 
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
   hfp_app_status_indication(chan_id_flag.id, ctx);
 #endif
 
@@ -1044,7 +1042,7 @@ static void hfp_callsetup_ind_handler(hf_chan_handle_t chan,
   if ((ctx->call_setup & 0x03) != 0) {
     hfp_call_setup_running_on_set(1);
   }
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
   hfp_app_status_indication(chan_id_flag.id, ctx);
 #endif
 
@@ -1125,7 +1123,7 @@ static void hfp_callsetup_ind_handler(hf_chan_handle_t chan,
 static void hfp_current_call_state_handler(hf_chan_handle_t chan,
                                            struct hfp_context *ctx) {
   TRACE(1, "::HF_EVENT_CURRENT_CALL_STATE  chan_id:%d\n", chan_id_flag.id);
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
   hfp_app_status_indication(chan_id_flag.id, ctx);
 #endif
 }
@@ -1428,8 +1426,7 @@ static void hfp_audio_disconnected_handler(hf_chan_handle_t chan,
 
 static void hfp_ring_ind_handler(hf_chan_handle_t chan,
                                  struct hfp_context *ctx) {
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__) &&                            \
-    defined(MEDIA_PLAYER_SUPPORT)
+#if defined(__BTIF_EARPHONE__) && defined(MEDIA_PLAYER_SUPPORT)
 #ifdef __BT_ONE_BRING_TWO__
   enum BT_DEVICE_ID_T anotherDevice =
       (BT_DEVICE_ID_1 == chan_id_flag.id) ? BT_DEVICE_ID_2 : BT_DEVICE_ID_1;

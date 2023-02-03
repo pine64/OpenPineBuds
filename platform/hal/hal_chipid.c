@@ -27,11 +27,7 @@ void BOOT_TEXT_FLASH_LOC hal_chipid_init(void) {
 }
 
 enum HAL_CHIP_METAL_ID_T BOOT_TEXT_SRAM_LOC hal_get_chip_metal_id(void) {
-#ifdef FPGA
-  return HAL_CHIP_METAL_ID_15;
-#else
   return metal_id;
-#endif
 }
 
 enum HAL_BT_CHIP_SERIES_T hal_get_bt_chip_series(void) {

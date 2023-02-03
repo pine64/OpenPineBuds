@@ -137,10 +137,6 @@
 #include "app_tws_ibrt.h"
 #endif
 
-#ifdef FPGA
-#include "hal_timer.h"
-#endif
-
 #ifdef __GATT_OVER_BR_EDR__
 #include "btgatt_api.h"
 #endif
@@ -301,7 +297,7 @@ enum appm_svc_list {
  ****************************************************************************************
  */
 // gattc_msg_handler_tab
-//#define KE_MSG_HANDLER_TAB(task)   __STATIC const struct ke_msg_handler
+// #define KE_MSG_HANDLER_TAB(task)   __STATIC const struct ke_msg_handler
 // task##_msg_handler_tab[] =
 /// Application Task Descriptor
 

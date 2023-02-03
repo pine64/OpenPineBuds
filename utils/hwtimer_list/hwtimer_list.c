@@ -21,7 +21,7 @@
 #include "hal_trace.h"
 #include "stdio.h"
 
-#if defined(ROM_BUILD) && !defined(SIMU) && !defined(FPGA)
+#if defined(ROM_BUILD) && !defined(SIMU)
 #error                                                                         \
     "The user of raw timer API must be unique. Now rom is using raw timer API."
 #endif
@@ -32,7 +32,7 @@
 #define HWTIMER_NUM 10
 #endif
 
-//#define HWTIMER_TEST
+// #define HWTIMER_TEST
 
 enum HWTIMER_STATE_T {
   HWTIMER_STATE_FREE = 0,

@@ -892,7 +892,7 @@
 #define POWER_ON_PRESS (1 << 10)
 #define POWER_ON (1 << 9)
 #define DEEPSLEEP_MODE (1 << 8)
-//#define PMU_LDO_ON                          (1 << 7)
+// #define PMU_LDO_ON                          (1 << 7)
 #define PU_OSC_OUT (1 << 6)
 #define UVLO_LV (1 << 5)
 #define AC_ON_DET_OUT_MASKED (1 << 4)
@@ -1248,7 +1248,7 @@ void pmu_wdt_restore_context(void);
 void pmu_charger_save_context(void);
 void pmu_charger_shutdown_config(void);
 
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
 static void pmu_hppa_dcdc_to_ldo(void);
 #endif
 
@@ -1471,7 +1471,7 @@ uint32_t BOOT_TEXT_FLASH_LOC read_hw_metal_id(void) {
   pmu_write(PMU_REG_METAL_ID, 0x5FEE);
   hal_sys_timer_delay(US_TO_TICKS(500));
 
-#if defined(PMU_FULL_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_FULL_INIT) || (!defined(PROGRAMMER))
   // Reset RF
   pmu_write(PMU_REG_RF_80, 0xCAFE);
   pmu_write(PMU_REG_RF_80, 0x5FEE);
@@ -1513,8 +1513,7 @@ uint32_t BOOT_TEXT_FLASH_LOC read_hw_metal_id(void) {
     SAFE_PROGRAM_STOP();
   }
 
-#if !defined(FPGA) && !defined(PROGRAMMER) &&                                  \
-    !defined(MCU_HIGH_PERFORMANCE_MODE)
+#if !defined(PROGRAMMER) && !defined(MCU_HIGH_PERFORMANCE_MODE)
   if (hal_cmu_get_crystal_freq() != hal_cmu_get_default_crystal_freq()) {
     // Update bbpll freq after resetting RF and getting crystal freq
     bbpll_freq_pll_config(384000000);
@@ -1700,7 +1699,7 @@ int BOOT_TEXT_SRAM_LOC pmu_get_efuse(enum PMU_EFUSE_PAGE_T page,
                                      unsigned short *efuse) {
   int ret;
 
-//#if defined(USE_CYBERON)
+// #if defined(USE_CYBERON)
 #if 0
     if (cyb_efuse_check_status()) {
         PMU_DEBUG_TRACE(2,"page %x, efuse %x", page, efuse);
@@ -1762,7 +1761,7 @@ static void pmu_sys_ctrl(bool shutdown) {
 
   PMU_INFO_TRACE_IMM(0, "Start pmu %s", shutdown ? "shutdown" : "reboot");
 
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
 #if defined(MCU_HIGH_PERFORMANCE_MODE)
   // Default vcore might not be high enough to support high performance mode
   pmu_high_performance_mode_enable(false);
@@ -1794,7 +1793,7 @@ static void pmu_sys_ctrl(bool shutdown) {
     }
 #endif
 
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
     pmu_wdt_config(3 * 1000, 3 * 1000);
     pmu_wdt_start();
     pmu_charger_shutdown_config();
@@ -1814,7 +1813,7 @@ static void pmu_sys_ctrl(bool shutdown) {
     PMU_INFO_TRACE_IMM(0, "\nError: pmu shutdown failed!\n");
     hal_sys_timer_delay(MS_TO_TICKS(5));
   } else {
-#if defined(PMU_FULL_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_FULL_INIT) || (!defined(PROGRAMMER))
     // CAUTION:
     // 1) Never reset RF because system or flash might be using X2/X4, which are
     // off by default 2) Never reset RF/ANA because system or flash might be
@@ -2401,7 +2400,7 @@ void pmu_sleep_en(unsigned char sleep_en) {
   pmu_write(PMU_REG_SLEEP_CFG, val);
 }
 
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
 static uint32_t pmu_vcodec_mv_to_val(uint16_t mv) {
   uint32_t val;
 
@@ -2709,7 +2708,7 @@ int pmu_codec_volt_ramp_down(void) {
 #endif
 
 int BOOT_TEXT_FLASH_LOC pmu_open(void) {
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
 
   uint16_t val;
   enum PMU_POWER_MODE_T mode;
@@ -2919,7 +2918,7 @@ int BOOT_TEXT_FLASH_LOC pmu_open(void) {
     pmu_write(PMU_REG_DCDC_HPPA_CFG_1A, 0x8E1F);
     pmu_write(PMU_REG_DCDC_DIG_CFG_33, 0x8E1F);
   }
-#endif // PMU_INIT || (!FPGA && !PROGRAMMER)
+#endif // PMU_INIT || (!PROGRAMMER)
 
   return 0;
 }
@@ -3158,7 +3157,7 @@ SRAM_TEXT_LOC void pmu_flash_read_config(void) {
 }
 
 void BOOT_TEXT_FLASH_LOC pmu_flash_freq_config(uint32_t freq) {
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
   uint32_t lock;
 
   lock = int_lock();
@@ -3181,7 +3180,7 @@ void BOOT_TEXT_FLASH_LOC pmu_flash_freq_config(uint32_t freq) {
 }
 
 void BOOT_TEXT_FLASH_LOC pmu_psram_freq_config(uint32_t freq) {
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
   uint32_t lock;
 
   lock = int_lock();
@@ -3223,7 +3222,7 @@ void pmu_rs_freq_config(uint32_t freq) {
 }
 
 void BOOT_TEXT_SRAM_LOC pmu_sys_freq_config(enum HAL_CMU_FREQ_T freq) {
-#if defined(PMU_INIT) || (!defined(FPGA) && !defined(PROGRAMMER))
+#if defined(PMU_INIT) || (!defined(PROGRAMMER))
 #if defined(MCU_HIGH_PERFORMANCE_MODE) || defined(ULTRA_LOW_POWER) ||          \
     !defined(OSC_26M_X4_AUD2BB)
   uint32_t lock;

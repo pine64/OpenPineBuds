@@ -93,11 +93,7 @@ int app_factorymode_audioloop(bool on, enum APP_SYSFREQ_FREQ_T freq) {
 #else
     stream_cfg.sample_rate = AUD_SAMPRATE_8000;
 #endif
-#if FPGA == 0
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#else
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#endif
     stream_cfg.vol = TGT_VOLUME_LEVEL_15;
     stream_cfg.io_path = AUD_INPUT_PATH_MAINMIC;
     stream_cfg.handler = app_factorymode_data_come;

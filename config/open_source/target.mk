@@ -2,8 +2,6 @@ CHIP        ?= best2300p
 
 DEBUG       ?= 1
 
-FPGA        ?= 0
-
 MBED        ?= 0
 
 RTOS        ?= 1

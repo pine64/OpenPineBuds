@@ -191,7 +191,7 @@ void hsp_callback(HsChannel *Chan, HsCallbackParms *Info) {
   case HS_EVENT_SERVICE_CONNECTED:
     TRACE(1, "::HS_EVENT_SERVICE_CONNECTED  Chan_id:%d\n", chan_id_flag.id);
     app_bt_profile_connect_manager_hs(chan_id_flag.id, Chan, Info);
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
     if (Chan->state == HF_STATE_OPEN) {
       ////report connected voice
       app_bt_device.hs_conn_flag[chan_id_flag.id] = 1;
@@ -258,7 +258,7 @@ void hsp_callback(HsChannel *Chan, HsCallbackParms *Info) {
     app_audio_manager_sendrequest(APP_BT_STREAM_MANAGER_STOP, BT_STREAM_VOICE,
                                   chan_id_flag.id, MAX_RECORD_NUM);
 
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
     if (app_bt_device.hs_conn_flag[chan_id_flag.id]) {
       ////report device disconnected voice
       app_bt_device.hs_conn_flag[chan_id_flag.id] = 0;
@@ -320,7 +320,7 @@ void hsp_callback(HsChannel *Chan, HsCallbackParms *Info) {
 
   case HS_EVENT_RING_IND:
     TRACE(1, "::HS_EVENT_RING_IND  chan_id:%d\n", chan_id_flag.id);
-#if !defined(FPGA) && defined(__BTIF_EARPHONE__)
+#if defined(__BTIF_EARPHONE__)
     //        if(app_bt_device.hs_audio_state[chan_id_flag.id] != HF_AUDIO_CON)
     app_voice_report(APP_STATUS_INDICATION_INCOMINGCALL, chan_id_flag.id);
 #endif

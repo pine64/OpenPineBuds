@@ -483,8 +483,7 @@ static void bt_a2dp_source_call_back(const BtEvent* event)
         case BTEVENT_LINK_CONNECT_CNF:
         case BTEVENT_LINK_CONNECT_IND:
 			SOURCE_DBLOG("CONNECT_IND/CNF evt:%d errCode:0x%0x newRole:%d activeCons:%d",event->eType, event->errCode, event->p.remDev->role, MEC(activeCons));
-#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) &&            \
-    !defined(FPGA)
+#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) 
 			if (MEC(activeCons) == 0){
 			    app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
 			}else{
@@ -585,8 +584,7 @@ static void bt_a2dp_source_call_back(const btif_event_t *Event) {
         btif_me_get_remote_device_role(
             btif_me_get_callback_event_rem_dev(Event)),
         btif_me_get_activeCons());
-#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__) &&            \
-    !defined(FPGA)
+#if defined(__BTIF_EARPHONE__) && defined(__BTIF_AUTOPOWEROFF__)
     if (btif_me_get_activeCons() == 0) {
       app_start_10_second_timer(APP_POWEROFF_TIMER_ID);
     } else {
@@ -722,7 +720,7 @@ static void a2dp_source_send_sbc_packet(void) {
 }
 #endif
 
-//#define BT_A2DP_SOURCE_LINEIN_BUFF_SIZE    	(512*5*2*2)
+// #define BT_A2DP_SOURCE_LINEIN_BUFF_SIZE    	(512*5*2*2)
 #define BT_A2DP_SOURCE_LINEIN_BUFF_SIZE (A2DP_TRANS_SIZE * 2)
 
 #if defined(APP_LINEIN_A2DP_SOURCE)
@@ -751,11 +749,7 @@ int app_a2dp_source_linein_on(bool on) {
     stream_cfg.bits = AUD_BITS_16;
     stream_cfg.channel_num = AUD_CHANNEL_NUM_2;
     stream_cfg.sample_rate = a2dp_source.sample_rate;
-#if FPGA == 0
     stream_cfg.device = AUD_STREAM_USE_INT_CODEC;
-#else
-    stream_cfg.device = AUD_STREAM_USE_EXT_CODEC;
-#endif
     stream_cfg.vol = 10;
     // stream_cfg.io_path = AUD_INPUT_PATH_HP_MIC;
     // stream_cfg.io_path =AUD_INPUT_PATH_MAINMIC;

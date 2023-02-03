@@ -51,19 +51,12 @@ extern void tws_playback_ticks_check_for_mix_prompt(void);
 #include "floatlimiter.h"
 #endif
 
-#if defined(CHIP_BEST2001) && defined(FPGA)
-#undef FPGA
-#endif
-
 #define AF_TRACE_DEBUG() // TRACE(2,"%s:%d\n", __func__, __LINE__)
 
-//#define AF_STREAM_ID_0_PLAYBACK_FADEOUT
+// #define AF_STREAM_ID_0_PLAYBACK_FADEOUT
 
-//#define CORRECT_SAMPLE_VALUE
+// #define CORRECT_SAMPLE_VALUE
 
-#ifdef FPGA
-#define AF_DEVICE_EXT_CODEC
-#endif
 #ifdef AUDIO_OUTPUT_DC_CALIB
 #ifdef CHIP_BEST1000
 #define AUDIO_OUTPUT_DC_CALIB_SW
@@ -2421,9 +2414,7 @@ uint32_t af_stream_pause(enum AUD_STREAM_ID_T id, enum AUD_STREAM_T stream) {
 
   hal_audma_stop(role->dma_cfg.ch);
 
-#ifndef FPGA
   codec_int_stream_stop(stream);
-#endif
 
   af_set_status(id, stream, AF_STATUS_STREAM_PAUSE_RESTART);
 
@@ -2480,13 +2471,8 @@ uint32_t af_stream_restart(enum AUD_STREAM_ID_T id, enum AUD_STREAM_T stream) {
 #endif
 
   hal_audma_sg_start(&role->dma_desc[0], &role->dma_cfg);
-
-#ifndef FPGA
   codec_int_stream_start(stream);
-#endif
-
   af_clear_status(id, stream, AF_STATUS_STREAM_PAUSE_RESTART);
-
   ret = AF_RES_SUCCESS;
 
 _exit:

@@ -66,7 +66,6 @@ struct HAL_I2S_MOD_NAME_T {
   enum HAL_CMU_MOD_ID_T apb;
 };
 
-#ifndef FPGA
 static const struct I2S_SAMPLE_RATE_T i2s_sample_rate[] = {
     {AUD_SAMPRATE_8000, CODEC_FREQ_48K_SERIES, CODEC_PLL_DIV, I2S_CMU_DIV},
     {AUD_SAMPRATE_16000, CODEC_FREQ_48K_SERIES, CODEC_PLL_DIV, I2S_CMU_DIV},
@@ -86,7 +85,6 @@ static const struct I2S_SAMPLE_RATE_T i2s_sample_rate[] = {
     {AUD_SAMPRATE_768000, CODEC_FREQ_48K_SERIES, CODEC_PLL_DIV, I2S_CMU_DIV},
     {AUD_SAMPRATE_1024000, CODEC_FREQ_48K_SERIES, CODEC_PLL_DIV, I2S_CMU_DIV},
 };
-#endif
 
 static const char *const invalid_id = "Invalid I2S ID: %d\n";
 // static const char * const invalid_ch = "Invalid I2S CH: %d\n";
@@ -504,17 +502,7 @@ int hal_i2s_setup_stream(enum HAL_I2S_ID_T id, enum AUD_STREAM_T stream,
          cfg->channel_num);
 
   if (i2s_mode[id] == HAL_I2S_MODE_MASTER) {
-#ifdef FPGA
-    uint32_t sclk;
 
-    sclk = cfg->sample_rate * cycles * AUD_CHANNEL_NUM_2;
-
-#define I2S_CLOCK_SOURCE 22579200 // 44100*512
-    div = I2S_CLOCK_SOURCE / sclk - 1;
-#undef I2S_CLOCK_SOURCE
-
-    TRACE(1, "div = %x", div);
-#else
     uint32_t i2s_clock;
     uint32_t bit_rate;
 
@@ -565,7 +553,6 @@ int hal_i2s_setup_stream(enum HAL_I2S_ID_T id, enum AUD_STREAM_T stream,
     // By default MCLK is half of (CODEC_FREQ_24P576M or CODEC_FREQ_22P5792M)
     hal_spdif_clock_out_enable(HAL_SPDIF_ID_0,
                                i2s_sample_rate[i].cmu_div * I2S_MCLK_DIV);
-#endif
 #endif
 
     hal_cmu_i2s_set_div(id, div);

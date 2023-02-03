@@ -20,45 +20,42 @@
 extern "C" {
 #endif
 
-#include "plat_types.h"
 #include "hal_cmu.h"
+#include "plat_types.h"
 
 //=============================================================================
 // Slow Timer (Default Timer)
 
-#ifdef FPGA
-#define CONFIG_SYSTICK_HZ_NOMINAL   (32000)
-#else
-#define CONFIG_SYSTICK_HZ_NOMINAL   (16000)
-#endif
+#define CONFIG_SYSTICK_HZ_NOMINAL (16000)
 
-//#if (CONFIG_SYSTICK_HZ_NOMINAL % 1000)
-//#error "Bad CONFIG_SYSTICK_HZ_NOMINAL configuration"
-//#endif
+// #if (CONFIG_SYSTICK_HZ_NOMINAL % 1000)
+// #error "Bad CONFIG_SYSTICK_HZ_NOMINAL configuration"
+// #endif
 
 #ifdef CALIB_SLOW_TIMER
 
-#define CONFIG_SYSTICK_HZ           hal_sys_timer_systick_hz()
+#define CONFIG_SYSTICK_HZ hal_sys_timer_systick_hz()
 
-#define __MS_TO_TICKS(ms)           hal_sys_timer_ms_to_ticks(ms)
+#define __MS_TO_TICKS(ms) hal_sys_timer_ms_to_ticks(ms)
 
-#define __US_TO_TICKS(us)           hal_sys_timer_us_to_ticks(us)
+#define __US_TO_TICKS(us) hal_sys_timer_us_to_ticks(us)
 
-#define __TICKS_TO_MS(tick)         hal_sys_timer_ticks_to_ms(tick)
+#define __TICKS_TO_MS(tick) hal_sys_timer_ticks_to_ms(tick)
 
-#define __TICKS_TO_US(tick)         hal_sys_timer_ticks_to_us(tick)
+#define __TICKS_TO_US(tick) hal_sys_timer_ticks_to_us(tick)
 
 #else
 
-#define CONFIG_SYSTICK_HZ           CONFIG_SYSTICK_HZ_NOMINAL
+#define CONFIG_SYSTICK_HZ CONFIG_SYSTICK_HZ_NOMINAL
 
-#define __MS_TO_TICKS(ms)           ((ms) * ((uint32_t)CONFIG_SYSTICK_HZ / 1000))
+#define __MS_TO_TICKS(ms) ((ms) * ((uint32_t)CONFIG_SYSTICK_HZ / 1000))
 
-#define __US_TO_TICKS(us)           (((us) * ((uint32_t)CONFIG_SYSTICK_HZ / 1000) + 1000 - 1) / 1000 + 1)
+#define __US_TO_TICKS(us)                                                      \
+  (((us) * ((uint32_t)CONFIG_SYSTICK_HZ / 1000) + 1000 - 1) / 1000 + 1)
 
-#define __TICKS_TO_MS(tick)         ((tick) / ((uint32_t)CONFIG_SYSTICK_HZ / 1000))
+#define __TICKS_TO_MS(tick) ((tick) / ((uint32_t)CONFIG_SYSTICK_HZ / 1000))
 
-#define __TICKS_TO_US(tick)         ((tick) * 1000 / ((uint32_t)CONFIG_SYSTICK_HZ / 1000))
+#define __TICKS_TO_US(tick) ((tick)*1000 / ((uint32_t)CONFIG_SYSTICK_HZ / 1000))
 
 #endif
 
@@ -75,25 +72,25 @@ extern "C" {
  * Note, don't use these macros, use MS_TO_HWTICKS/US_TO_HWTICKS/HWTICKS_TO_MS
  * alternately
  */
-#define MS_TO_TICKS(ms)             __MS_TO_TICKS(ms)
+#define MS_TO_TICKS(ms) __MS_TO_TICKS(ms)
 
-#define US_TO_TICKS(us)             __US_TO_TICKS(us)
+#define US_TO_TICKS(us) __US_TO_TICKS(us)
 
-#define TICKS_TO_MS(tick)           __TICKS_TO_MS(tick)
+#define TICKS_TO_MS(tick) __TICKS_TO_MS(tick)
 
-#define TICKS_TO_US(tick)           __TICKS_TO_US(tick)
+#define TICKS_TO_US(tick) __TICKS_TO_US(tick)
 
-#define MS_TO_HWTICKS(ms)           __MS_TO_TICKS(ms)
+#define MS_TO_HWTICKS(ms) __MS_TO_TICKS(ms)
 
-#define US_TO_HWTICKS(us)             __US_TO_TICKS(us)
+#define US_TO_HWTICKS(us) __US_TO_TICKS(us)
 
-#define HWTICKS_TO_MS(tick)           __TICKS_TO_MS(tick)
+#define HWTICKS_TO_MS(tick) __TICKS_TO_MS(tick)
 
-#define HWTICKS_TO_US(tick)           __TICKS_TO_US(tick)
+#define HWTICKS_TO_US(tick) __TICKS_TO_US(tick)
 
-#define GET_CURRENT_TICKS()         hal_sys_timer_get()
+#define GET_CURRENT_TICKS() hal_sys_timer_get()
 
-#define GET_CURRENT_MS()            TICKS_TO_MS(GET_CURRENT_TICKS())
+#define GET_CURRENT_MS() TICKS_TO_MS(GET_CURRENT_TICKS())
 
 void hal_sys_timer_open(void);
 
@@ -138,19 +135,24 @@ uint32_t hal_timer_get_passed_ticks(uint32_t curr_ticks, uint32_t prev_ticks);
 //=============================================================================
 // Fast Timer
 
-#define CONFIG_FAST_SYSTICK_HZ      (hal_cmu_get_crystal_freq() / 4)
+#define CONFIG_FAST_SYSTICK_HZ (hal_cmu_get_crystal_freq() / 4)
 
-#define MS_TO_FAST_TICKS(ms)        ((uint32_t)(ms) * (CONFIG_FAST_SYSTICK_HZ / 1000))
+#define MS_TO_FAST_TICKS(ms) ((uint32_t)(ms) * (CONFIG_FAST_SYSTICK_HZ / 1000))
 
-#define US_TO_FAST_TICKS(us)        ((uint32_t)(us) * (CONFIG_FAST_SYSTICK_HZ / 1000 / 100) / 10)
+#define US_TO_FAST_TICKS(us)                                                   \
+  ((uint32_t)(us) * (CONFIG_FAST_SYSTICK_HZ / 1000 / 100) / 10)
 
-#define NS_TO_FAST_TICKS(ns)        ((uint32_t)(ns) * (CONFIG_FAST_SYSTICK_HZ / 1000 / 100) / 10 / 1000)
+#define NS_TO_FAST_TICKS(ns)                                                   \
+  ((uint32_t)(ns) * (CONFIG_FAST_SYSTICK_HZ / 1000 / 100) / 10 / 1000)
 
-#define FAST_TICKS_TO_MS(tick)      ((uint32_t)(tick) / (CONFIG_FAST_SYSTICK_HZ / 1000))
+#define FAST_TICKS_TO_MS(tick)                                                 \
+  ((uint32_t)(tick) / (CONFIG_FAST_SYSTICK_HZ / 1000))
 
-#define FAST_TICKS_TO_US(tick)      ((uint32_t)(tick) * 10 / (CONFIG_FAST_SYSTICK_HZ / 1000 / 100))
+#define FAST_TICKS_TO_US(tick)                                                 \
+  ((uint32_t)(tick)*10 / (CONFIG_FAST_SYSTICK_HZ / 1000 / 100))
 
-#define FAST_TICKS_TO_NS(tick)      ((uint32_t)(tick) * 10 * 1000 / (CONFIG_FAST_SYSTICK_HZ / 1000 / 100))
+#define FAST_TICKS_TO_NS(tick)                                                 \
+  ((uint32_t)(tick)*10 * 1000 / (CONFIG_FAST_SYSTICK_HZ / 1000 / 100))
 
 uint32_t hal_fast_sys_timer_get(void);
 
@@ -163,4 +165,3 @@ int osDelay(uint32_t ms);
 #endif
 
 #endif
-

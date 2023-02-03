@@ -26,13 +26,13 @@
 #include "plat_types.h"
 #include "reg_spdifip.h"
 
-//#define SPDIF_CLOCK_SOURCE 240000000
-//#define SPDIF_CLOCK_SOURCE 22579200
-//#define SPDIF_CLOCK_SOURCE 48000000
+// #define SPDIF_CLOCK_SOURCE 240000000
+// #define SPDIF_CLOCK_SOURCE 22579200
+// #define SPDIF_CLOCK_SOURCE 48000000
 #define SPDIF_CLOCK_SOURCE 3072000
 
-//#define SPDIF_CLOCK_SOURCE 76800000
-//#define SPDIF_CLOCK_SOURCE 84672000
+// #define SPDIF_CLOCK_SOURCE 76800000
+// #define SPDIF_CLOCK_SOURCE 84672000
 
 // Trigger DMA request when TX-FIFO count <= threshold
 #define HAL_SPDIF_TX_FIFO_TRIGGER_LEVEL (SPDIFIP_FIFO_DEPTH / 2)
@@ -324,9 +324,6 @@ int hal_spdif_setup_stream(enum HAL_SPDIF_ID_T id, enum AUD_STREAM_T stream,
 
   TRACE(3, "[%s] stream=%d sample_rate=%d", __func__, stream, cfg->sample_rate);
 
-#ifdef FPGA
-  hal_cmu_spdif_set_div(id, 2);
-#else
 #ifndef SIMU
   analog_aud_freq_pll_config(spdif_sample_rate[i].codec_freq,
                              spdif_sample_rate[i].codec_div);
@@ -337,7 +334,6 @@ int hal_spdif_setup_stream(enum HAL_SPDIF_ID_T id, enum AUD_STREAM_T stream,
 #endif
   // SPDIF module is working on 24.576M or 22.5792M
   hal_cmu_spdif_set_div(id, spdif_sample_rate[i].pcm_div);
-#endif
 
   if ((stream == AUD_STREAM_PLAYBACK &&
        spdif_status[id][AUD_STREAM_CAPTURE] == HAL_SPDIF_STATUS_NULL) ||
