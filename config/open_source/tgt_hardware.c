@@ -104,7 +104,7 @@ const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM] = {
 // bt config
 // const char *BT_LOCAL_NAME = TO_STRING(BT_DEV_NAME) "\0";
 const char *BT_LOCAL_NAME = "PineBuds Pro";
-const char *BLE_DEFAULT_NAME = "BES_BLE";
+const char *BLE_DEFAULT_NAME = "PineBuds Pro BLE";
 uint8_t ble_addr[6] = {
 #ifdef BLE_DEV_ADDR
     BLE_DEV_ADDR
@@ -122,6 +122,7 @@ uint8_t bt_addr[6] = {
 #endif
 };
 
+/// True Wireless side configuration using resistor fitment
 const struct HAL_IOMUX_PIN_FUNCTION_MAP cfg_hw_tws_channel_cfg = {
     HAL_IOMUX_PIN_P1_4, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO,
     HAL_IOMUX_PIN_PULLUP_ENABLE};
@@ -159,21 +160,23 @@ const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
     {TX_PA_GAIN, 0x03, -3},  {TX_PA_GAIN, 0x03, 0}, // 0dBm
 };
 
-#if SPEECH_CODEC_CAPTURE_CHANNEL_NUM == 2
-#define CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV                                      \
-  (AUD_CHANNEL_MAP_CH0 | AUD_CHANNEL_MAP_CH4 | AUD_VMIC_MAP_VMIC2 |            \
-   AUD_VMIC_MAP_VMIC3)
-#elif SPEECH_CODEC_CAPTURE_CHANNEL_NUM == 3
-#define CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV                                      \
-  (AUD_CHANNEL_MAP_CH0 | AUD_CHANNEL_MAP_CH1 | AUD_CHANNEL_MAP_CH4 |           \
-   AUD_VMIC_MAP_VMIC1)
-#else
-#define CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV                                      \
-  (AUD_CHANNEL_MAP_CH4 | AUD_VMIC_MAP_VMIC3)
-#endif
+// MIC and channel configurations
+// Pinebuds pro have the following mic's and biases
+/*
 
-#define CFG_HW_AUD_INPUT_PATH_LINEIN_DEV                                       \
-  (AUD_CHANNEL_MAP_CH0 | AUD_CHANNEL_MAP_CH1)
+ * User Voice (Talking) = MIC5 input and VMIC3 Bias
+ * ANC Feed Forward     = MIC1 input and VMIC2 Bias
+ * ANC Feed Backward    = MIC3 input and VMIC2 Bias
+ *
+ * Note that AUD_CHANNEL_MAP is offset by 1 (0 start)
+*/
+
+
+#define USER_TALK_MIC AUD_CHANNEL_MAP_CH4
+#define USER_TALK_VMIC_CFG AUD_VMIC_MAP_VMIC3
+
+#define CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV (USER_TALK_MIC | USER_TALK_VMIC_CFG)
+
 #ifdef VOICE_DETECTOR_EN
 #define CFG_HW_AUD_INPUT_PATH_VADMIC_DEV                                       \
   (AUD_CHANNEL_MAP_CH4 | AUD_VMIC_MAP_VMIC1)
@@ -184,32 +187,23 @@ const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
 
 const struct AUD_IO_PATH_CFG_T
     cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_PATH_NUM] = {
-#if defined(SPEECH_TX_AEC_CODEC_REF)
-        // NOTE: If enable Ch5 and CH6, need to add channel_num when setup
-        // audioflinger stream
-        {
-            AUD_INPUT_PATH_MAINMIC,
-            CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV | AUD_CHANNEL_MAP_CH4,
-        },
-#else
         {
             AUD_INPUT_PATH_MAINMIC,
             CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV,
         },
-#endif
         {
             AUD_INPUT_PATH_LINEIN,
-            CFG_HW_AUD_INPUT_PATH_LINEIN_DEV,
+            CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV,
         },
 #ifdef VOICE_DETECTOR_EN
         {
             AUD_INPUT_PATH_VADMIC,
-            CFG_HW_AUD_INPUT_PATH_VADMIC_DEV,
+            CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV,
         },
 #else
         {
             AUD_INPUT_PATH_ASRMIC,
-            CFG_HW_AUD_INPUT_PATH_ASRMIC_DEV,
+            CFG_HW_AUD_INPUT_PATH_MAINMIC_DEV,
         },
 #endif
 };
@@ -232,16 +226,6 @@ const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_INT ={
 HAL_IOMUX_PIN_PULLUP_ENABLE
 };
 */
-
-// const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SDA ={
-// 	HAL_IOMUX_PIN_P2_1, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO,
-// HAL_IOMUX_PIN_PULLUP_ENABLE
-// };
-
-// const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SCL ={
-// 	HAL_IOMUX_PIN_P2_0, HAL_IOMUX_FUNC_AS_GPIO, HAL_IOMUX_PIN_VOLTAGE_VIO,
-// HAL_IOMUX_PIN_PULLUP_ENABLE
-// };
 
 #define IIR_COUNTER_FF_L (6)
 #define IIR_COUNTER_FF_R (6)
