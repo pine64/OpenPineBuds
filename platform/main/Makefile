@@ -202,7 +202,6 @@ ccflags-y +=  \
 	-Iutils/hwtimer_list \
 	-Iplatform/drivers/ana \
 	-Iplatform/drivers/security_engine \
-	-Iplatform/drivers/usb/usb_dev/inc \
 	-Iapps/main \
 	-Iapps/factory \
 	-Iutils/list  \

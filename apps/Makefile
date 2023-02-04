@@ -12,9 +12,6 @@ obj-y += btusbaudio/
 obj-y += usbaudio/
 endif
 
-ifeq ($(APP_TEST_SDMMC),1)
-obj-y += sdmmc/
-endif
 
 ifeq ($(ANC_APP),1)
 obj-y += anc/
@@ -35,7 +32,6 @@ endif
 subdir-ccflags-y += -Iapps/apptester \
 					-Iapps/audioplayers \
 					-Iapps/common \
-					-Iapps/sdmmc \
 					-Iapps/main \
 					-Iapps/cmd \
 					-Iapps/key \
