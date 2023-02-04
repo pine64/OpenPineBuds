@@ -171,7 +171,6 @@ const struct CODEC_DAC_VOL_T codec_dac_vol[TGT_VOLUME_LEVEL_QTY] = {
  * Note that AUD_CHANNEL_MAP is offset by 1 (0 start)
 */
 
-
 #define USER_TALK_MIC AUD_CHANNEL_MAP_CH4
 #define USER_TALK_VMIC_CFG AUD_VMIC_MAP_VMIC3
 
@@ -237,8 +236,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         {
             .anc_cfg_ff_l =
                 {
-                    // .total_gain = 440,
-                    .total_gain = 350,
+                    .total_gain = 440,
+                    // .total_gain = 350,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -273,8 +272,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 },
             .anc_cfg_ff_r =
                 {
-                    //  .total_gain = 382,
-                    .total_gain = 350,
+                    .total_gain = 382,
+                    // .total_gain = 350,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -425,8 +424,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         {
             .anc_cfg_ff_l =
                 {
-                    // .total_gain = 440,
-                    .total_gain = 312,
+                    .total_gain = 440,
+                    // .total_gain = 312,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -461,8 +460,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 },
             .anc_cfg_ff_r =
                 {
-                    //  .total_gain = 382,
-                    .total_gain = 288,
+                    .total_gain = 382,
+                    // .total_gain = 288,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -717,8 +716,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         {
             .anc_cfg_ff_l =
                 {
-                    // .total_gain = 440,
-                    .total_gain = 312,
+                    .total_gain = 440,
+                    // .total_gain = 312,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -753,8 +752,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 },
             .anc_cfg_ff_r =
                 {
-                    //  .total_gain = 382,
-                    .total_gain = 288,
+                    .total_gain = 382,
+                    // .total_gain = 288,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
