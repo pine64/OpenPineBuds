@@ -61,19 +61,19 @@ AUDIO_OUTPUT_DIFF ?= 0
 
 #### ANC DEFINE START ######
 export ANC_APP		    ?= 1
-export ANC_FF_ENABLED	?= 1
-export ANC_FB_ENABLED	?= 1
+export ANC_FF_ENABLED	?= 1 # Feed Forward  ANC configuration (external mic)
+export ANC_FB_ENABLED	?= 1 # Feed Backward ANC configuration (internal mic)
 export AUDIO_ANC_FB_MC ?= 0
 export AUDIO_SECTION_SUPPT ?= 0
 export AUD_SECTION_STRUCT_VERSION ?= 2
-export AUDIO_ANC_FB_MC_HW ?=0
+export AUDIO_ANC_FB_MC_HW ?=0 # Music cancel hardware?
 export APP_ANC_KEY ?= 1
 export ANC_FB_CHECK ?= 1
 ##### ANC DEFINE END ######
 
-APP_ANC_TEST ?= 0
+APP_ANC_TEST ?= 0 # Build in ANC testing app (closed source)
 
-TEST_OVER_THE_AIR ?= 0
+TEST_OVER_THE_AIR ?= 0 # Allow test commands via bluetooth
 
 HW_FIR_EQ_PROCESS ?= 0
 
