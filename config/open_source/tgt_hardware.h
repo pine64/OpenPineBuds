@@ -106,14 +106,14 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
  * 
  * Note that AUD_CHANNEL_MAP is offset by 1 (0 start)
 */
-
-#define ANC_FF_MIC_CH_L                     AUD_CHANNEL_MAP_CH0
-#define ANC_FF_MIC_CH_R                     0
-#define ANC_FB_MIC_CH_L                     AUD_CHANNEL_MAP_CH2
-#define ANC_FB_MIC_CH_R                     0
-
 #define ANC_FF_MIC AUD_CHANNEL_MAP_CH0
 #define ANC_FB_MIC AUD_CHANNEL_MAP_CH2
+
+#define ANC_FF_MIC_CH_L                     ANC_FF_MIC
+#define ANC_FF_MIC_CH_R                     0
+#define ANC_FB_MIC_CH_L                     ANC_FB_MIC
+#define ANC_FB_MIC_CH_R                     0
+
 #define ANC_VMIC_CFG AUD_VMIC_MAP_VMIC2
 
 // audio codec
