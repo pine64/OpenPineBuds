@@ -123,6 +123,7 @@
 #endif
 
 #ifndef ANC_VMIC_CFG
+#warning "No ANC VMIC configured"
 #define ANC_VMIC_CFG (AUD_VMIC_MAP_VMIC1)
 #endif
 
