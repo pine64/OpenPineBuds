@@ -61,10 +61,10 @@ AUDIO_OUTPUT_DIFF ?= 0
 
 #### ANC DEFINE START ######
 export ANC_APP		    ?= 1
-export ANC_FF_ENABLED	?= 1
 # Feed Forward  ANC configuration (external mic)
-export ANC_FB_ENABLED	?= 1
+export ANC_FF_ENABLED	?= 1
 # Feed Backward ANC configuration (internal mic)
+export ANC_FB_ENABLED	?= 1
 export AUDIO_ANC_FB_MC ?= 0
 export AUDIO_SECTION_SUPPT ?= 0
 export AUD_SECTION_STRUCT_VERSION ?= 2
