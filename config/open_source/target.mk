@@ -69,7 +69,7 @@ export AUDIO_ANC_FB_MC ?= 0
 export AUDIO_SECTION_SUPPT ?= 0
 export AUD_SECTION_STRUCT_VERSION ?= 2
 # Music cancel hardware?
-export AUDIO_ANC_FB_MC_HW ?=0
+export AUDIO_ANC_FB_MC_HW ?=1
 export APP_ANC_KEY ?= 1
 export ANC_FB_CHECK ?= 1
 ##### ANC DEFINE END ######
