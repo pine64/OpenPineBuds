@@ -268,7 +268,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_ff_r =
                 {
@@ -304,7 +304,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 
             /*
@@ -358,7 +358,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     */
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_fb_r =
                 {
@@ -393,7 +393,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 
 };
@@ -456,7 +456,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_ff_r =
                 {
@@ -491,7 +491,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 
             /*
@@ -544,7 +544,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_fb_r =
                 {
@@ -579,7 +579,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 
 #if (AUD_SECTION_STRUCT_VERSION == 2)
@@ -658,7 +658,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_mc_r =
                 {
@@ -686,7 +686,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 #endif
 };
@@ -748,7 +748,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_ff_r =
                 {
@@ -784,7 +784,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 
             /*
@@ -836,7 +836,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_fb_r =
                 {
@@ -871,7 +871,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 #if (AUD_SECTION_STRUCT_VERSION == 2)
 
@@ -919,7 +919,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
             .anc_cfg_mc_r =
                 {
@@ -947,7 +947,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (0) * 4,
+                    .adc_gain_offset = (2) * 4,
                 },
 #endif
 
