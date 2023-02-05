@@ -14,115 +14,42 @@
  *
  ****************************************************************************/
 #include "apps.h"
-#include "a2dp_api.h"
-#include "app_audio.h"
-#include "app_battery.h"
-#include "app_ble_include.h"
-#include "app_bt.h"
-#include "app_bt_func.h"
-#include "app_bt_media_manager.h"
-#include "app_key.h"
-#include "app_overlay.h"
-#include "app_pwl.h"
-#include "app_status_ind.h"
-#include "app_thread.h"
-#include "app_utils.h"
-#include "audioflinger.h"
-#include "besbt.h"
-#include "bt_drv_interface.h"
-#include "bt_if.h"
-#include "btapp.h"
-#include "cmsis_os.h"
-#include "crash_dump_section.h"
-#include "factory_section.h"
-#include "gapm_task.h"
-#include "hal_bootmode.h"
-#include "hal_i2c.h"
-#include "hal_sleep.h"
-#include "hal_timer.h"
-#include "hal_trace.h"
-#include "list.h"
-#include "log_section.h"
-#include "me_api.h"
-#include "norflash_api.h"
-#include "nvrecord.h"
-#include "nvrecord_dev.h"
-#include "nvrecord_env.h"
-#include "os_api.h"
-#include "pmu.h"
-#include "stdio.h"
-#include "string.h"
-#include "tgt_hardware.h"
-#ifdef __AI_VOICE__
-#include "ai_manager.h"
-#include "app_ai_if.h"
-#include "app_ai_manager_api.h"
-#include "app_ai_tws.h"
-#endif
-#include "app_tws_ibrt_cmd_handler.h"
-#include "audio_process.h"
-
-#ifdef __PC_CMD_UART__
-#include "app_cmd.h"
-#endif
-
-#ifdef __FACTORY_MODE_SUPPORT__
-#include "app_factory.h"
-#include "app_factory_bt.h"
-#endif
-
-#ifdef __INTERCONNECTION__
-#include "app_ble_mode_switch.h"
-#include "app_interconnection.h"
-#include "app_interconnection_ble.h"
-#include "app_interconnection_logic_protocol.h"
-#endif
-
-#ifdef __INTERACTION__
-#include "app_interaction.h"
-#endif
-
-#ifdef BISTO_ENABLED
-#include "app_ai_manager_api.h"
-#include "gsound_custom_actions.h"
-#include "gsound_custom_ota.h"
-#include "gsound_custom_reset.h"
-#include "nvrecord_gsound.h"
-#endif
-
-#ifdef IBRT_OTA
-#include "ota_bes.h"
-#endif
-
-#ifdef MEDIA_PLAYER_SUPPORT
-#include "app_media_player.h"
-#include "resources.h"
-#endif
-
-#ifdef VOICE_DATAPATH
-#include "app_voicepath.h"
-#endif
-
-#ifdef BT_USB_AUDIO_DUAL_MODE
-#include "btusb_audio.h"
-#include "usbaudio_thread.h"
-#endif
-
-#ifdef TILE_DATAPATH
-#include "tile_target_ble.h"
-#endif
-
-#if defined(IBRT)
-#include "app_ibrt_customif_cmd.h"
-#include "app_ibrt_customif_ui.h"
-#include "app_ibrt_if.h"
-#include "app_ibrt_ui_test.h"
-#include "app_ibrt_voice_report.h"
-#include "app_tws_if.h"
-#endif
-
+#include "common_apps_imports.h"
+#include "ibrt.h"
+#include "key_handler.h"
+#include "led_control.h"
 #ifdef GFPS_ENABLED
 #include "app_gfps.h"
+#ifdef GFPS_ENABLED
+static void app_tell_battery_info_handler(uint8_t *batteryValueCount,
+                                          uint8_t *batteryValue) {
+  GFPS_BATTERY_STATUS_E status;
+  if (app_battery_is_charging()) {
+    status = BATTERY_CHARGING;
+  } else {
+    status = BATTERY_NOT_CHARGING;
+  }
+
+  // TODO: add the charger case's battery level
+#ifdef IBRT
+  if (app_tws_ibrt_tws_link_connected()) {
+    *batteryValueCount = 2;
+  } else {
+    *batteryValueCount = 1;
+  }
+#else
+  *batteryValueCount = 1;
+#endif
+
+  TRACE(2, "%s,*batteryValueCount is %d", __func__, *batteryValueCount);
+  if (1 == *batteryValueCount) {
+    batteryValue[0] = ((app_battery_current_level() + 1) * 10) | (status << 7);
+  } else {
+    batteryValue[0] = ((app_battery_current_level() + 1) * 10) | (status << 7);
+    batteryValue[1] = ((app_battery_current_level() + 1) * 10) | (status << 7);
+  }
+}
+#endif
 #endif
 
 #ifdef BTIF_BLE_APP_DATAPATH_SERVER
@@ -1486,217 +1413,6 @@ void app_latency_switch_key_handler(void) {
   }
 }
 
-/*
- * handling of touch events when the devices are turned on
-
- * Both pods active:
-
- * Right Ear:
- * Single tap : Play/Pause
- * Double tap : Next track
- * Hold       : ANC on/off
- * Triple tap : Volume Up
- *
- * Left Ear:
- * Single tap : Play/Pause
- * Double tap : Previous track
- * Hold       : ANC on/off
- * Triple tap : Volume Down
-
- * Single pod active:
-
- * Single tap : Play/Pause
- * Double tap : Next track
- * Hold       : Previous track
- * Triple tap : Volume Up
- * Quad   tap : Volume Down
-
-
-
- * We use app_ibrt_if_start_user_action for handling actions, as this will apply
- locally if we are link master
- * OR send it over the link to the other bud if we are not
-*/
-
-void send_vol_up(void) {
-  uint8_t action[] = {IBRT_ACTION_LOCAL_VOLUP};
-  app_ibrt_if_start_user_action(action, sizeof(action));
-}
-void send_play_pause(void) {
-  if (app_bt_device.a2dp_play_pause_flag != 0) {
-    uint8_t action[] = {IBRT_ACTION_PAUSE};
-    app_ibrt_if_start_user_action(action, sizeof(action));
-  } else {
-    uint8_t action[] = {IBRT_ACTION_PLAY};
-    app_ibrt_if_start_user_action(action, sizeof(action));
-  }
-}
-void send_vol_down(void) {
-  uint8_t action[] = {IBRT_ACTION_LOCAL_VOLDN};
-  app_ibrt_if_start_user_action(action, sizeof(action));
-}
-
-void send_next_track(void) {
-  uint8_t action[] = {IBRT_ACTION_FORWARD};
-  app_ibrt_if_start_user_action(action, sizeof(action));
-}
-
-void send_prev_track(void) {
-  uint8_t action[] = {IBRT_ACTION_BACKWARD};
-  app_ibrt_if_start_user_action(action, sizeof(action));
-}
-void app_key_single_tap(APP_KEY_STATUS *status, void *param) {
-  TRACE(2, "%s event %d", __func__, status->event);
-
-  if (!app_tws_ibrt_tws_link_connected()) {
-    // No other bud paired
-    TRACE(0, "Handling %s in single bud mode", __func__);
-    send_play_pause();
-  } else {
-    // Bud's are working as a pair
-    if (app_tws_is_left_side()) {
-      TRACE(0, "Handling %s as left bud", __func__);
-      // Lefty
-      send_play_pause();
-    } else {
-      TRACE(0, "Handling %s as right bud", __func__);
-      // Righty
-      send_play_pause();
-    }
-  }
-}
-void app_key_double_tap(APP_KEY_STATUS *status, void *param) {
-  TRACE(2, "%s event %d", __func__, status->event);
-
-  if (!app_tws_ibrt_tws_link_connected()) {
-    // No other bud paired
-    TRACE(0, "Handling %s in single bud mode", __func__);
-    send_next_track();
-  } else {
-    // Bud's are working as a pair
-    if (app_tws_is_left_side()) {
-      TRACE(0, "Handling %s as left bud", __func__);
-      // Lefty
-      send_prev_track();
-    } else {
-      TRACE(0, "Handling %s as right bud", __func__);
-      // Righty
-      send_next_track();
-    }
-  }
-}
-
-void app_key_triple_tap(APP_KEY_STATUS *status, void *param) {
-  TRACE(2, "%s event %d", __func__, status->event);
-
-  if (!app_tws_ibrt_tws_link_connected()) {
-    // No other bud paired
-    TRACE(0, "Handling %s in single bud mode", __func__);
-    send_vol_up();
-  } else {
-    // Bud's are working as a pair
-    if (app_tws_is_left_side()) {
-      TRACE(0, "Handling %s as left bud", __func__);
-      // Lefty
-      send_vol_down();
-    } else {
-      TRACE(0, "Handling %s as right bud", __func__);
-      // Righty
-      send_vol_up();
-    }
-  }
-}
-void app_key_quad_tap(APP_KEY_STATUS *status, void *param) {
-  TRACE(2, "%s event %d", __func__, status->event);
-
-  if (!app_tws_ibrt_tws_link_connected()) {
-    // No other bud paired
-    TRACE(0, "Handling %s in single bud mode", __func__);
-    send_vol_down();
-  } else {
-    // Bud's are working as a pair
-    if (app_tws_is_left_side()) {
-      TRACE(0, "Handling %s as left bud", __func__);
-      // Lefty
-    } else {
-      TRACE(0, "Handling %s as right bud", __func__);
-      // Righty
-    }
-  }
-}
-
-void app_key_long_press_down(APP_KEY_STATUS *status, void *param) {
-  TRACE(2, "%s event %d", __func__, status->event);
-
-  if (!app_tws_ibrt_tws_link_connected()) {
-    // No other bud paired
-    TRACE(0, "Handling %s in single bud mode", __func__);
-    send_prev_track();
-  } else {
-    // Bud's are working as a pair
-    app_anc_key(status, param);
-  }
-}
-
-void app_key_reboot(APP_KEY_STATUS *status, void *param) {
-  TRACE(1, "%s ", __func__);
-  hal_cmu_sys_reboot();
-}
-
-void app_key_init(void) {
-  uint8_t i = 0;
-  TRACE(1, "%s", __func__);
-
-  const APP_KEY_HANDLE key_cfg[] = {
-
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_CLICK}, "", app_key_single_tap, NULL},
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_DOUBLECLICK},
-       "",
-       app_key_double_tap,
-       NULL},
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_TRIPLECLICK},
-       "",
-       app_key_triple_tap,
-       NULL},
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_ULTRACLICK},
-       "",
-       app_key_quad_tap,
-       NULL},
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_LONGPRESS},
-       "",
-       app_key_long_press_down,
-       NULL},
-  };
-
-  app_key_handle_clear();
-  for (i = 0; i < (sizeof(key_cfg) / sizeof(APP_KEY_HANDLE)); i++) {
-    app_key_handle_registration(&key_cfg[i]);
-  }
-}
-
-void app_key_init_on_charging(void) {
-  uint8_t i = 0;
-  const APP_KEY_HANDLE key_cfg[] = {
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_LONGLONGPRESS},
-       "long press reboot",
-       app_key_reboot,
-       NULL},
-  // {{APP_KEY_CODE_PWR,APP_KEY_EVENT_CLICK},"bt function
-  // key",app_dfu_key_handler, NULL},
-#ifdef __USB_COMM__
-      {{APP_KEY_CODE_PWR, APP_KEY_EVENT_LONGPRESS},
-       "usb cdc key",
-       app_usb_cdc_comm_key_handler,
-       NULL},
-#endif
-  };
-
-  TRACE(1, "%s", __func__);
-  for (i = 0; i < (sizeof(key_cfg) / sizeof(APP_KEY_HANDLE)); i++) {
-    app_key_handle_registration(&key_cfg[i]);
-  }
-}
-
 void stopAuto_Shutdowm_Timer(void);
 
 bool MobileLinkLose_reboot = false;
@@ -1987,36 +1703,6 @@ void stoponce_delay_event_Timer_(void) {
 
 /********************************once_delay_event_Timer__timer*******************************************************/
 /***********************************************************************************************/
-#include "hal_gpio.h"
-#include "tgt_hardware.h"
-extern struct BT_DEVICE_T app_bt_device;
-extern void hal_gpio_pin_set(enum HAL_GPIO_PIN_T pin);
-
-bool Curr_Is_Master(void) {
-  static ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-  if (p_ibrt_ctrl->current_role == IBRT_MASTER)
-    return 1;
-  else
-    return 0;
-}
-
-bool Curr_Is_Slave(void) {
-  static ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-  if (p_ibrt_ctrl->current_role == IBRT_SLAVE)
-    return 1;
-  else
-    return 0;
-}
-
-uint8_t get_curr_role(void) {
-  static ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-  return p_ibrt_ctrl->current_role;
-}
-
-uint8_t get_nv_role(void) {
-  static ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-  return p_ibrt_ctrl->nv_role;
-}
 
 extern bt_status_t LinkDisconnectDirectly(bool PowerOffFlag);
 void a2dp_suspend_music_force(void);
@@ -2102,34 +1788,6 @@ int app_deinit(int deinit_case) {
 
   return nRet;
 }
-
-#ifdef APP_TEST_MODE
-extern void app_test_init(void);
-int app_init(void) {
-  int nRet = 0;
-  // uint8_t pwron_case = APP_POWERON_CASE_INVALID;
-  TRACE(1, "%s", __func__);
-  app_poweroff_flag = 0;
-
-  app_sysfreq_req(APP_SYSFREQ_USER_APP_INIT, APP_SYSFREQ_52M);
-  list_init();
-  af_open();
-  app_os_init();
-  app_pwl_open();
-  app_audio_open();
-  app_audio_manager_open();
-  app_overlay_open();
-  if (app_key_open(true)) {
-    nRet = -1;
-    goto exit;
-  }
-
-  app_test_init();
-exit:
-  app_sysfreq_req(APP_SYSFREQ_USER_APP_INIT, APP_SYSFREQ_32K);
-  return nRet;
-}
-#else /* !defined(APP_TEST_MODE) */
 
 int app_bt_connect2tester_init(void) {
   btif_device_record_t rec;
@@ -2273,130 +1931,6 @@ void app_ibrt_init(void) {
 #endif
 }
 
-#ifdef GFPS_ENABLED
-static void app_tell_battery_info_handler(uint8_t *batteryValueCount,
-                                          uint8_t *batteryValue) {
-  GFPS_BATTERY_STATUS_E status;
-  if (app_battery_is_charging()) {
-    status = BATTERY_CHARGING;
-  } else {
-    status = BATTERY_NOT_CHARGING;
-  }
-
-  // TODO: add the charger case's battery level
-#ifdef IBRT
-  if (app_tws_ibrt_tws_link_connected()) {
-    *batteryValueCount = 2;
-  } else {
-    *batteryValueCount = 1;
-  }
-#else
-  *batteryValueCount = 1;
-#endif
-
-  TRACE(2, "%s,*batteryValueCount is %d", __func__, *batteryValueCount);
-  if (1 == *batteryValueCount) {
-    batteryValue[0] = ((app_battery_current_level() + 1) * 10) | (status << 7);
-  } else {
-    batteryValue[0] = ((app_battery_current_level() + 1) * 10) | (status << 7);
-    batteryValue[1] = ((app_battery_current_level() + 1) * 10) | (status << 7);
-  }
-}
-#endif
-/*
-#define regaddr0	0x40
-#define regaddr1	0x41
-#define regaddr2	0x42
-#define regaddr3	0x43
-
-#define regaddr4	0xc8
-
-#define decice_firstreg	0x00
-*/
-void touch_evt_handler(enum HAL_GPIO_PIN_T pin) {
-  TRACE(3, "SCL_TOUCH !!!!");
-
-  /*
-  unsigned char  keyEventBUff0 ;
-  unsigned char  keyEventBUff1 ;
-  unsigned char  keyEventBUff2 ;
-  unsigned char  keyEventBUff3 ;
-  unsigned char  temp = 0;
-  //hal_gpio_i2c_simple_recv((unsigned char)0x60, 0x40, 1,&keyEventBUff,4);
-  I2C_ReadByte(regaddr0,&keyEventBUff0);
-  I2C_ReadByte(regaddr1,&keyEventBUff1);
-  I2C_ReadByte(regaddr2,&keyEventBUff2);
-  I2C_ReadByte(regaddr3,&keyEventBUff3);
-  unsigned char	firstaddr;
-
-  I2C_ReadByte(decice_firstreg,&firstaddr);
-  TRACE(3,"0X00 REG = 0x%x",firstaddr);
-  unsigned char  keyEventBUff4byte[4] ;
-  I2C_Read4Byte(regaddr0,keyEventBUff4byte);
-
-  I2C_ReadByte(0xC8,&temp);
-  temp |= 0x01;
-  I2C_WriteByte(0xC8,temp);
-  TRACE(3,"REG0X40 = 0x%x, REG0X41 = 0x%x, REG0X42 = 0x%x, REG0X43 =
-  0x%x",keyEventBUff0,keyEventBUff1,keyEventBUff2,keyEventBUff3);
-  TRACE(3,"keyEventBUff4BYTE :");
-  DUMP8("0x%02x ",keyEventBUff4byte,4);
-
-  uint8_t  keyEventBUff0[4];
-  uint8_t  keyEventBUff4[1];
-
-  touch_key_i2c_read(regaddr0,&keyEventBUff0[0],1);
-  touch_key_i2c_read(regaddr1,&keyEventBUff0[1],1);
-  touch_key_i2c_read(regaddr2,&keyEventBUff0[2],1);
-  touch_key_i2c_read(regaddr3,&keyEventBUff0[3],1);
-  touch_key_i2c_read(regaddr4,keyEventBUff4,1);
-  TRACE(3,"keyEventBUff0 :");
-  DUMP8("0x%02x ",keyEventBUff0,4);
-  TRACE(3,"keyEventBUff1 :");
-  DUMP8("0x%02x ",keyEventBUff4,1);
-  keyEventBUff4[0] |= 0x1;
-  touch_key_i2c_write(0,regaddr4,1,keyEventBUff4);
-  */
-}
-
-/******************************LED_status_timer*********************************************************/
-osTimerId LED_statusid = NULL;
-void startLED_status(int ms);
-void stopLED_status(void);
-static void LED_statusfun(const void *);
-osTimerDef(defLED_status, LED_statusfun);
-void LED_statusinit(void) {
-  LED_statusid = osTimerCreate(osTimer(defLED_status), osTimerOnce, (void *)0);
-}
-static void LED_statusfun(const void *) {
-  // TRACE("\n\n!!!!!!enter %s\n\n",__func__);
-  if ((Curr_Is_Slave() || app_device_bt_is_connected()) &&
-      (!app_battery_is_charging())) {
-    app_status_indication_set(APP_STATUS_INDICATION_CONNECTED);
-  } else if (!app_device_bt_is_connected() && (!app_battery_is_charging())) {
-    app_status_indication_set(APP_STATUS_INDICATION_BOTHSCAN);
-  } else if (app_battery_is_charging()) {
-    app_status_indication_set(APP_STATUS_INDICATION_CHARGING);
-  }
-  // unsigned char	firstaddr;
-  // I2C_ReadByte(decice_firstreg,&firstaddr);
-  // TRACE(3,"0X00 REG = 0x%x",firstaddr);
-  startLED_status(1000);
-}
-
-void startLED_status(int ms) {
-  // TRACE("\n\n !!!!!!!!!!start %s\n\n",__func__);
-  osTimerStart(LED_statusid, ms);
-}
-void stopLED_status(void) {
-  // TRACE("\n\n!!!!!!!!!!  stop %s\n\n",__func__);
-  osTimerStop(LED_statusid);
-}
-
-/********************************LED_status_timer*******************************************************/
-
-/********************************TOUCH_INT_TEST_timer*******************************************************/
-
 void user_io_timer_init(void) {
   // app_mute_ctrl_init();
   LED_statusinit();
@@ -2417,44 +1951,6 @@ extern uint32_t __lhdc_license_start[];
 extern uint32_t __aud_start[];
 extern uint32_t __userdata_start[];
 extern uint32_t __factory_start[];
-
-#if defined(A2DP_LHDC_ON)
-extern "C" {
-typedef struct bes_bt_local_info_t {
-  uint8_t bt_addr[BTIF_BD_ADDR_SIZE];
-  const char *bt_name;
-  uint8_t bt_len;
-  uint8_t ble_addr[BTIF_BD_ADDR_SIZE];
-  const char *ble_name;
-  uint8_t ble_len;
-} bes_bt_local_info;
-
-typedef int (*LHDC_GET_BT_INFO)(bes_bt_local_info *bt_info);
-extern bool lhdcSetLicenseKeyTable(uint8_t *licTable, LHDC_GET_BT_INFO pFunc);
-}
-extern int bes_bt_local_info_get(bes_bt_local_info *local_info);
-
-void lhdc_license_check() {
-  uint8_t lhdc_license_key = 0;
-  uint8_t *lhdc_license_data = (uint8_t *)__lhdc_license_start + 0x98;
-  TRACE(5, "lhdc_license_data:%p, lhdc license %02x %02x %02x %02x",
-        lhdc_license_data, lhdc_license_data[0], lhdc_license_data[1],
-        lhdc_license_data[2], lhdc_license_data[3]);
-
-  app_overlay_select(APP_OVERLAY_A2DP_LHDC);
-  TRACE(1, "current_overlay = %d", app_get_current_overlay());
-
-  lhdc_license_key =
-      lhdcSetLicenseKeyTable(lhdc_license_data, bes_bt_local_info_get);
-  TRACE(0, "lhdc_license_key:%d", lhdc_license_key);
-
-  if (lhdc_license_key) {
-    TRACE(0, "LHDC OK");
-  } else {
-    TRACE(0, "LHDC ERROR");
-  }
-}
-#endif
 
 int app_init(void) {
   int nRet = 0;
@@ -3020,5 +2516,3 @@ exit:
 
   return nRet;
 }
-
-#endif /* APP_TEST_MODE */
