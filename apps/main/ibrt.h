@@ -1,5 +1,4 @@
-#ifndef IBRT_H_
-#define IBRT_H_
+#pragma once 
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -13,4 +12,4 @@ uint8_t get_nv_role(void);
 #ifdef __cplusplus
 };
 #endif
-#endif
+

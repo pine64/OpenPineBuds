@@ -18,6 +18,7 @@
 #include "ibrt.h"
 #include "key_handler.h"
 #include "led_control.h"
+#include "rb_codec.h"
 
 #ifdef BTIF_BLE_APP_DATAPATH_SERVER
 #include "app_ble_cmd_handler.h"
@@ -70,12 +71,6 @@ enum APP_POWERON_CASE_T {
 
   APP_POWERON_CASE_NUM
 };
-
-#ifdef RB_CODEC
-extern int rb_ctl_init();
-extern bool rb_ctl_is_init_done(void);
-extern void app_rbplay_audio_reset_pause_status(void);
-#endif
 
 #ifdef __SUPPORT_ANC_SINGLE_MODE_WITHOUT_BT__
 extern bool app_pwr_key_monitor_get_val(void);
@@ -820,7 +815,6 @@ extern "C" void app_bt_key(APP_KEY_STATUS *status, void *param) {
       bt_key_send(status);
   }
 }
-
 
 void app_voice_assistant_key(APP_KEY_STATUS *status, void *param) {
   TRACE(2, "%s event %d", __func__, status->event);
