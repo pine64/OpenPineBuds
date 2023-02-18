@@ -162,9 +162,6 @@ static int g_language = MEDIA_DEFAULT_LANGUAGE;
 static enum AUD_SAMPRATE_T app_play_audio_sample_rate = AUD_SAMPRATE_16000;
 #endif
 
-#define PREFIX_AUDIO(name)                                                     \
-  ((g_language == MEDIA_DEFAULT_LANGUAGE) ? EN_##name : CN_##name)
-
 #define PROMPT_MIX_PROPERTY_PTR_FROM_ENTRY_INDEX(index)                        \
   ((PROMPT_MIX_PROPERTY_T *)((uintptr_t)__mixprompt_property_table_start +     \
                              (index) * sizeof(PROMPT_MIX_PROPERTY_T)))
