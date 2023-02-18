@@ -14,9 +14,9 @@
  *
  ****************************************************************************/
 
-extern const uint8_t CN_POWER_ON [];
+extern const uint8_t CN_SOUND_POWER_ON [];
 
-extern const uint8_t CN_POWER_OFF [];
+extern const uint8_t CN_SOUND_POWER_OFF [];
 
 extern const uint8_t CN_SOUND_ZERO[];
 
@@ -38,50 +38,50 @@ extern const uint8_t CN_SOUND_EIGHT[];
 
 extern const uint8_t CN_SOUND_NINE[];
 
-extern const uint8_t CN_BT_PAIR_ENABLE[];
+extern const uint8_t CN_SOUND_PAIR_ENABLE[];
 
-extern const uint8_t CN_BT_PAIRING [];
+extern const uint8_t CN_SOUND_PAIRING [];
 
-extern const uint8_t CN_BT_PAIRING_FAIL[];
+extern const uint8_t CN_SOUND_PAIRING_FAIL[];
 
-extern const uint8_t CN_BT_PAIRING_SUCCESS[];
+extern const uint8_t CN_SOUND_PAIRING_SUCCESS[];
 
-extern const uint8_t CN_BT_REFUSE[];
+extern const uint8_t CN_SOUND_REFUSE[];
 
-extern const uint8_t CN_BT_OVER[];
+extern const uint8_t CN_SOUND_OVER[];
 
-extern const uint8_t CN_BT_ANSWER[];
+extern const uint8_t CN_SOUND_ANSWER[];
 
-extern const uint8_t CN_BT_HUNG_UP[];
+extern const uint8_t CN_SOUND_HUNG_UP[];
 
-extern const uint8_t CN_BT_INCOMING_CALL [];
+extern const uint8_t CN_SOUND_INCOMING_CALL [];
 
-extern const uint8_t CN_BT_CONNECTED [];
+extern const uint8_t CN_SOUND_CONNECTED [];
 
-extern const uint8_t CN_BT_DIS_CONNECT [];
+extern const uint8_t CN_SOUND_DIS_CONNECT [];
 
-extern const uint8_t CN_CHARGE_PLEASE[] ;
+extern const uint8_t CN_SOUND_CHARGE_PLEASE[] ;
 
-extern const uint8_t CN_CHARGE_FINISH[];
+extern const uint8_t CN_SOUND_CHARGE_FINISH[];
 
-extern const uint8_t CN_LANGUAGE_SWITCH[];
+extern const uint8_t CN_SOUND_LANGUAGE_SWITCH[];
 
-extern const uint8_t CN_BT_WARNING[];
+extern const uint8_t CN_SOUND_WARNING[];
 
-extern const uint8_t CN_BT_ALEXA_START[];
+extern const uint8_t CN_SOUND_ALEXA_START[];
 
-extern const uint8_t CN_BT_ALEXA_STOP[];
+extern const uint8_t CN_SOUND_ALEXA_STOP[];
 
-extern const uint8_t CN_BT_GSOUND_MIC_OPEN[];
+extern const uint8_t CN_SOUND_GSOUND_MIC_OPEN[];
 
-extern const uint8_t CN_BT_GSOUND_MIC_CLOSE[];
+extern const uint8_t CN_SOUND_GSOUND_MIC_CLOSE[];
 
-extern const uint8_t CN_BT_GSOUND_NC[];
+extern const uint8_t CN_SOUND_GSOUND_NC[];
 
 
-extern unsigned int CN_POWER_ON_len;
+extern unsigned int CN_SOUND_POWER_ON_len;
 
-extern unsigned int CN_POWER_OFF_len;
+extern unsigned int CN_SOUND_POWER_OFF_len;
 
 extern unsigned int CN_SOUND_ZERO_len;
 
@@ -103,45 +103,45 @@ extern unsigned int CN_SOUND_EIGHT_len;
 
 extern unsigned int CN_SOUND_NINE_len;
 
-extern unsigned int CN_BT_PAIR_ENABLE_len;
+extern unsigned int CN_SOUND_PAIR_ENABLE_len;
 
-extern unsigned int CN_BT_PAIRING_len;
+extern unsigned int CN_SOUND_PAIRING_len;
 
-extern unsigned int CN_BT_PAIRING_FAIL_len;
+extern unsigned int CN_SOUND_PAIRING_FAIL_len;
 
-extern unsigned int CN_BT_PAIRING_SUCCESS_len;
+extern unsigned int CN_SOUND_PAIRING_SUCCESS_len;
 
-extern unsigned int CN_BT_REFUSE_len;
+extern unsigned int CN_SOUND_REFUSE_len;
 
-extern unsigned int CN_BT_OVER_len;
+extern unsigned int CN_SOUND_OVER_len;
 
-extern unsigned int CN_BT_ANSWER_len;
+extern unsigned int CN_SOUND_ANSWER_len;
 
-extern unsigned int CN_BT_HUNG_UP_len;
+extern unsigned int CN_SOUND_HUNG_UP_len;
 
-extern unsigned int CN_BT_INCOMING_CALL_len;
+extern unsigned int CN_SOUND_INCOMING_CALL_len;
 
-extern unsigned int CN_BT_CONNECTED_len;
+extern unsigned int CN_SOUND_CONNECTED_len;
 
-extern unsigned int CN_BT_DIS_CONNECT_len;
+extern unsigned int CN_SOUND_DIS_CONNECT_len;
 
-extern unsigned int CN_CHARGE_PLEASE_len ;
+extern unsigned int CN_SOUND_CHARGE_PLEASE_len ;
 
-extern unsigned int CN_CHARGE_FINISH_len;
+extern unsigned int CN_SOUND_CHARGE_FINISH_len;
 
-extern unsigned int CN_LANGUAGE_SWITCH_len;
+extern unsigned int CN_SOUND_LANGUAGE_SWITCH_len;
 
-extern unsigned int CN_BT_WARNING_len;
+extern unsigned int CN_SOUND_WARNING_len;
 
-extern unsigned int CN_BT_ALEXA_START_len;
+extern unsigned int CN_SOUND_ALEXA_START_len;
 
-extern unsigned int CN_BT_ALEXA_STOP_len;
+extern unsigned int CN_SOUND_ALEXA_STOP_len;
 
-extern unsigned int CN_BT_GSOUND_MIC_OPEN_len;
+extern unsigned int CN_SOUND_GSOUND_MIC_OPEN_len;
 
-extern unsigned int CN_BT_GSOUND_MIC_CLOSE_len;
+extern unsigned int CN_SOUND_GSOUND_MIC_CLOSE_len;
 
-extern unsigned int CN_BT_GSOUND_NC_len;
+extern unsigned int CN_SOUND_GSOUND_NC_len;
 
 
 #ifdef __INTERACTION__
