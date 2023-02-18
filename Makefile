@@ -195,6 +195,16 @@ $(error Invalid target: T=$(T))
 endif
 export T
 
+# Select sound language
+LANGUAGE_SOUND_FOLDER = config/_default_cfg_src_/res/$(LANG)
+ifeq ($(LANG),)
+$(error Please specify the sound language in the command line: LANG=<languageAbbrev>)
+endif
+ifeq ($(wildcard $(LANGUAGE_SOUND_FOLDER)),)
+$(error Invalid target: LANG=$(LANG))
+endif
+export LANG
+
 KBUILD_OUTPUT := $(KBUILD_OUTPUT)/$(T)
 
 # That's our default target when none is given on the command line
