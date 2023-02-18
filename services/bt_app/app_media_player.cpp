@@ -123,32 +123,17 @@ typedef struct tMediaSoundMap {
 
 } _tMediaSoundMap;
 
-const tMediaSoundMap *media_sound_map;
-
-const tMediaSoundMap media_sound_map_cn[MAX_SOUND_NUMBER] = {
-    {(U8 *)CN_SOUND_ZERO, CN_SOUND_ZERO_len},
-    {(U8 *)CN_SOUND_ONE, CN_SOUND_ONE_len},
-    {(U8 *)CN_SOUND_TWO, CN_SOUND_TWO_len},
-    {(U8 *)CN_SOUND_THREE, CN_SOUND_THREE_len},
-    {(U8 *)CN_SOUND_FOUR, CN_SOUND_FOUR_len},
-    {(U8 *)CN_SOUND_FIVE, CN_SOUND_FIVE_len},
-    {(U8 *)CN_SOUND_SIX, CN_SOUND_SIX_len},
-    {(U8 *)CN_SOUND_SEVEN, CN_SOUND_SEVEN_len},
-    {(U8 *)CN_SOUND_EIGHT, CN_SOUND_EIGHT_len},
-    {(U8 *)CN_SOUND_NINE, CN_SOUND_NINE_len},
-};
-
-const tMediaSoundMap media_sound_map_en[MAX_SOUND_NUMBER] = {
-    {(U8 *)EN_SOUND_ZERO, EN_SOUND_ZERO_len},
-    {(U8 *)EN_SOUND_ONE, EN_SOUND_ONE_len},
-    {(U8 *)EN_SOUND_TWO, EN_SOUND_TWO_len},
-    {(U8 *)EN_SOUND_THREE, EN_SOUND_THREE_len},
-    {(U8 *)EN_SOUND_FOUR, EN_SOUND_FOUR_len},
-    {(U8 *)EN_SOUND_FIVE, EN_SOUND_FIVE_len},
-    {(U8 *)EN_SOUND_SIX, EN_SOUND_SIX_len},
-    {(U8 *)EN_SOUND_SEVEN, EN_SOUND_SEVEN_len},
-    {(U8 *)EN_SOUND_EIGHT, EN_SOUND_EIGHT_len},
-    {(U8 *)EN_SOUND_NINE, EN_SOUND_NINE_len},
+const tMediaSoundMap media_sound_map[MAX_SOUND_NUMBER] = {
+    {(U8 *)SOUND_ZERO, SOUND_ZERO_len},
+    {(U8 *)SOUND_ONE, SOUND_ONE_len},
+    {(U8 *)SOUND_TWO, SOUND_TWO_len},
+    {(U8 *)SOUND_THREE, SOUND_THREE_len},
+    {(U8 *)SOUND_FOUR, SOUND_FOUR_len},
+    {(U8 *)SOUND_FIVE, SOUND_FIVE_len},
+    {(U8 *)SOUND_SIX, SOUND_SIX_len},
+    {(U8 *)SOUND_SEVEN, SOUND_SEVEN_len},
+    {(U8 *)SOUND_EIGHT, SOUND_EIGHT_len},
+    {(U8 *)SOUND_NINE, SOUND_NINE_len},
 };
 
 const uint8_t BT_MUTE[] = {
@@ -468,296 +453,159 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                                        uint32_t *len) {
   switch (id) {
   case AUD_ID_POWER_ON:
-    g_app_audio_data =
-        (g_language == MEDIA_DEFAULT_LANGUAGE)
-            ? (U8 *)EN_SOUND_POWER_ON
-            : (U8 *)CN_SOUND_POWER_ON; // aud_get_reouce((AUD_ID_ENUM)id,
+    g_app_audio_data = (U8*)SOUND_POWER_ON; // aud_get_reouce((AUD_ID_ENUM)id,
                                  // &g_app_audio_length, &type);
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_POWER_ON_len
-                             : CN_SOUND_POWER_ON_len;
+    g_app_audio_length = SOUND_POWER_ON_len;
     break;
   case AUD_ID_POWER_OFF:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_POWER_OFF
-                           : (U8 *)CN_SOUND_POWER_OFF;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_POWER_OFF_len
-                             : CN_SOUND_POWER_OFF_len;
+    g_app_audio_data = (U8*)SOUND_POWER_OFF;
+    g_app_audio_length = SOUND_POWER_OFF_len;
     break;
   case AUD_ID_BT_PAIR_ENABLE:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_PAIR_ENABLE
-                           : (U8 *)CN_SOUND_PAIR_ENABLE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_PAIR_ENABLE_len
-                             : CN_SOUND_PAIR_ENABLE_len;
+    g_app_audio_data = (U8*)SOUND_PAIR_ENABLE;
+    g_app_audio_length = SOUND_PAIR_ENABLE_len;
     break;
   case AUD_ID_BT_PAIRING:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_PAIRING
-                           : (U8 *)CN_SOUND_PAIRING;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_PAIRING_len
-                             : CN_SOUND_PAIRING_len;
+    g_app_audio_data = (U8*)SOUND_PAIRING;
+    g_app_audio_length = SOUND_PAIRING_len;
     break;
   case AUD_ID_BT_PAIRING_SUC:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_PAIRING_SUCCESS
-                           : (U8 *)CN_SOUND_PAIRING_SUCCESS;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_PAIRING_SUCCESS_len
-                             : CN_SOUND_PAIRING_SUCCESS_len;
+    g_app_audio_data = (U8*)SOUND_PAIRING_SUCCESS;
+    g_app_audio_length = SOUND_PAIRING_SUCCESS_len;
     break;
   case AUD_ID_BT_PAIRING_FAIL:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_PAIRING_FAIL
-                           : (U8 *)CN_SOUND_PAIRING_FAIL;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_PAIRING_FAIL_len
-                             : CN_SOUND_PAIRING_FAIL_len;
+    g_app_audio_data = (U8*)SOUND_PAIRING_FAIL;
+    g_app_audio_length = SOUND_PAIRING_FAIL_len;
     break;
   case AUD_ID_BT_CALL_REFUSE:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_REFUSE
-                           : (U8 *)CN_SOUND_REFUSE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_REFUSE_len
-                             : CN_SOUND_REFUSE_len;
+    g_app_audio_data = (U8*)SOUND_REFUSE;
+    g_app_audio_length = SOUND_REFUSE_len;
     break;
   case AUD_ID_BT_CALL_OVER:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_OVER
-                           : (U8 *)CN_SOUND_OVER;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_OVER_len
-                             : CN_SOUND_OVER_len;
+    g_app_audio_data = (U8*)SOUND_OVER;
+    g_app_audio_length = SOUND_OVER_len;
     break;
   case AUD_ID_BT_CALL_ANSWER:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_ANSWER
-                           : (U8 *)CN_SOUND_ANSWER;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_ANSWER_len
-                             : CN_SOUND_ANSWER_len;
+    g_app_audio_data = (U8*)SOUND_ANSWER;
+    g_app_audio_length = SOUND_ANSWER_len;
     break;
   case AUD_ID_BT_CALL_HUNG_UP:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_HUNG_UP
-                           : (U8 *)CN_SOUND_HUNG_UP;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_HUNG_UP_len
-                             : CN_SOUND_HUNG_UP_len;
+    g_app_audio_data = (U8*)SOUND_HUNG_UP;
+    g_app_audio_length = SOUND_HUNG_UP_len;
     break;
   case AUD_ID_BT_CALL_INCOMING_CALL:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_INCOMING_CALL
-                           : (U8 *)CN_SOUND_INCOMING_CALL;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_INCOMING_CALL_len
-                             : CN_SOUND_INCOMING_CALL_len;
+    g_app_audio_data = (U8*)SOUND_INCOMING_CALL;
+    g_app_audio_length = SOUND_INCOMING_CALL_len;
     break;
   case AUD_ID_BT_CHARGE_PLEASE:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_CHARGE_PLEASE
-                           : (U8 *)CN_SOUND_CHARGE_PLEASE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_CHARGE_PLEASE_len
-                             : CN_SOUND_CHARGE_PLEASE_len;
+    g_app_audio_data = (U8*)SOUND_CHARGE_PLEASE;
+    g_app_audio_length = SOUND_CHARGE_PLEASE_len;
     break;
   case AUD_ID_BT_CHARGE_FINISH:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_CHARGE_FINISH
-                           : (U8 *)CN_SOUND_CHARGE_FINISH;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_CHARGE_FINISH_len
-                             : CN_SOUND_CHARGE_FINISH_len;
+    g_app_audio_data = (U8*)SOUND_CHARGE_FINISH;
+    g_app_audio_length = SOUND_CHARGE_FINISH_len;
     break;
   case AUD_ID_BT_CONNECTED:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_CONNECTED
-                           : (U8 *)CN_SOUND_CONNECTED;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_CONNECTED_len
-                             : CN_SOUND_CONNECTED_len;
+    g_app_audio_data = (U8*)SOUND_CONNECTED;
+    g_app_audio_length = SOUND_CONNECTED_len;
     break;
   case AUD_ID_BT_DIS_CONNECT:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_DIS_CONNECT
-                           : (U8 *)CN_SOUND_DIS_CONNECT;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_DIS_CONNECT_len
-                             : CN_SOUND_DIS_CONNECT_len;
+    g_app_audio_data = (U8*)SOUND_DIS_CONNECT;
+    g_app_audio_length = SOUND_DIS_CONNECT_len;
     break;
   case AUD_ID_BT_WARNING:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_WARNING
-                           : (U8 *)CN_SOUND_WARNING;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_WARNING_len
-                             : CN_SOUND_WARNING_len;
+    g_app_audio_data = (U8*)SOUND_WARNING;
+    g_app_audio_length = SOUND_WARNING_len;
     break;
   case AUDIO_ID_BT_ALEXA_START:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_ALEXA_START
-                           : (U8 *)CN_SOUND_ALEXA_START;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_ALEXA_START_len
-                             : CN_SOUND_ALEXA_START_len;
+    g_app_audio_data = (U8*)SOUND_ALEXA_START;
+    g_app_audio_length = SOUND_ALEXA_START_len;
     break;
   case AUDIO_ID_BT_ALEXA_STOP:
   case AUDIO_ID_FIND_MY_BUDS:
   case AUDIO_ID_FIND_TILE:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_ALEXA_STOP
-                           : (U8 *)CN_SOUND_ALEXA_STOP;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_ALEXA_STOP_len
-                             : CN_SOUND_ALEXA_STOP_len;
+    g_app_audio_data = (U8*)SOUND_ALEXA_STOP;
+    g_app_audio_length = SOUND_ALEXA_STOP_len;
     break;
   case AUDIO_ID_BT_GSOUND_MIC_OPEN:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_GSOUND_MIC_OPEN
-                           : (U8 *)CN_SOUND_GSOUND_MIC_OPEN;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_GSOUND_MIC_OPEN_len
-                             : CN_SOUND_GSOUND_MIC_OPEN_len;
+    g_app_audio_data = (U8*)SOUND_GSOUND_MIC_OPEN;
+    g_app_audio_length = SOUND_GSOUND_MIC_OPEN_len;
     break;
   case AUDIO_ID_BT_GSOUND_MIC_CLOSE:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_GSOUND_MIC_CLOSE
-                           : (U8 *)CN_SOUND_GSOUND_MIC_CLOSE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_GSOUND_MIC_CLOSE_len
-                             : CN_SOUND_GSOUND_MIC_CLOSE_len;
+    g_app_audio_data = (U8*)SOUND_GSOUND_MIC_CLOSE;
+    g_app_audio_length = SOUND_GSOUND_MIC_CLOSE_len;
     break;
   case AUDIO_ID_BT_GSOUND_NC:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_GSOUND_NC
-                           : (U8 *)CN_SOUND_GSOUND_NC;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_GSOUND_NC_len
-                             : CN_SOUND_GSOUND_NC_len;
+    g_app_audio_data = (U8*)SOUND_GSOUND_NC;
+    g_app_audio_length = SOUND_GSOUND_NC_len;
     break;
   case AUD_ID_LANGUAGE_SWITCH:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_LANGUAGE_SWITCH
-                           : (U8 *)CN_SOUND_LANGUAGE_SWITCH;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_LANGUAGE_SWITCH_len
-                             : CN_SOUND_LANGUAGE_SWITCH_len;
+    g_app_audio_data = (U8*)SOUND_LANGUAGE_SWITCH;
+    g_app_audio_length = SOUND_LANGUAGE_SWITCH_len;
     break;
   case AUDIO_ID_BT_MUTE:
     g_app_audio_data = (U8 *)BT_MUTE;
     g_app_audio_length = sizeof(BT_MUTE);
     break;
   case AUD_ID_NUM_0:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_ZERO
-                           : (U8 *)CN_SOUND_ZERO;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_ZERO_len
-                             : CN_SOUND_ZERO_len;
+    g_app_audio_data = (U8*)SOUND_ZERO;
+    g_app_audio_length = SOUND_ZERO_len;
     break;
   case AUD_ID_NUM_1:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_ONE
-                           : (U8 *)CN_SOUND_ONE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_ONE_len
-                             : CN_SOUND_ONE_len;
+    g_app_audio_data = (U8*)SOUND_ONE;
+    g_app_audio_length = SOUND_ONE_len;
     break;
   case AUD_ID_NUM_2:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_TWO
-                           : (U8 *)CN_SOUND_TWO;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_TWO_len
-                             : CN_SOUND_TWO_len;
+    g_app_audio_data = (U8*)SOUND_TWO;
+    g_app_audio_length = SOUND_TWO_len;
     break;
   case AUD_ID_NUM_3:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_THREE
-                           : (U8 *)CN_SOUND_THREE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_THREE_len
-                             : CN_SOUND_THREE_len;
+    g_app_audio_data = (U8*)SOUND_THREE;
+    g_app_audio_length = SOUND_THREE_len;
     break;
   case AUD_ID_NUM_4:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_FOUR
-                           : (U8 *)CN_SOUND_FOUR;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_FOUR_len
-                             : CN_SOUND_FOUR_len;
+    g_app_audio_data = (U8*)SOUND_FOUR;
+    g_app_audio_length = SOUND_FOUR_len;
     break;
   case AUD_ID_NUM_5:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_FIVE
-                           : (U8 *)CN_SOUND_FIVE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_FIVE_len
-                             : CN_SOUND_FIVE_len;
+    g_app_audio_data = (U8*)SOUND_FIVE;
+    g_app_audio_length = SOUND_FIVE_len;
     break;
   case AUD_ID_NUM_6:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_SIX
-                           : (U8 *)CN_SOUND_SIX;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_SIX_len
-                             : CN_SOUND_SIX_len;
+    g_app_audio_data = (U8*)SOUND_SIX;
+    g_app_audio_length = SOUND_SIX_len;
     break;
   case AUD_ID_NUM_7:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_SEVEN
-                           : (U8 *)CN_SOUND_SEVEN;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_SEVEN_len
-                             : CN_SOUND_SEVEN_len;
+    g_app_audio_data = (U8*)SOUND_SEVEN;
+    g_app_audio_length = SOUND_SEVEN_len;
     break;
   case AUD_ID_NUM_8:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_EIGHT
-                           : (U8 *)CN_SOUND_EIGHT;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_EIGHT_len
-                             : CN_SOUND_EIGHT_len;
+    g_app_audio_data = (U8*)SOUND_EIGHT;
+    g_app_audio_length = SOUND_EIGHT_len;
     break;
   case AUD_ID_NUM_9:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_NINE
-                           : (U8 *)CN_SOUND_NINE;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_NINE_len
-                             : CN_SOUND_NINE_len;
+    g_app_audio_data = (U8*)SOUND_NINE;
+    g_app_audio_length = SOUND_NINE_len;
     break;
 #ifdef __BT_WARNING_TONE_MERGE_INTO_STREAM_SBC__
   case AUD_ID_RING_WARNING:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)RES_AUD_RING_SAMPRATE_16000
-                           : (U8 *)RES_AUD_RING_SAMPRATE_16000;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? sizeof(RES_AUD_RING_SAMPRATE_16000)
-                             : sizeof(RES_AUD_RING_SAMPRATE_16000);
+    g_app_audio_data = (U8*)RES_AUD_RING_SAMPRATE_16000;
+    g_app_audio_length = RES_AUD_RING_SAMPRATE_16000;
     break;
 #endif
 #ifdef __INTERACTION__
   case AUD_ID_BT_FINDME:
-    g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                           ? (U8 *)EN_SOUND_FINDME
-                           : (U8 *)CN_SOUND_FINDME;
-    g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
-                             ? EN_SOUND_FINDME_len
-                             : CN_SOUND_FINDME_len;
+    g_app_audio_data = (U8*)SOUND_FINDME;
+    g_app_audio_length = SOUND_FINDME_len;
     break;
 #endif
   case AUDIO_ID_BT_DUDU:
-    g_app_audio_data = (U8 *)EN_DUDU;
-    g_app_audio_length = EN_DUDU_len;
+    g_app_audio_data = (U8 *)DUDU;
+    g_app_audio_length = DUDU_len;
     break;
   case AUDIO_ID_BT_DU:
-    g_app_audio_data = (U8 *)EN_DUDU;
-    g_app_audio_length = EN_DUDU_len;
+    g_app_audio_data = (U8 *)DUDU;
+    g_app_audio_length = DUDU_len;
     break;
   default:
     g_app_audio_length = 0;
