@@ -10,6 +10,7 @@ obj_cpp += $(patsubst $(cur_dir)%,%,$(wildcard $(cur_dir)/app_voice/app_$(VOICE_
 endif
 
 obj_mp3 := $(patsubst $(cur_dir)%,%,$(wildcard ../../config/_default_cfg_src_/res/en/*.mp3))
+obj_mp3 += $(patsubst $(cur_dir)%,%,$(wildcard ../../config/_default_cfg_src_/res/cn/*.mp3))
 
 obj-y := $(obj_mp3:.mp3=.snd.o) $(obj_mp3:.mp3=.snd.cpp) $(obj_c:.c=.o) $(obj_s:.S=.o) $(obj_cpp:.cpp=.o)
 
