@@ -43,7 +43,6 @@
 #include "audio_prompt_sbc.h"
 #include "besbt.h"
 #include "res_audio_data.h"
-#include "res_audio_data_cn.h"
 #include "res_audio_ring.h"
 #include "resources.h"
 
