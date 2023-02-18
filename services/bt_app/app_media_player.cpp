@@ -126,16 +126,16 @@ typedef struct tMediaSoundMap {
 const tMediaSoundMap *media_sound_map;
 
 const tMediaSoundMap media_sound_map_cn[MAX_SOUND_NUMBER] = {
-    {(U8 *)CN_SOUND_ZERO, sizeof(CN_SOUND_ZERO)},
-    {(U8 *)CN_SOUND_ONE, sizeof(CN_SOUND_ONE)},
-    {(U8 *)CN_SOUND_TWO, sizeof(CN_SOUND_TWO)},
-    {(U8 *)CN_SOUND_THREE, sizeof(CN_SOUND_THREE)},
-    {(U8 *)CN_SOUND_FOUR, sizeof(CN_SOUND_FOUR)},
-    {(U8 *)CN_SOUND_FIVE, sizeof(CN_SOUND_FIVE)},
-    {(U8 *)CN_SOUND_SIX, sizeof(CN_SOUND_SIX)},
-    {(U8 *)CN_SOUND_SEVEN, sizeof(CN_SOUND_SEVEN)},
-    {(U8 *)CN_SOUND_EIGHT, sizeof(CN_SOUND_EIGHT)},
-    {(U8 *)CN_SOUND_NINE, sizeof(CN_SOUND_NINE)},
+    {(U8 *)CN_SOUND_ZERO, CN_SOUND_ZERO_len},
+    {(U8 *)CN_SOUND_ONE, CN_SOUND_ONE_len},
+    {(U8 *)CN_SOUND_TWO, CN_SOUND_TWO_len},
+    {(U8 *)CN_SOUND_THREE, CN_SOUND_THREE_len},
+    {(U8 *)CN_SOUND_FOUR, CN_SOUND_FOUR_len},
+    {(U8 *)CN_SOUND_FIVE, CN_SOUND_FIVE_len},
+    {(U8 *)CN_SOUND_SIX, CN_SOUND_SIX_len},
+    {(U8 *)CN_SOUND_SEVEN, CN_SOUND_SEVEN_len},
+    {(U8 *)CN_SOUND_EIGHT, CN_SOUND_EIGHT_len},
+    {(U8 *)CN_SOUND_NINE, CN_SOUND_NINE_len},
 };
 
 const tMediaSoundMap media_sound_map_en[MAX_SOUND_NUMBER] = {
@@ -475,7 +475,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                                  // &g_app_audio_length, &type);
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_POWER_ON_len
-                             : sizeof(CN_POWER_ON);
+                             : CN_POWER_ON_len;
     break;
   case AUD_ID_POWER_OFF:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -483,7 +483,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_POWER_OFF;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_POWER_OFF_len
-                             : sizeof(CN_POWER_OFF);
+                             : CN_POWER_OFF_len;
     break;
   case AUD_ID_BT_PAIR_ENABLE:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -491,7 +491,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_PAIR_ENABLE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_PAIR_ENABLE_len
-                             : sizeof(CN_BT_PAIR_ENABLE);
+                             : CN_BT_PAIR_ENABLE_len;
     break;
   case AUD_ID_BT_PAIRING:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -499,7 +499,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_PAIRING;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_PAIRING_len
-                             : sizeof(CN_BT_PAIRING);
+                             : CN_BT_PAIRING_len;
     break;
   case AUD_ID_BT_PAIRING_SUC:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -507,7 +507,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_PAIRING_SUCCESS;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_PAIRING_SUCCESS_len
-                             : sizeof(CN_BT_PAIRING_SUCCESS);
+                             : CN_BT_PAIRING_SUCCESS_len;
     break;
   case AUD_ID_BT_PAIRING_FAIL:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -515,7 +515,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_PAIRING_FAIL;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_PAIRING_FAIL_len
-                             : sizeof(CN_BT_PAIRING_FAIL);
+                             : CN_BT_PAIRING_FAIL_len;
     break;
   case AUD_ID_BT_CALL_REFUSE:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -523,7 +523,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_REFUSE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_REFUSE_len
-                             : sizeof(CN_BT_REFUSE);
+                             : CN_BT_REFUSE_len;
     break;
   case AUD_ID_BT_CALL_OVER:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -531,7 +531,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_OVER;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_OVER_len
-                             : sizeof(CN_BT_OVER);
+                             : CN_BT_OVER_len;
     break;
   case AUD_ID_BT_CALL_ANSWER:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -539,7 +539,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_ANSWER;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_ANSWER_len
-                             : sizeof(CN_BT_ANSWER);
+                             : CN_BT_ANSWER_len;
     break;
   case AUD_ID_BT_CALL_HUNG_UP:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -547,7 +547,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_HUNG_UP;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_HUNG_UP_len
-                             : sizeof(CN_BT_HUNG_UP);
+                             : CN_BT_HUNG_UP_len;
     break;
   case AUD_ID_BT_CALL_INCOMING_CALL:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -555,7 +555,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_INCOMING_CALL;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_INCOMING_CALL_len
-                             : sizeof(CN_BT_INCOMING_CALL);
+                             : CN_BT_INCOMING_CALL_len;
     break;
   case AUD_ID_BT_CHARGE_PLEASE:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -563,7 +563,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_CHARGE_PLEASE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_CHARGE_PLEASE_len
-                             : sizeof(CN_CHARGE_PLEASE);
+                             : CN_CHARGE_PLEASE_len;
     break;
   case AUD_ID_BT_CHARGE_FINISH:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -571,7 +571,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_CHARGE_FINISH;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_CHARGE_FINISH_len
-                             : sizeof(CN_CHARGE_FINISH);
+                             : CN_CHARGE_FINISH_len;
     break;
   case AUD_ID_BT_CONNECTED:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -579,7 +579,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_CONNECTED;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_CONNECTED_len
-                             : sizeof(CN_BT_CONNECTED);
+                             : CN_BT_CONNECTED_len;
     break;
   case AUD_ID_BT_DIS_CONNECT:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -587,7 +587,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_DIS_CONNECT;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_DIS_CONNECT_len
-                             : sizeof(CN_BT_DIS_CONNECT);
+                             : CN_BT_DIS_CONNECT_len;
     break;
   case AUD_ID_BT_WARNING:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -595,7 +595,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_WARNING;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_WARNING_len
-                             : sizeof(CN_BT_WARNING);
+                             : CN_BT_WARNING_len;
     break;
   case AUDIO_ID_BT_ALEXA_START:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -603,7 +603,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_ALEXA_START;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_ALEXA_START_len
-                             : sizeof(CN_BT_ALEXA_START);
+                             : CN_BT_ALEXA_START_len;
     break;
   case AUDIO_ID_BT_ALEXA_STOP:
   case AUDIO_ID_FIND_MY_BUDS:
@@ -613,7 +613,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_ALEXA_STOP;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_ALEXA_STOP_len
-                             : sizeof(CN_BT_ALEXA_STOP);
+                             : CN_BT_ALEXA_STOP_len;
     break;
   case AUDIO_ID_BT_GSOUND_MIC_OPEN:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -621,7 +621,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_GSOUND_MIC_OPEN;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_GSOUND_MIC_OPEN_len
-                             : sizeof(CN_BT_GSOUND_MIC_OPEN);
+                             : CN_BT_GSOUND_MIC_OPEN_len;
     break;
   case AUDIO_ID_BT_GSOUND_MIC_CLOSE:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -629,7 +629,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_GSOUND_MIC_CLOSE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_GSOUND_MIC_CLOSE_len
-                             : sizeof(CN_BT_GSOUND_MIC_CLOSE);
+                             : CN_BT_GSOUND_MIC_CLOSE_len;
     break;
   case AUDIO_ID_BT_GSOUND_NC:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -637,7 +637,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_GSOUND_NC;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_GSOUND_NC_len
-                             : sizeof(CN_BT_GSOUND_NC);
+                             : CN_BT_GSOUND_NC_len;
     break;
   case AUD_ID_LANGUAGE_SWITCH:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -645,7 +645,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_LANGUAGE_SWITCH;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_LANGUAGE_SWITCH_len
-                             : sizeof(CN_LANGUAGE_SWITCH);
+                             : CN_LANGUAGE_SWITCH_len;
     break;
   case AUDIO_ID_BT_MUTE:
     g_app_audio_data = (U8 *)BT_MUTE;
@@ -657,7 +657,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_ZERO;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_ZERO_len
-                             : sizeof(CN_SOUND_ZERO);
+                             : CN_SOUND_ZERO_len;
     break;
   case AUD_ID_NUM_1:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -665,7 +665,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_ONE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_ONE_len
-                             : sizeof(CN_SOUND_ONE);
+                             : CN_SOUND_ONE_len;
     break;
   case AUD_ID_NUM_2:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -673,7 +673,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_TWO;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_TWO_len
-                             : sizeof(CN_SOUND_TWO);
+                             : CN_SOUND_TWO_len;
     break;
   case AUD_ID_NUM_3:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -681,7 +681,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_THREE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_THREE_len
-                             : sizeof(CN_SOUND_THREE);
+                             : CN_SOUND_THREE_len;
     break;
   case AUD_ID_NUM_4:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -689,7 +689,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_FOUR;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_FOUR_len
-                             : sizeof(CN_SOUND_FOUR);
+                             : CN_SOUND_FOUR_len;
     break;
   case AUD_ID_NUM_5:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -697,7 +697,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_FIVE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_FIVE_len
-                             : sizeof(CN_SOUND_FIVE);
+                             : CN_SOUND_FIVE_len;
     break;
   case AUD_ID_NUM_6:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -705,7 +705,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_SIX;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_SIX_len
-                             : sizeof(CN_SOUND_SIX);
+                             : CN_SOUND_SIX_len;
     break;
   case AUD_ID_NUM_7:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -713,7 +713,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_SEVEN;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_SEVEN_len
-                             : sizeof(CN_SOUND_SEVEN);
+                             : CN_SOUND_SEVEN_len;
     break;
   case AUD_ID_NUM_8:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -721,7 +721,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_EIGHT;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_EIGHT_len
-                             : sizeof(CN_SOUND_EIGHT);
+                             : CN_SOUND_EIGHT_len;
     break;
   case AUD_ID_NUM_9:
     g_app_audio_data = (g_language == MEDIA_DEFAULT_LANGUAGE)
@@ -729,7 +729,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_SOUND_NINE;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_NINE_len
-                             : sizeof(CN_SOUND_NINE);
+                             : CN_SOUND_NINE_len;
     break;
 #ifdef __BT_WARNING_TONE_MERGE_INTO_STREAM_SBC__
   case AUD_ID_RING_WARNING:
@@ -748,7 +748,7 @@ void media_runtime_audio_prompt_update(uint16_t id, uint8_t **ptr,
                            : (U8 *)CN_BT_FINDME;
     g_app_audio_length = (g_language == MEDIA_DEFAULT_LANGUAGE)
                              ? EN_SOUND_FINDME_len
-                             : sizeof(CN_BT_FINDME);
+                             : CN_BT_FINDME_len;
     break;
 #endif
   case AUDIO_ID_BT_DUDU:

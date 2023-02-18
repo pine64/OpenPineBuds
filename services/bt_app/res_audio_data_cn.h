@@ -16,137 +16,139 @@
 #ifndef __RES_AUDIO_DATA_CN_H
 #define __RES_AUDIO_DATA_CN_H
 
-const uint8_t CN_POWER_ON [] = {
-#include "res/cn/SOUND_POWER_ON.txt"
-};
+extern const uint8_t CN_POWER_ON [];
 
-const uint8_t CN_POWER_OFF [] = {
-#include "res/cn/SOUND_POWER_OFF.txt"
-};
+extern const uint8_t CN_POWER_OFF [];
 
-const uint8_t CN_SOUND_ZERO[] = { 
-#include "res/cn/SOUND_ZERO.txt"
-};
+extern const uint8_t CN_SOUND_ZERO[];
 
-const uint8_t CN_SOUND_ONE[] = { 
-#include "res/cn/SOUND_ONE.txt"
-};
+extern const uint8_t CN_SOUND_ONE[];
 
-const uint8_t CN_SOUND_TWO[] = { 
-#include "res/cn/SOUND_TWO.txt"
-};
+extern const uint8_t CN_SOUND_TWO[];
 
-const uint8_t CN_SOUND_THREE[] = { 
-#include "res/cn/SOUND_THREE.txt"
-};
+extern const uint8_t CN_SOUND_THREE[];
 
-const uint8_t CN_SOUND_FOUR[] = { 
-#include "res/cn/SOUND_FOUR.txt"
-};
+extern const uint8_t CN_SOUND_FOUR[];
 
-const uint8_t CN_SOUND_FIVE[] = { 
-#include "res/cn/SOUND_FIVE.txt"
-};
+extern const uint8_t CN_SOUND_FIVE[];
 
-const uint8_t CN_SOUND_SIX[] = { 
-#include "res/cn/SOUND_SIX.txt"
-};
+extern const uint8_t CN_SOUND_SIX[];
 
-const uint8_t CN_SOUND_SEVEN[] = { 
-#include "res/cn/SOUND_SEVEN.txt"
-};
+extern const uint8_t CN_SOUND_SEVEN[];
 
-const uint8_t CN_SOUND_EIGHT[] = { 
-#include "res/cn/SOUND_EIGHT.txt"
-};
+extern const uint8_t CN_SOUND_EIGHT[];
 
-const uint8_t CN_SOUND_NINE[] = { 
-#include "res/cn/SOUND_NINE.txt"
-};
+extern const uint8_t CN_SOUND_NINE[];
 
-const uint8_t CN_BT_PAIR_ENABLE[] = {
-#include "res/cn/SOUND_PAIR_ENABLE.txt"
-};
+extern const uint8_t CN_BT_PAIR_ENABLE[];
 
-const uint8_t CN_BT_PAIRING [] = {
-#include "res/cn/SOUND_PAIRING.txt"
-};
+extern const uint8_t CN_BT_PAIRING [];
 
-const uint8_t CN_BT_PAIRING_FAIL[] = {
-#include "res/cn/SOUND_PAIRING_FAIL.txt"
-};
+extern const uint8_t CN_BT_PAIRING_FAIL[];
 
-const uint8_t CN_BT_PAIRING_SUCCESS[] = { 
-#include "res/cn/SOUND_PAIRING_SUCCESS.txt"
-};
+extern const uint8_t CN_BT_PAIRING_SUCCESS[];
 
-const uint8_t CN_BT_REFUSE[] = { 
-#include "res/cn/SOUND_REFUSE.txt"
-};
+extern const uint8_t CN_BT_REFUSE[];
 
-const uint8_t CN_BT_OVER[] = { 
-#include "res/cn/SOUND_OVER.txt"
-};
+extern const uint8_t CN_BT_OVER[];
 
-const uint8_t CN_BT_ANSWER[] = { 
-#include "res/cn/SOUND_ANSWER.txt"
-};
+extern const uint8_t CN_BT_ANSWER[];
+
+extern const uint8_t CN_BT_HUNG_UP[];
+
+extern const uint8_t CN_BT_INCOMING_CALL [];
+
+extern const uint8_t CN_BT_CONNECTED [];
+
+extern const uint8_t CN_BT_DIS_CONNECT [];
+
+extern const uint8_t CN_CHARGE_PLEASE[] ;
+
+extern const uint8_t CN_CHARGE_FINISH[];
+
+extern const uint8_t CN_LANGUAGE_SWITCH[];
+
+extern const uint8_t CN_BT_WARNING[];
+
+extern const uint8_t CN_BT_ALEXA_START[];
+
+extern const uint8_t CN_BT_ALEXA_STOP[];
+
+extern const uint8_t CN_BT_GSOUND_MIC_OPEN[];
+
+extern const uint8_t CN_BT_GSOUND_MIC_CLOSE[];
+
+extern const uint8_t CN_BT_GSOUND_NC[];
 
 
-const uint8_t CN_BT_HUNG_UP[] = { 
-#include "res/cn/SOUND_HUNG_UP.txt"
-};
+extern unsigned int CN_POWER_ON_len;
 
-const uint8_t CN_BT_INCOMING_CALL [] = {
-#include "res/cn/SOUND_INCOMING_CALL.txt"
-};
+extern unsigned int CN_POWER_OFF_len;
 
-const uint8_t CN_BT_CONNECTED [] = {
-#include "res/cn/SOUND_CONNECTED.txt"    
-};
+extern unsigned int CN_SOUND_ZERO_len;
 
-const uint8_t CN_BT_DIS_CONNECT [] = {
-#include "res/cn/SOUND_DIS_CONNECT.txt"
-};
+extern unsigned int CN_SOUND_ONE_len;
 
-const uint8_t CN_CHARGE_PLEASE[] = {
-#include "res/cn/SOUND_CHARGE_PLEASE.txt"
-};
+extern unsigned int CN_SOUND_TWO_len;
 
-const uint8_t CN_CHARGE_FINISH[] = {
-#include "res/cn/SOUND_CHARGE_FINISH.txt"
-};
+extern unsigned int CN_SOUND_THREE_len;
 
-const uint8_t CN_LANGUAGE_SWITCH[] = { 
-#include "res/cn/SOUND_LANGUAGE_SWITCH.txt"
-};
+extern unsigned int CN_SOUND_FOUR_len;
 
-const uint8_t CN_BT_WARNING[] = { 
-#include "res/cn/SOUND_WARNING.txt"
-};
+extern unsigned int CN_SOUND_FIVE_len;
 
-const uint8_t CN_BT_ALEXA_START[] = { 
+extern unsigned int CN_SOUND_SIX_len;
 
-};
+extern unsigned int CN_SOUND_SEVEN_len;
 
-const uint8_t CN_BT_ALEXA_STOP[] = { 
+extern unsigned int CN_SOUND_EIGHT_len;
 
-};
+extern unsigned int CN_SOUND_NINE_len;
 
-const uint8_t CN_BT_GSOUND_MIC_OPEN[] = {
+extern unsigned int CN_BT_PAIR_ENABLE_len;
 
-};
+extern unsigned int CN_BT_PAIRING_len;
 
-const uint8_t CN_BT_GSOUND_MIC_CLOSE[] = {
+extern unsigned int CN_BT_PAIRING_FAIL_len;
 
-};
+extern unsigned int CN_BT_PAIRING_SUCCESS_len;
 
-const uint8_t CN_BT_GSOUND_NC[] = {
+extern unsigned int CN_BT_REFUSE_len;
 
-};
+extern unsigned int CN_BT_OVER_len;
+
+extern unsigned int CN_BT_ANSWER_len;
+
+extern unsigned int CN_BT_HUNG_UP_len;
+
+extern unsigned int CN_BT_INCOMING_CALL_len;
+
+extern unsigned int CN_BT_CONNECTED_len;
+
+extern unsigned int CN_BT_DIS_CONNECT_len;
+
+extern unsigned int CN_CHARGE_PLEASE_len ;
+
+extern unsigned int CN_CHARGE_FINISH_len;
+
+extern unsigned int CN_LANGUAGE_SWITCH_len;
+
+extern unsigned int CN_BT_WARNING_len;
+
+extern unsigned int CN_BT_ALEXA_START_len;
+
+extern unsigned int CN_BT_ALEXA_STOP_len;
+
+extern unsigned int CN_BT_GSOUND_MIC_OPEN_len;
+
+extern unsigned int CN_BT_GSOUND_MIC_CLOSE_len;
+
+extern unsigned int CN_BT_GSOUND_NC_len;
+
+
 #ifdef __INTERACTION__
-const uint8_t CN_BT_FINDME[] = {
-#include "res/cn/SOUND_FINDME.txt"
+extern const uint8_t CN_BT_FINDME[];
+extern unsigned int CN_BT_FINDME_len;
 };
 #endif
 #endif
