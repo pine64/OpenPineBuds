@@ -13,8 +13,6 @@
  * trademark and other intellectual property rights.
  *
  ****************************************************************************/
-#ifndef __RES_AUDIO_DATA_CN_H
-#define __RES_AUDIO_DATA_CN_H
 
 extern const uint8_t CN_POWER_ON [];
 
@@ -151,5 +149,3 @@ extern const uint8_t CN_BT_FINDME[];
 extern unsigned int CN_BT_FINDME_len;
 };
 #endif
-#endif
-
