@@ -618,11 +618,6 @@ void media_Play_init_audio(uint16_t aud_id) {
   if (aud_id == AUD_ID_BT_CALL_INCOMING_NUMBER) {
     g_play_continue_mark = 1;
 
-    if (g_language == MEDIA_DEFAULT_LANGUAGE)
-      media_sound_map = media_sound_map_en;
-    else
-      media_sound_map = media_sound_map_cn;
-
     memset(&pCont_context, 0x0, sizeof(pCont_context));
 
     pCont_context.g_play_continue_total =
