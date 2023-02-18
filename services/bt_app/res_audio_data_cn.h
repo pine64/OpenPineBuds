@@ -145,7 +145,7 @@ extern unsigned int CN_SOUND_GSOUND_NC_len;
 
 
 #ifdef __INTERACTION__
-extern const uint8_t CN_BT_FINDME[];
-extern unsigned int CN_BT_FINDME_len;
+extern const uint8_t CN_SOUND_FINDME[];
+extern unsigned int CN_SOUND_FINDME_len;
 };
 #endif
