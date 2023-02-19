@@ -195,6 +195,19 @@ $(error Invalid target: T=$(T))
 endif
 export T
 
+# Default audio source: en (English, config/_default_cfg_src_/res/en)
+AUDIO ?= en
+AUDIO := $(strip $(AUDIO))
+# Select audio source
+AUDIO_FOLDER = config/_default_cfg_src_/res/$(AUDIO)
+ifeq ($(AUDIO),)
+$(error Please specify the sound language in the command line: AUDIO=<audioName>)
+endif
+ifeq ($(wildcard $(AUDIO_FOLDER)),)
+$(error Invalid target: AUDIO=$(AUDIO))
+endif
+export AUDIO
+
 KBUILD_OUTPUT := $(KBUILD_OUTPUT)/$(T)
 
 # That's our default target when none is given on the command line

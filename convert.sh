@@ -38,7 +38,7 @@ audio_to_txt() {
 audio_to_cpp() {
   hash=$(echo $arg1 | md5sum | cut -d" " -f1)
   filename="out-$hash.sbc"
-  varname=$(echo $arg1 | rev | cut -c5- | cut -d"/" -f1,2 | rev | tr '[:lower:]' '[:upper:]' | tr "/" _)
+  varname=$(echo $arg1 | rev | cut -c5- | cut -d"/" -f1 | rev | tr '[:lower:]' '[:upper:]' | tr "/" _)
   ffmpeg -y \
     -v quiet            `# verbosity - other options are "quiet", "error", "panic"` \
     -i $arg1           `#input file: $arg1` \

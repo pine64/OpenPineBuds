@@ -71,10 +71,20 @@ bestool write-image out/open_source/open_source.bin --port /dev/ttyACM1
 - Quad tap : Volume Down
 
 ## Changing audio alerts
-The audio alerts are stored in: 
+The default audio alerts are stored in: 
 
 `config/_default_cfg_src_/res/en/`
 
 If you want to change the alert to a custom sound, just replace the sound file you'd like to change
 (ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) with your own MP3 with the same name
 and recompile with `./build.sh`!
+
+### Language support
+
+The `AUDIO` environment variable can be set when running the `build.sh` script to load sound files
+for languages other than the default English. For example, running `AUDIO=cn ./build.sh` will load sounds files from 
+`config/_default_cfg_src_/res/cn/` instead of the default `en/` folder. 
+
+The current languages supported with sound files are English (`en`) and Chinese (`cn`). Other languages 
+(or other sets of custom sounds) may be added by adding all the correct sound files into a 
+`config/_default_cfg_src_/res/<custom_sounds>/` directory and building with `AUDIO=<custom_sounds> ./build.sh`.
