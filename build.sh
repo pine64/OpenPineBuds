@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# use LANG environment variable, default to "en"
-LANG="${LANG:-en}"
+# use AUDIO environment variable, default to "en"
+AUDIO="${AUDIO:-en}"
 
 make -j T=open_source DEBUG=1 >log.txt 2>&1
 

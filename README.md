@@ -81,10 +81,10 @@ and recompile with `./build.sh`!
 
 ### Language support
 
-The `LANG` environment variable can be set when running the `build.sh` script to load sound files
-for languages other than the default English. For example, running `LANG=cn ./build.sh` will load sounds files from 
+The `AUDIO` environment variable can be set when running the `build.sh` script to load sound files
+for languages other than the default English. For example, running `AUDIO=cn ./build.sh` will load sounds files from 
 `config/_default_cfg_src_/res/cn/` instead of the default `en/` folder. 
 
 The current languages supported with sound files are English (`en`) and Chinese (`cn`). Other languages 
 (or other sets of custom sounds) may be added by adding all the correct sound files into a 
-`config/_default_cfg_src_/res/<custom_language>/` directory and building with `LANG=<custom_language> ./build.sh`.
+`config/_default_cfg_src_/res/<custom_sounds>/` directory and building with `AUDIO=<custom_sounds> ./build.sh`.

@@ -195,15 +195,15 @@ $(error Invalid target: T=$(T))
 endif
 export T
 
-# Select sound language
-LANGUAGE_SOUND_FOLDER = config/_default_cfg_src_/res/$(LANG)
-ifeq ($(LANG),)
-$(error Please specify the sound language in the command line: LANG=<languageAbbrev>)
+# Select audio source
+AUDIO_FOLDER = config/_default_cfg_src_/res/$(AUDIO)
+ifeq ($(AUDIO),)
+$(error Please specify the sound language in the command line: AUDIO=<audioName>)
 endif
-ifeq ($(wildcard $(LANGUAGE_SOUND_FOLDER)),)
-$(error Invalid target: LANG=$(LANG))
+ifeq ($(wildcard $(AUDIO_FOLDER)),)
+$(error Invalid target: AUDIO=$(AUDIO))
 endif
-export LANG
+export AUDIO
 
 KBUILD_OUTPUT := $(KBUILD_OUTPUT)/$(T)
 
