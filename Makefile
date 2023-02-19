@@ -197,6 +197,7 @@ export T
 
 # Default audio source: en (English, config/_default_cfg_src_/res/en)
 AUDIO ?= en
+AUDIO := $(strip $(AUDIO))
 # Select audio source
 AUDIO_FOLDER = config/_default_cfg_src_/res/$(AUDIO)
 ifeq ($(AUDIO),)
