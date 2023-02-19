@@ -195,6 +195,8 @@ $(error Invalid target: T=$(T))
 endif
 export T
 
+# Default audio source: en (English, config/_default_cfg_src_/res/en)
+AUDIO ?= en
 # Select audio source
 AUDIO_FOLDER = config/_default_cfg_src_/res/$(AUDIO)
 ifeq ($(AUDIO),)
