@@ -173,6 +173,7 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status) {
     app_pwl_start(APP_PWL_ID_1);
     break;
   case APP_STATUS_INDICATION_CONNECTED:
+#ifdef DISABLE_CONNECTED_BLUE_LIGHT
     cfg0.part[0].level = 0;
     cfg0.part[0].time = (500);
     cfg0.parttotal = 1;
@@ -183,6 +184,27 @@ int app_status_indication_set(APP_STATUS_INDICATION_T status) {
     app_pwl_start(APP_PWL_ID_0);
     app_pwl_setup(APP_PWL_ID_1, &cfg0);
     app_pwl_start(APP_PWL_ID_1);
+#else
+    cfg0.part[0].level = 1;
+    cfg0.part[0].time = (500);
+    cfg0.part[1].level = 0;
+    cfg0.part[1].time = (3000);
+    cfg0.parttotal = 2;
+    cfg0.startlevel = 1;
+    cfg0.periodic = true;
+
+    cfg1.part[0].level = 0;
+    cfg1.part[0].time = (500);
+    cfg1.part[1].level = 0;
+    cfg1.part[1].time = (3000);
+    cfg1.parttotal = 2;
+    cfg1.startlevel = 0;
+    cfg1.periodic = true;
+    app_pwl_setup(APP_PWL_ID_0, &cfg0);
+    app_pwl_start(APP_PWL_ID_0);
+    app_pwl_setup(APP_PWL_ID_1, &cfg1);
+    app_pwl_start(APP_PWL_ID_1);
+#endif
     break;
   case APP_STATUS_INDICATION_CHARGING:
     cfg1.part[0].level = 1;
