@@ -1,6 +1,5 @@
-#! /bin/bash
+#!/bin/sh
 
-num=$(ls -l /dev/ttyUSB* | rev | cut -c 1)
-#num=1
-echo $num
-sudo minicom port$num
+num=$(find /dev -name 'ttyUSB*' | rev | cut -c 1)
+echo "$num"
+sudo minicom "port$num"

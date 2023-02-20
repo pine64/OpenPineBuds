@@ -1,2 +1,3 @@
-#!/bin/bash
-make T=open_source -j DEBUG=1 clean
+#!/bin/sh
+
+make -j "$(nproc)" T=open_source DEBUG=1 clean
