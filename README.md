@@ -76,8 +76,8 @@ The default audio alerts are stored in:
 `config/_default_cfg_src_/res/en/`
 
 If you want to change the alert to a custom sound, just replace the sound file you'd like to change
-(ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) with your own MP3 with the same name
-and recompile with `./build.sh`!
+(ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.opus`) with your own audio file with the same base
+name (ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) and recompile with `./build.sh`!
 
 ### Language support
 

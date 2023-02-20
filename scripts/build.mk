@@ -244,11 +244,11 @@ $(obj)/%.i: $(src)/%.cpp FORCE
 $(obj)/%.i: $(src)/%.cc FORCE
 	$(call if_changed_dep,cc_i_c++)
 
-# Convert sounds (.mp3 to .txt)
+# Convert sounds (audio to .cpp)
 # ---------------------------------------------------------------------------
 
-%.snd.cpp: %.mp3 FORCE
-	../.././convert.sh -C $< $@
+%.snd.cpp: % FORCE
+	../../convert.sh -C $< $@
 #	$(call if_changed_dep,as_s_S)        TODO! Reference, delete once implemented below
 
 
