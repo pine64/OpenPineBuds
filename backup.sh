@@ -6,7 +6,7 @@ mkdir -p "$BKPPATH"
 
 NOW=$(date +%s)
 
-num=$(ls -l /dev/ttyACM* | rev | cut -c 1)
+num=$(find /dev -name 'ttyACM*' | sort | rev | cut -c 1)
 echo com is: "$num"
 mapfile -t splitPorts <<< "$num"
 echo "This tool assumes your buds are the only thing connected and are enumerated {right,left} order. YMMV"
