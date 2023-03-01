@@ -71,7 +71,8 @@ bestool write-image out/open_source/open_source.bin --port /dev/ttyACM1
 - Quad tap : Volume Down
 
 ## Changing audio alerts
-The default audio alerts are stored in: 
+
+The default audio alerts are stored in:
 
 `config/_default_cfg_src_/res/en/`
 
@@ -82,9 +83,15 @@ name (ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) and recompile wit
 ### Language support
 
 The `AUDIO` environment variable can be set when running the `build.sh` script to load sound files
-for languages other than the default English. For example, running `AUDIO=cn ./build.sh` will load sounds files from 
-`config/_default_cfg_src_/res/cn/` instead of the default `en/` folder. 
+for languages other than the default English. For example, running `AUDIO=cn ./build.sh` will load sounds files from
+`config/_default_cfg_src_/res/cn/` instead of the default `en/` folder.
 
-The current languages supported with sound files are English (`en`) and Chinese (`cn`). Other languages 
-(or other sets of custom sounds) may be added by adding all the correct sound files into a 
+The current languages supported with sound files are English (`en`) and Chinese (`cn`). Other languages
+(or other sets of custom sounds) may be added by adding all the correct sound files into a
 `config/_default_cfg_src_/res/<custom_sounds>/` directory and building with `AUDIO=<custom_sounds> ./build.sh`.
+
+### Blue light when connected
+
+The firmware can be configured to either have a blinking blue light when connected or not.
+Build with `CONNECTED_BLUE_LIGHT=1 ./build.sh` to enable blinking when connected,
+or `CONNECTED_BLUE_LIGHT=0 ./build.sh` (or just the default `./build.sh`) to keep the LEDs off when connected.
