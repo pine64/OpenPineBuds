@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 txt_to_wav() {
   hash="$(md5sum "$1" | cut -d ' ' -f 1)"
