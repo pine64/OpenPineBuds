@@ -228,7 +228,7 @@ KBUILD_OUTPUT := $(shell ( if not exist $(KBUILD_OUTPUT)\ mkdir $(KBUILD_OUTPUT)
 KBUILD_OUTPUT := $(subst \,/,$(KBUILD_OUTPUT))
 else
 KBUILD_OUTPUT := $(shell mkdir -p $(KBUILD_OUTPUT) && cd $(KBUILD_OUTPUT) \
-                         && /bin/pwd)
+                         && pwd)
 endif
 
 $(if $(KBUILD_OUTPUT),, \
