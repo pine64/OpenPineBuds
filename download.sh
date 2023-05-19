@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 num=$(find /dev -name 'ttyACM*' | sort | rev | cut -c 1)
 echo com is: "$num"
