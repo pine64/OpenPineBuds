@@ -87,6 +87,9 @@ export VOICE_DETECTOR_EN ?= 0
 # 1 to use 8K sample rate for VAD, 0 to use 16K sample rate for VAD
 VAD_USE_8K_SAMPLE_RATE ?= 0
 
+# 1 to enable the blue flashing light when connected, 0 to disable
+CONNECTED_BLUE_LIGHT ?= 0
+
 # -------------------------------------------
 # Root Option Dependencies
 # -------------------------------------------
@@ -188,6 +191,10 @@ endif
 ifneq ($(filter apps/ tests/speech_test/ tests/ota_boot/, $(core-y)),)
 export BT_APP ?= 1
 FULL_APP_PROJECT ?= 1
+endif
+
+ifeq ($(strip $(CONNECTED_BLUE_LIGHT)),0)
+KBUILD_CPPFLAGS += -DDISABLE_CONNECTED_BLUE_LIGHT
 endif
 
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
