@@ -9,6 +9,7 @@ concurrency:
 
 jobs:
   build-and-push-images:
+    if: ${{ github.repository == 'pine64/OpenPineBuds' }}
     name: Build and push container image for PineBuds Pro SDK to GHCR.io
     runs-on: ubuntu-latest
     steps:
