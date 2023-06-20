@@ -4,6 +4,7 @@ services:
     stdin_open: true
     tty: true
     privileged: true
+    image: "ghcr.io/pine64/openpinebuds:latest-sdk"
     build:
       context: .
     volumes:
