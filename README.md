@@ -1,7 +1,9 @@
-# PineBuds Open Source SDK
+# PineBuds SDK
 
 This is just the SDK from the wiki (so far), with dockerfile setup to make building easier, and my reverse engineered bestool integrated.
 The docker image will build bestool for you first, then drop you into the dev container for building and flashing the buds.
+
+NOTE: Currently, the SDK is not licensed under an 'open source' license. We are working to resolve this issue, and will be reaching out to contributors and other parties soon. For now, consider this SDK as 'All Rights Reserved'/'shared source'.
 
 ## Usage
 
