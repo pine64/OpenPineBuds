@@ -5,3 +5,5 @@ add_subdirectory (battery)
 add_subdirectory (cmd)
 add_subdirectory (common)
 add_subdirectory (key)
+add_subdirectory (main)
+
