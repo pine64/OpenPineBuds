@@ -1,6 +1,7 @@
 name: Container image builder workflow
 on:
   push:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
