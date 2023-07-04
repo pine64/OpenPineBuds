@@ -643,25 +643,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 #endif
 };
 
-/*
-//ff
-
-
-Filter1_B=[     42465729,    -84858529,     42392831];
-Filter1_A=[    134217728,   -268346271,    134128558];
-
-Filter2_B=[    136159949,   -267039705,    130899919];
-Filter2_A=[    134217728,   -267039705,    132842140];
-
-Filter3_B=[    132746107,   -263254540,    130599907];
-Filter3_A=[    134217728,   -263254540,    129128286];
-
-Filter4_B=[    131402980,   -255575175,    125032243];
-Filter4_A=[    134217728,   -255575175,    122217496];
-
-
-
-*/
 
 static const struct_anc_cfg POSSIBLY_UNUSED
     AncFirCoef_44p1k_mode0 = {
