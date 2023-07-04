@@ -228,8 +228,8 @@ HAL_IOMUX_PIN_PULLUP_ENABLE
 
 #define IIR_COUNTER_FF_L (8)
 #define IIR_COUNTER_FF_R (8)
-#define IIR_COUNTER_FB_L (5)
-#define IIR_COUNTER_FB_R (5)
+#define IIR_COUNTER_FB_L (6)
+#define IIR_COUNTER_FB_R (6)
 
 static const struct_anc_cfg POSSIBLY_UNUSED
     AncFirCoef_50p7k_mode0 =
@@ -398,65 +398,41 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
 };
 
-/*
-
-//ff
-
-
-Filter1_B=[     42463913,    -84860822,     42396935];
-Filter1_A=[    134217728,   -268353516,    134135801];
-
-Filter2_B=[    136002894,   -267154076,    131168209];
-Filter2_A=[    134217728,   -267154076,    132953376];
-
-Filter3_B=[    132863566,   -263674901,    130888668];
-Filter3_A=[    134217728,   -263674901,    129534506];
-
-Filter4_B=[    131621817,   -256639526,    125746382];
-Filter4_A=[    134217728,   -256639526,    123150471];
-
-
-
-*/
-
 static const struct_anc_cfg POSSIBLY_UNUSED
     AncFirCoef_48k_mode0 =
         {
             .anc_cfg_ff_l =
                 {
-                    .total_gain = 440,
+                    .total_gain = 302,
                     // .total_gain = 312,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
 
-                    .iir_coef[0].coef_b = {42463913, -84860822, 42396935},
-                    .iir_coef[0].coef_a = {134217728, -268353516, 134135801},
+                    .iir_coef[0].coef_b = {47756600, -94784525, 47030952},
+                    .iir_coef[0].coef_a = {134217728, -267141655, 132927324},
 
-                    .iir_coef[1].coef_b = {136002894, -267154076, 131168209},
-                    .iir_coef[1].coef_a = {134217728, -267154076, 132953376},
+                    .iir_coef[1].coef_b = {95026235, -189959646, 94933615},
+                    .iir_coef[1].coef_a = {134217728, -268325174, 134107649},
 
-                    .iir_coef[2].coef_b = {132863566, -263674901, 130888668},
-                    .iir_coef[2].coef_a = {134217728, -263674901, 129534506},
+                    .iir_coef[2].coef_b = {137182418, -258280236, 121193611},
+                    .iir_coef[2].coef_a = {134217728, -258309065, 124129473},
 
-                    .iir_coef[3].coef_b = {131621817, -256639526, 125746382},
-                    .iir_coef[3].coef_a = {134217728, -256639526, 123150471},
+                    .iir_coef[3].coef_b = {119863779, -218243094, 100875648},
+                    .iir_coef[3].coef_a = {134217728, -218243094, 86521699},
 
-                    .iir_coef[4].coef_b = {0x8000000, 0, 0},
-                    .iir_coef[4].coef_a = {0x8000000, 0, 0},
+                    .iir_coef[4].coef_b = {118677290, -210108781, 98119610},
+                    .iir_coef[4].coef_a = {134217728, -210108781, 82579171},
 
-                    .iir_coef[5].coef_b = {0x8000000, 0, 0},
-                    .iir_coef[5].coef_a = {0x8000000, 0, 0},
+                    .iir_coef[5].coef_b = {133493787, -264941439, 131633425},
+                    .iir_coef[5].coef_a = {134217728, -264941439, 130909484},
+                    .iir_coef[6].coef_b = {134779906, -266962984, 132210881},
+                    .iir_coef[6].coef_a = {134217728, -266962984, 132773059},
+                    .iir_coef[7].coef_b = {134235269, -268350403, 134115242},
+                    .iir_coef[7].coef_a = {134217728, -268350430, 134132755},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset = -24,
                 },
             .anc_cfg_ff_r =
                 {
@@ -494,57 +470,33 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .adc_gain_offset = (2) * 4,
                 },
 
-            /*
-
-            Filter1_B=[     27172676,    -53803459,     26691412];
-            Filter1_A=[    134217728,   -214195429,     80219070];
-
-            Filter2_B=[    138529480,   -267551490,    129040578];
-            Filter2_A=[    134217728,   -267551490,    133352330];
-
-            Filter3_B=[    134516353,   -268162980,    133647489];
-            Filter3_A=[    134217728,   -268162980,    133946114];
-
-            Filter4_B=[    133595549,   -264581113,    131087955];
-            Filter4_A=[    134217728,   -264581113,    130465777];
-
-
-            */
-
             .anc_cfg_fb_l =
                 {
-                    .total_gain = 511,
+                    .total_gain = 512,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_L,
 
-                    .iir_coef[0].coef_b = {27172676, -53803459, 26691412},
-                    .iir_coef[0].coef_a = {134217728, -214195429, 80219070},
+                    .iir_coef[0].coef_b = {75662976, -150466868, 74809339},
+                    .iir_coef[0].coef_a = {134217728, -267572133, 133364091},
 
-                    .iir_coef[1].coef_b = {138529480, -267551490, 129040578},
-                    .iir_coef[1].coef_a = {134217728, -267551490, 133352330},
+                    .iir_coef[1].coef_b = {136259446, -267048746, 130806222},
+                    .iir_coef[1].coef_a = {134217728, -267048746, 132847940},
 
-                    .iir_coef[2].coef_b = {134516353, -268162980, 133647489},
-                    .iir_coef[2].coef_a = {134217728, -268162980, 133946114},
+                    .iir_coef[2].coef_b = {134365088, -267930698, 133570324},
+                    .iir_coef[2].coef_a = {134217728, -267932117, 133716266},
 
-                    .iir_coef[3].coef_b = {133595549, -264581113, 131087955},
-                    .iir_coef[3].coef_a = {134217728, -264581113, 130465777},
+                    .iir_coef[3].coef_b = {124587325, -241835594, 118126292},
+                    .iir_coef[3].coef_a = {134217728, -241835594, 108495889},
 
-                    .iir_coef[4].coef_b = {0x8000000, 0, 0},
-                    .iir_coef[4].coef_a = {0x8000000, 0, 0},
+                    .iir_coef[4].coef_b = {130235205, -255036797, 124966921},
+                    .iir_coef[4].coef_a = {134217728, -255036797, 120984398},
 
-                    .iir_coef[5].coef_b = {0x8000000, 0, 0},
-                    .iir_coef[5].coef_a = {0x8000000, 0, 0},
+                    .iir_coef[5].coef_b = {134327171, -268333985, 134007055},
+                    .iir_coef[5].coef_a = {134217728, -268333985, 134116498},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset = -24,
                 },
             .anc_cfg_fb_r =
                 {
