@@ -9,3 +9,4 @@ set (headers "./inc/anc_wnr.h"
              "./inc/peak_detector.h")
 
 add_library (apps_anc STATIC ${sources} ${headers})
+target_link_libraries (apps_anc PUBLIC apps_common)
