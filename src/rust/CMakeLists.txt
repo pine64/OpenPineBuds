@@ -1,0 +1,13 @@
+find_program(CXXBRIDGE cxxbridge PATHS "$ENV{HOME}/.cargo/bin/")
+if (CXXBRIDGE STREQUAL "CXXBRIDGE-NOTFOUND")
+    find_program(CARGO cargo PATHS "$ENV{HOME}/.cargo/bin/")
+    if (CARGO STREQUAL "CARGO-NOTFOUND")
+        message(FATAL_ERROR "Requires cargo available in path, install via rustup https://rustup.rs/")
+    endif()
+    message("Could not find cxxbridge, trying to install with `cargo install cxxbridge-cmd'")
+    execute_process(COMMAND ${CARGO} install cxxbridge-cmd)
+    find_program(CXXBRIDGE cxxbridge PATHS "$ENV{HOME}/.cargo/bin/")
+endif()
+
+corrosion_import_crate(MANIFEST_PATH Cargo.toml)
+corrosion_add_cxxbridge(rustlib CRATE openpinebuds_rs FILES lib.rs)
