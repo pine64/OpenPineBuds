@@ -29,11 +29,12 @@ RUN apt-get update \
     bash \
     bc \
     bzip2 \
+    clang-format \ 
     curl \
     ffmpeg \
-    clang-format \ 
     git \
     make \
+    procps \
     tar \
     xxd \
     && git config --global --add safe.directory /src \
@@ -50,4 +51,4 @@ ENV PATH="${PATH}:/src/gcc-arm-none-eabi-9-2019-q4-major/bin"
 COPY --from=rust_build /usr/src/bestool/bestool/target/release/bestool /usr/local/bin/bestool
 COPY . /usr/src
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash", "-l", "-c"]

@@ -1,8 +1,8 @@
 {
 	"name": "Open PineBuds Pro - VS Code Development Environment",
+	"image": "ghcr.io/pine64/openpinebuds:latest-sdk",
 	"build": {
-		"dockerfile": "../Dockerfile",
-		"context": ".."
+		"build": "Dockerfile"
 	},
 	"extensions": [
 		"ms-vscode.cmake-tools",

@@ -20,6 +20,7 @@
 !.mailmap
 !.github
 !.devcontainer
+!.devcontainer.json
 
 # Backup files
 *~
