@@ -118,6 +118,12 @@ void send_prev_track(void) {
   uint8_t action[] = {IBRT_ACTION_BACKWARD};
   app_ibrt_if_start_user_action(action, sizeof(action));
 }
+
+void send_enable_disable_anc(void) {
+  uint8_t action[] = {IBRT_ACTION_ANC_NOTIRY_MASTER_EXCHANGE_COEF};
+  app_ibrt_if_start_user_action(action, sizeof(action));
+}
+
 void app_key_single_tap(APP_KEY_STATUS *status, void *param) {
   TRACE(2, "%s event %d", __func__, status->event);
 
@@ -207,7 +213,7 @@ void app_key_long_press_down(APP_KEY_STATUS *status, void *param) {
     send_prev_track();
   } else {
     // Bud's are working as a pair
-    app_anc_key(status, param);
+    send_enable_disable_anc();
   }
 }
 
