@@ -1531,13 +1531,6 @@ void app_anc_key(APP_KEY_STATUS *status, void *param) {
   bool flag = app_anc_work_status();
 
 #if defined(IBRT)
-  ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-
-  TRACE(2, "[%s] current_role: %d", __func__, p_ibrt_ctrl->current_role);
-  if (p_ibrt_ctrl->current_role == IBRT_SLAVE) {
-    app_anc_notify_master_to_exchange_coef(0, 0);
-    return;
-  }
   app_anc_status_sync(!flag);
 #endif
   app_anc_status_post(!flag);
