@@ -17,11 +17,17 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
+      - name: Install qemu dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+
       - name: Build images
         id: build
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ github.repository }}
+          platforms: linux/amd64, linux/arm64
           context: /
           tags: ${{ contains(github.ref_name, 'main') && 'latest' || github.ref_name }}-sdk
           containerfiles: /Dockerfile
