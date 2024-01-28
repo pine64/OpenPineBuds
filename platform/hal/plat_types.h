@@ -24,6 +24,11 @@ extern "C" {
 #include "stdint.h"
 #include "stdbool.h"
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+# define __uint32_t_defined
+#endif
+
 typedef unsigned char               u8;
 typedef unsigned short              u16;
 typedef unsigned long               u32;

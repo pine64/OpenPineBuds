@@ -22,6 +22,7 @@ extern "C" {
 
 #include "stdint.h"
 #include "stdbool.h"
+#include "plat_types.h"
 
 enum CP_PROC_DELAY_T {
     CP_PROC_DELAY_0_FRAME = 0,

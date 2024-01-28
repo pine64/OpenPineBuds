@@ -36,6 +36,11 @@
   #define __has_builtin(x) (0)
 #endif
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+# define __uint32_t_defined
+#endif
+
 /* CMSIS compiler specific defines */
 #ifndef   __ASM
   #define __ASM                                  __asm
