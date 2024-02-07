@@ -65,7 +65,7 @@ export ANC_APP		    ?= 1
 export ANC_FF_ENABLED	?= 1
 # Feed Backward ANC configuration (internal mic)
 export ANC_FB_ENABLED	?= 1
-
+# Wind noise reduction mode
 export ANC_WNR_ENABLED ?= 0
 
 export AUDIO_ANC_FB_MC ?= 0
@@ -74,6 +74,7 @@ export AUD_SECTION_STRUCT_VERSION ?= 2
 # Music cancel hardware?
 export AUDIO_ANC_FB_MC_HW ?=1
 export APP_ANC_KEY ?= 1
+# Feedback check for feedforward mic
 export ANC_FB_CHECK ?= 1
 ##### ANC DEFINE END ######
 
