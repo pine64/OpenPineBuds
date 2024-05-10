@@ -3866,7 +3866,9 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq) {
     }
 #endif
 #endif
-    freq = APP_SYSFREQ_52M;
+    if (freq < APP_SYSFREQ_52M) {
+      freq = APP_SYSFREQ_52M;
+    }
     app_sysfreq_req(APP_SYSFREQ_USER_BT_A2DP, freq);
     TRACE_AUD_STREAM_I("[A2DP_PLAYER] sysfreq %d", freq);
     TRACE_AUD_STREAM_I("[A2DP_PLAYER] sysfreq calc : %d\n",
@@ -3886,8 +3888,10 @@ int bt_sbc_player(enum PLAYER_OPER_T on, enum APP_SYSFREQ_FREQ_T freq) {
 
       else if (codec_type == BTIF_AVDTP_CODEC_TYPE_NON_A2DP) {
         TRACE(1, "current_a2dp_non_type %d", current_a2dp_non_type);
+        if (0) {
+        }
 #if defined(A2DP_LHDC_ON)
-        if (current_a2dp_non_type == A2DP_NON_CODEC_TYPE_LHDC) {
+        else if (current_a2dp_non_type == A2DP_NON_CODEC_TYPE_LHDC) {
           app_overlay_select(APP_OVERLAY_A2DP_LHDC);
         }
 #endif
