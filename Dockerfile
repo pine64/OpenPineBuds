@@ -41,6 +41,11 @@ RUN apt-get update \
     && curl \
     https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-$(arch)-linux.tar.bz2 | tar -xj -C /src/
 
+RUN apt-get update \
+    && apt-get install -y \
+    minicom \
+    sudo
+
 ENV PATH="${PATH}:/src/gcc-arm-none-eabi-9-2019-q4-major/bin"
 COPY --from=rust_build /usr/src/bestool/bestool/target/release/bestool /usr/local/bin/bestool
 COPY . /usr/src
