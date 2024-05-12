@@ -237,7 +237,7 @@ A2DP_LHDC_LARC ?= 1
 export FLASH_UNIQUE_ID ?= 1
 endif
 
-A2DP_LDAC_ON ?= 0
+A2DP_LDAC_ON ?= 1
 
 export TX_RX_PCM_MASK ?= 0
 
@@ -351,6 +351,8 @@ export BT_EXT_LNA ?=0
 export BT_EXT_PA ?=0
 
 ifeq ($(A2DP_LHDC_ON),1)
+AUDIO_BUFFER_SIZE := 140*1024
+else ifeq ($(A2DP_LDAC_ON),1)
 AUDIO_BUFFER_SIZE := 140*1024
 else
 AUDIO_BUFFER_SIZE := 100*1024
