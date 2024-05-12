@@ -1,13 +1,17 @@
 {
-	"name": "Open PineBuds Pro - VS Code Development Environment",
+	"name": "OpenPineBuds - Dev Environment",
 	"build": {
 		"dockerfile": "../Dockerfile",
 		"context": ".."
 	},
-	"extensions": [
-		"ms-vscode.cmake-tools",
-		"ms-vscode.cpptools"
-	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools"
+			]
+		}
+	},
 	"runArgs": [
 		"--privileged"
 	],
