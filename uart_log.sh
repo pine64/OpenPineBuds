@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 rightbud=/dev/serial/by-id/usb-wch.cn_USB_Dual_Serial_0123456789-if00
 leftbud=/dev/serial/by-id/usb-wch.cn_USB_Dual_Serial_0123456789-if02
