@@ -11,6 +11,10 @@ RTOS        ?= 1
 NO_PWRKEY    = 0
 LIBC_ROM    ?= 1
 
+# Extas added by Open source community
+CONNECTED_BLUE_LIGHT = 1 # if set to 1, the blue light will flash when connected
+# end our extras
+
 export USER_SECURE_BOOT	?= 0
 # enable:1
 # disable:0
