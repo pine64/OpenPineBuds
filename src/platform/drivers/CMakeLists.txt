@@ -1,0 +1,5 @@
+add_subdirectory(ana)
+add_subdirectory(bt)
+add_subdirectory(btpcm)
+add_subdirectory(codec)
+add_subdirectory(norflash)
