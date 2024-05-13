@@ -25,6 +25,7 @@ endif
 
 ifeq ($(ANC_ASSIST_ENABLED),1)
 CFLAGS_app_anc.o += -DANC_ASSIST_ENABLED
+CFLAGS_anc_assist.o += -DANC_ASSIST_ENABLED
 
 ifeq ($(ANC_ASSIST_WNR_ENABLED),1)
 CFLAGS_anc_assist.o += -DANC_ASSIST_WNR_ENABLED

@@ -96,10 +96,25 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
 #define ANC_COEF_LIST_NUM                   (ANC_COEF_NUM)
 #endif
 
-#define ANC_FF_MIC_CH_L                     AUD_CHANNEL_MAP_CH0
-#define ANC_FF_MIC_CH_R                     AUD_CHANNEL_MAP_CH1
-#define ANC_FB_MIC_CH_L                     AUD_CHANNEL_MAP_CH2
-#define ANC_FB_MIC_CH_R                     AUD_CHANNEL_MAP_CH3
+// MIC and channel configurations
+// Pinebuds pro have the following mic's and biases
+/*
+
+ * User Voice (Talking) = MIC5 input and VMIC3 Bias
+ * ANC Feed Forward     = MIC1 input and VMIC2 Bias
+ * ANC Feed Backward    = MIC3 input and VMIC2 Bias
+ * 
+ * Note that AUD_CHANNEL_MAP is offset by 1 (0 start)
+*/
+#define ANC_FF_MIC AUD_CHANNEL_MAP_CH0
+#define ANC_FB_MIC AUD_CHANNEL_MAP_CH2
+
+#define ANC_FF_MIC_CH_L                     ANC_FF_MIC
+#define ANC_FF_MIC_CH_R                     0
+#define ANC_FB_MIC_CH_L                     ANC_FB_MIC
+#define ANC_FB_MIC_CH_R                     0
+
+#define ANC_VMIC_CFG AUD_VMIC_MAP_VMIC2
 
 // audio codec
 #define CFG_HW_AUD_INPUT_PATH_NUM           3
@@ -107,7 +122,7 @@ extern const struct AUD_IO_PATH_CFG_T cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_
 
 #define CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV  (AUD_CHANNEL_MAP_CH0)
 
-#define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH0)
+#define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH4)
 #define CFG_HW_AUD_SIDETONE_GAIN_DBVAL      (-20)
 
 //bt config
@@ -139,8 +154,6 @@ extern const struct HAL_IOMUX_PIN_FUNCTION_MAP app_battery_ext_charger_indicator
 	
 extern bool tgt_tws_get_channel_is_right(void);
 
-extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SDA;
-extern const struct HAL_IOMUX_PIN_FUNCTION_MAP TOUCH_I2C_SCL;
 #ifdef __cplusplus
 }
 #endif

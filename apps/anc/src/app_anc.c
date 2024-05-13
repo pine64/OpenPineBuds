@@ -47,8 +47,8 @@
 #endif
 
 #include "co_math.h"
-//#define ANC_MODE_SWITCH_WITHOUT_FADE //Comment this line if you need fade
-// function between anc mode
+// #define ANC_MODE_SWITCH_WITHOUT_FADE //Comment this line if you need fade
+//  function between anc mode
 
 #ifndef _ANC_FADE_STACK_SIZE
 #define _ANC_FADE_STACK_SIZE (1 * 1024)
@@ -1060,31 +1060,41 @@ void app_anc_open_anc(void) {
   capture_rate = anc_sample_rate[AUD_STREAM_CAPTURE];
 
   pmu_anc_config(1);
-
+  int result = 0;
 #ifdef ANC_FF_ENABLED
-  af_anc_open(ANC_FEEDFORWARD, playback_rate, capture_rate, handler);
-  anc_open(ANC_FEEDFORWARD);
-  anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
-                  ANC_FEEDFORWARD, ANC_GAIN_DELAY);
+  result = af_anc_open(ANC_FEEDFORWARD, playback_rate, capture_rate, handler);
+  TRACE(2, "af_anc_open %s %d -> %d\n", __FUNCTION__, __LINE__, result);
+  result = anc_open(ANC_FEEDFORWARD);
+  TRACE(2, "anc_open %s %d -> %d\n", __FUNCTION__, __LINE__, result);
+  result = anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
+                           ANC_FEEDFORWARD, ANC_GAIN_DELAY);
+  TRACE(2, "anc_select_coef %s %d -> %d\n", __FUNCTION__, __LINE__, result);
 #endif
 
 #ifdef ANC_FB_ENABLED
-  af_anc_open(ANC_FEEDBACK, playback_rate, capture_rate, handler);
-  anc_open(ANC_FEEDBACK);
-  anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
-                  ANC_FEEDBACK, ANC_GAIN_DELAY);
+  result = af_anc_open(ANC_FEEDBACK, playback_rate, capture_rate, handler);
+  TRACE(2, "anc_open %s %d -> %d\n", __FUNCTION__, __LINE__, result);
+  result = anc_open(ANC_FEEDBACK);
+  TRACE(2, "anc_open %s %d -> %d\n", __FUNCTION__, __LINE__, result);
+  result = anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
+                           ANC_FEEDBACK, ANC_GAIN_DELAY);
+  TRACE(2, "anc_select_coef %s %d -> %d\n", __FUNCTION__, __LINE__, result);
 #endif
 
 #ifdef AUDIO_ANC_FB_MC_HW
-  anc_open(ANC_MUSICCANCLE);
-  anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
-                  ANC_MUSICCANCLE, ANC_GAIN_NO_DELAY);
+  result = anc_open(ANC_MUSICCANCLE);
+  TRACE(2, "anc_open %s %d -> %d\n", __FUNCTION__, __LINE__, result);
+  result = anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
+                           ANC_MUSICCANCLE, ANC_GAIN_NO_DELAY);
+  TRACE(2, "anc_select_coef %s %d -> %d\n", __FUNCTION__, __LINE__, result);
 #endif
 
 #if defined(AUDIO_ANC_TT_HW)
   anc_open(ANC_TALKTHRU);
-  anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
-                  ANC_TALKTHRU, ANC_GAIN_NO_DELAY);
+  TRACE(2, "anc_open %s %d -> %d\n", __FUNCTION__, __LINE__, result);
+  result = anc_select_coef(anc_sample_rate[AUD_STREAM_PLAYBACK], anc_coef_idx,
+                           ANC_TALKTHRU, ANC_GAIN_NO_DELAY);
+  TRACE(2, "anc_select_coef %s %d -> %d\n", __FUNCTION__, __LINE__, result);
 #endif
 
 #ifdef AUDIO_ANC_FB_MC_HW
@@ -1521,13 +1531,6 @@ void app_anc_key(APP_KEY_STATUS *status, void *param) {
   bool flag = app_anc_work_status();
 
 #if defined(IBRT)
-  ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
-
-  TRACE(2, "[%s] current_role: %d", __func__, p_ibrt_ctrl->current_role);
-  if (p_ibrt_ctrl->current_role == IBRT_SLAVE) {
-    app_anc_notify_master_to_exchange_coef(0, 0);
-    return;
-  }
   app_anc_status_sync(!flag);
 #endif
   app_anc_status_post(!flag);
