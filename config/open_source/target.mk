@@ -64,7 +64,7 @@ AUDIO_OUTPUT_MONO ?= 0
 AUDIO_OUTPUT_DIFF ?= 0
 
 # Raise mic bias from 2.2V to 3.3V
-DIGMIC_HIGH_VOLT?=0 
+DIGMIC_HIGH_VOLT ?= 0 
 
 #### ANC DEFINE START ######
 export ANC_APP		    ?= 1
@@ -84,10 +84,10 @@ export AUDIO_ANC_FB_MC_HW ?=0
 export APP_ANC_KEY ?= 1
 # Feedback check for feedforward mic. Locked on due to blobs
 export ANC_FB_CHECK ?= 1
-##### ANC DEFINE END ######
-
 # Build in ANC testing app (closed source)
 APP_ANC_TEST ?= 0
+export ANC_ASSIST_ENABLED ?= 0
+##### ANC DEFINE END ######
 
 # Allow test commands via bluetooth
 TEST_OVER_THE_AIR ?= 0
