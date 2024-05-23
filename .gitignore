@@ -102,3 +102,9 @@ Release/
 # *.ini
 log.txt
 log.txt
+
+#CMake
+/build/
+CMakeCache.txt
+*.cmake
+/CMakeFiles/

@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.12)
-project (OpenPineBuds C CXX)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+project (OpenPineBuds C CXX ASM)
 
 option (OPB_BLUE_CONN_LIGHT "Enable the blue connection light" OFF) # Use BLE to control this.
 
