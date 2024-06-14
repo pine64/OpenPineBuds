@@ -16,8 +16,8 @@
 #ifndef __ANC_WNR_H__
 #define __ANC_WNR_H__
 
-// #include "plat_types.h"
 #include <stdint.h>
+#include "plat_types.h"
 
 #ifdef __cplusplus
 extern "C" {

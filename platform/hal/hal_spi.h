@@ -22,6 +22,7 @@ extern "C" {
 
 #include "stdint.h"
 #include "stdbool.h"
+#include "plat_types.h"
 
 enum HAL_SPI_MOD_CLK_SEL_T {
     HAL_SPI_MOD_CLK_SEL_NONE,

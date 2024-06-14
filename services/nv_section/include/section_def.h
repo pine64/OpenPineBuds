@@ -17,6 +17,7 @@
 #define __section_def_h__
 
 #include "stdint.h"
+#include "plat_types.h"
 
 #ifdef __cplusplus
 extern "C" {

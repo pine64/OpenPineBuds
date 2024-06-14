@@ -22,6 +22,11 @@ extern "C" {
 
 #include <stdint.h>
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+# define __uint32_t_defined
+#endif
+
 #define CODEC_FREQ_24M                      24000000
 #define CODEC_FREQ_26M                      26000000
 #define CODEC_FREQ_24P576M                  24576000

@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-#include "hal_trace_mod.h"
 #include "plat_types.h"
+#include "hal_trace_mod.h"
 
 #if 0
 #define AUDIO_DEBUG

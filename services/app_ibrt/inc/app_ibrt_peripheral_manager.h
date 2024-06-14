@@ -16,7 +16,7 @@
 #ifndef __APP_IBRT_PERIPHERAL_MANAGER_H__
 #define __APP_IBRT_PERIPHERAL_MANAGER_H__
 #include <stdint.h>
-
+#include "plat_types.h"
 /*************************
  *   automate_cmd format
  *   item        len(byte)
