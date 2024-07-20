@@ -17,6 +17,7 @@
 #define __APP_RING_MERGE_H__
 
 #include <stdint.h>
+#include "plat_types.h"
 
 enum APP_RING_MERGE_PLAY_T {
   APP_RING_MERGE_PLAY_ONESHOT = 0,

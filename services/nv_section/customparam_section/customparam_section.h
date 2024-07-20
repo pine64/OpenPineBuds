@@ -17,6 +17,7 @@
 #define __CUSTOMPARAM_SECTION_H__
 #include <stdbool.h>
 #include <stdint.h>
+#include "plat_types.h"
 
 #ifdef __cplusplus
 extern "C" {

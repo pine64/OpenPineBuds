@@ -3,6 +3,7 @@
 #include "stdint.h"
 #include "string.h"
 #include "multi_heap.h"
+#include "plat_types.h"
 
 #ifdef __cplusplus
 extern "C" {

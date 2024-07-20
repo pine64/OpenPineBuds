@@ -20,6 +20,11 @@
 extern "C" {
 #endif
 
+#ifndef __uint32_t_defined
+typedef unsigned int uint32_t;
+# define __uint32_t_defined
+#endif
+
 #define HAL_CMU_VALID_CRYSTAL_FREQ          { 26000000, 24000000, 40000000, 48000000, }
 
 enum HAL_CMU_MOD_ID_T {

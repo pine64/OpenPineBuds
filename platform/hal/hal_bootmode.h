@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 #include "stdint.h"
+#include "plat_types.h"
 
 #define HAL_HW_BOOTMODE_MASK                    (0xF << 0)
 #define HAL_SW_BOOTMODE_MASK                    (0x0FFFFFFF << 4)

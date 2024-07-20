@@ -18,6 +18,7 @@
 
 #include "app_utils.h"
 #include "avdtp_api.h"
+#include "plat_types.h"
 
 #define A2DP_DECODER_HISTORY_SEQ_SAVE          (25)
 //#define A2DP_DECODER_HISTORY_LOCTIME_SAVE      (1)

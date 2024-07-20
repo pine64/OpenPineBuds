@@ -18,6 +18,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "plat_types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -3,6 +3,7 @@
 #include "stdint.h"
 #include "cqueue.h"
 #include "codec_sbc.h"
+#include "plat_types.h"
 
 #ifdef __cplusplus
 extern "C" {
