@@ -126,7 +126,7 @@ void send_enable_disable_anc(void) {
 
 void app_key_single_tap(APP_KEY_STATUS *status, void *param) {
   TRACE(2, "%s event %d", __func__, status->event);
-
+  /*
   if (!app_tws_ibrt_tws_link_connected()) {
     // No other bud paired
     TRACE(0, "Handling %s in single bud mode", __func__);
@@ -143,6 +143,8 @@ void app_key_single_tap(APP_KEY_STATUS *status, void *param) {
       send_play_pause();
     }
   }
+  */
+  send_play_pause();
 }
 void app_key_double_tap(APP_KEY_STATUS *status, void *param) {
   TRACE(2, "%s event %d", __func__, status->event);
@@ -192,15 +194,6 @@ void app_key_quad_tap(APP_KEY_STATUS *status, void *param) {
     // No other bud paired
     TRACE(0, "Handling %s in single bud mode", __func__);
     send_vol_down();
-  } else {
-    // Bud's are working as a pair
-    if (app_tws_is_left_side()) {
-      TRACE(0, "Handling %s as left bud", __func__);
-      // Lefty
-    } else {
-      TRACE(0, "Handling %s as right bud", __func__);
-      // Righty
-    }
   }
 }
 
