@@ -210,7 +210,7 @@ enum AUD_STREAM_ID_T {
     AUD_STREAM_ID_0 = 0,
     AUD_STREAM_ID_1,
     AUD_STREAM_ID_2,
-#ifdef __ANC_ASSIST__
+#ifdef ANC_ASSIST_ENABLED
     AUD_STREAM_ID_3,
 #endif
     AUD_STREAM_ID_NUM,
@@ -235,7 +235,7 @@ enum AUD_IO_PATH_T {
     AUD_INPUT_PATH_NTMIC,
     AUD_INPUT_PATH_ANC_WNR, // Wind Noise Reduction
     AUD_INPUT_PATH_USBAUDIO,
-#ifdef __ANC_ASSIST__
+#ifdef ANC_ASSIST_ENABLED
     AUD_INPUT_PATH_AF_ANC,
 #endif
     // Output path

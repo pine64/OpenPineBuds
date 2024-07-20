@@ -279,6 +279,7 @@ void app_ibrt_ui_perform_user_action(uint8_t *p_buff, uint16_t length) {
   ibrt_ctrl_t *p_ibrt_ctrl = app_tws_ibrt_get_bt_ctrl_ctx();
 
 #ifdef ANC_APP
+  //Doesnt actully get used!!!
   app_anc_cmd_receive_process(p_buff, length);
 #endif
 #ifdef ANC_WNR_ENABLED
@@ -351,6 +352,9 @@ void app_ibrt_ui_perform_user_action(uint8_t *p_buff, uint16_t length) {
   case IBRT_ACTION_LOCAL_VOLDN:
     app_bt_volumedown();
     app_ibrt_sync_volume_info();
+    break;
+  case IBRT_ACTION_ANC_NOTIRY_MASTER_EXCHANGE_COEF:
+    app_anc_key(NULL, NULL);
     break;
   default:
     TRACE(2, "%s unknown user action %d\n", __func__, p_buff[0]);
