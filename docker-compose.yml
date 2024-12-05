@@ -1,4 +1,3 @@
-version: "3"
 services:
   builder:
     stdin_open: true
