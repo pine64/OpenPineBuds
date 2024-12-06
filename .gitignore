@@ -19,7 +19,7 @@
 !.gitattributes
 !.mailmap
 !.github
-!.devcontainer
+!.devcontainer.json
 
 # Backup files
 *~
@@ -102,3 +102,8 @@ Release/
 # *.ini
 log.txt
 log.txt
+
+#CMake
+/build/
+CMakeCache.txt
+/CMakeFiles/

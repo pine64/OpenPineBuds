@@ -1,0 +1,9 @@
+add_subdirectory (anc)
+add_subdirectory (apptester)
+add_subdirectory (audioplayers)
+add_subdirectory (battery)
+add_subdirectory (cmd)
+add_subdirectory (common)
+add_subdirectory (key)
+add_subdirectory (main)
+
