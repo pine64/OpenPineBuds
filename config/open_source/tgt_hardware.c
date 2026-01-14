@@ -230,14 +230,26 @@ HAL_IOMUX_PIN_PULLUP_ENABLE
 #define IIR_COUNTER_FF_R (8)
 #define IIR_COUNTER_FB_L (6)
 #define IIR_COUNTER_FB_R (6)
+// Total gain scaling
+#define TOTAL_GAIN_NOMINAL (512) /*Gain int's are scaled by dividing them by this to get a percentage scale. so 512 is 1x and 1024 ix 2x */
+#define ADC_DAC_GAIN_dB (4) /*Values are in quarter dB, so 4 == 1dB, 8 == 2dB etc */
+#define DEFAULT_ADC_GAIN_qdB (0)
+// It looks like if we set that to 0 there is a different hardware path than if we change it
+// Changing it didnt seem to have a huge impact so putting it to 0 for now
+
+
+/*
+ * Looking at factory dumps, the only difference bud to bud looks to be total_gain
+ * Proposing that they are factory calibrated so that they are all normalised in ANC to some output or reduction target
+ */
 
 static const struct_anc_cfg POSSIBLY_UNUSED
     AncFirCoef_50p7k_mode0 =
         {
             .anc_cfg_ff_l =
                 {
-                    .total_gain = 440,
-                    // .total_gain = 350,
+                    .total_gain = 440 ,
+                    // .total_gain = 350 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -268,12 +280,12 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
             .anc_cfg_ff_r =
                 {
-                    .total_gain = 382,
-                    // .total_gain = 350,
+                    .total_gain = 382 ,
+                    // .total_gain = 350 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -304,7 +316,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
 
             /*
@@ -326,7 +338,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
             .anc_cfg_fb_l =
                 {
-                    .total_gain = 350,
+                    .total_gain = 350 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_L,
@@ -358,11 +370,11 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     */
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
             .anc_cfg_fb_r =
                 {
-                    .total_gain = 350,
+                    .total_gain = 350 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_R,
@@ -393,7 +405,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
 
 };
@@ -403,8 +415,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         {
             .anc_cfg_ff_l =
                 {
-                    .total_gain = 302,
-                    // .total_gain = 312,
+                    .total_gain = 302 ,
+                    // .total_gain = 312 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -432,12 +444,12 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[7].coef_a = {134217728, -268350430, 134132755},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = -24,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
             .anc_cfg_ff_r =
                 {
-                    .total_gain = 382,
-                    // .total_gain = 288,
+                    .total_gain = 382 ,
+                    // .total_gain = 288 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -467,12 +479,12 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
 
             .anc_cfg_fb_l =
                 {
-                    .total_gain = 512,
+                    .total_gain = 512 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_L,
@@ -496,11 +508,11 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {134217728, -268333985, 134116498},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = -24,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
             .anc_cfg_fb_r =
                 {
-                    .total_gain = 511,
+                    .total_gain = 511 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_R,
@@ -531,7 +543,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                             },
                     */
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
 
 #if (AUD_SECTION_STRUCT_VERSION == 2)
@@ -586,7 +598,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
             .anc_cfg_mc_l =
                 {
-                    .total_gain = 1228,
+                    .total_gain = 1228 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = 5,
@@ -610,11 +622,11 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
             .anc_cfg_mc_r =
                 {
-                    .total_gain = 1331,
+                    .total_gain = 1331 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = 5,
@@ -638,7 +650,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                     .dac_gain_offset = 0,
-                    .adc_gain_offset = (2) * 4,
+                    .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
 #endif
 };
@@ -648,8 +660,8 @@ static const struct_anc_cfg POSSIBLY_UNUSED
     AncFirCoef_44p1k_mode0 = {
         .anc_cfg_ff_l =
             {
-                .total_gain = 512,
-                // .total_gain = 312,
+                .total_gain = 512 ,
+                // .total_gain = 312 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = IIR_COUNTER_FF_L,
@@ -752,12 +764,12 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                     },
                 .dac_gain_offset = 0,
-                .adc_gain_offset = -24,
+                .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
         .anc_cfg_ff_r =
             {
-                .total_gain = 382,
-                // .total_gain = 288,
+                .total_gain = 382 ,
+                // .total_gain = 288 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = IIR_COUNTER_FF_R,
@@ -788,7 +800,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                         },
                 */
                 .dac_gain_offset = 0,
-                .adc_gain_offset = (2) * 4,
+                .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
 
         /*
@@ -809,7 +821,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
         .anc_cfg_fb_l =
             {
-                .total_gain = 512,
+                .total_gain = 512 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = IIR_COUNTER_FB_L,
@@ -840,11 +852,11 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                         },
                 */
                 .dac_gain_offset = 0,
-                .adc_gain_offset = -24,
+                .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
         .anc_cfg_fb_r =
             {
-                .total_gain = 511,
+                .total_gain = 511 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = IIR_COUNTER_FB_R,
@@ -875,7 +887,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                         },
                 */
                 .dac_gain_offset = 0,
-                .adc_gain_offset = (2) * 4,
+                .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
 #if (AUD_SECTION_STRUCT_VERSION == 2)
 
@@ -899,7 +911,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
         .anc_cfg_mc_l =
             {
-                .total_gain = 1228,
+                .total_gain = 1228 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = 5,
@@ -923,11 +935,11 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                 .dac_gain_offset = 0,
-                .adc_gain_offset = (2) * 4,
+                .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
         .anc_cfg_mc_r =
             {
-                .total_gain = 1331,
+                .total_gain = 1331 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = 5,
@@ -951,7 +963,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
                 .dac_gain_offset = 0,
-                .adc_gain_offset = (2) * 4,
+                .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
 #endif
 
