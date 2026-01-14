@@ -249,7 +249,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
             .anc_cfg_ff_l =
                 {
                     .total_gain = 440 ,
-                    // .total_gain = 350 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -272,20 +271,13 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_b = {0x8000000, 0, 0},
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
+
                     .dac_gain_offset = 0,
                     .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
             .anc_cfg_ff_r =
                 {
                     .total_gain = 382 ,
-                    // .total_gain = 350 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -308,33 +300,10 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_b = {0x8000000, 0, 0},
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
+
                     .dac_gain_offset = 0,
                     .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
-
-            /*
-
-            Filter1_B=[     27461831,    -54408898,     27001841];
-            Filter1_A=[    134217728,   -216605724,     82606056];
-
-            Filter2_B=[    138294078,   -267600712,    129323227];
-            Filter2_A=[    134217728,   -267600712,    133399577];
-
-            Filter3_B=[    134500015,   -268177932,    133678688];
-            Filter3_A=[    134217728,   -268177932,    133960975];
-
-            Filter4_B=[    133629164,   -264794659,    131257050];
-            Filter4_A=[    134217728,   -264794659,    130668486];
-
-
-            */
 
             .anc_cfg_fb_l =
                 {
@@ -361,13 +330,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_b = {0x8000000, 0, 0},
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
+
 
                     .dac_gain_offset = 0,
                     .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
@@ -397,13 +360,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_b = {0x8000000, 0, 0},
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
+
                     .dac_gain_offset = 0,
                     .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
@@ -416,7 +373,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
             .anc_cfg_ff_l =
                 {
                     .total_gain = 302 ,
-                    // .total_gain = 312 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -449,7 +405,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
             .anc_cfg_ff_r =
                 {
                     .total_gain = 382 ,
-                    // .total_gain = 288 ,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -471,13 +426,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
                     .iir_coef[5].coef_b = {0x8000000, 0, 0},
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
+
                     .dac_gain_offset = 0,
                     .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
@@ -535,66 +484,13 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                     .iir_coef[5].coef_b = {0x8000000, 0, 0},
                     .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                    /*		.fir_bypass_flag=1,
-                            .fir_len = AUD_COEF_LEN,
-                            .fir_coef =
-                            {
-                                32767,
-                            },
-                    */
+
                     .dac_gain_offset = 0,
                     .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
                 },
 
 #if (AUD_SECTION_STRUCT_VERSION == 2)
 
-            /*
-            1.0000000000000000,-1.5858874672928407,0.6974239598044429,0.2832267077115959,-0.3117526885614825,0.1400624733614886,
-            Filter1_B=[      4751756,     -5230342,      2349858];
-            Filter1_A=[     16777216,    -26606777,     11700832];
-
-
-            1.0000000000000000,-1.7971697583202608,0.8159624512785459,0.9540998606028980,-1.7971697583202608,0.8618625906756480,
-            Filter2_B=[     16007139,    -30151505,     14459655];
-            Filter2_A=[     16777216,    -30151505,     13689578];
-
-
-            1.0000000000000000,-1.9694050640918992,0.9705681145972464,0.3200483744622364,-0.6223829329788905,0.3034976090220014,
-            Filter3_B=[      5369521,    -10441853,      5091845];
-            Filter3_A=[     16777216,    -33041134,     16283431];
-
-
-            1.0000000000000000,-1.9921619776276678,0.9921812243512138,0.9968660174712476,-1.9921712178765081,0.9953059666311256,
-            Filter4_B=[     16724636,    -33423087,     16698463];
-            Filter4_A=[     16777216,    -33422932,     16646039];
-            */
-
-            /*
-
-            1.0000000000000000,-1.9868580074509832,0.9869011854430232,1.1834688902733632,-2.3614075958038656,1.1779451659756268,
-            Filter1_B=[     19855313,    -39617845,     19762640];
-            Filter1_A=[     16777216,    -33333946,     16557454];
-
-
-            1.0000000000000000,-1.0329261527674278,0.0418392318218667,0.5812322628931170,-1.0329261527674278,0.4606069689287498,
-            Filter2_B=[      9751459,    -17329625,      7727703];
-            Filter2_A=[     16777216,    -17329625,       701946];
-
-
-            1.0000000000000000,-1.9576081396140492,0.9591185490154677,1.0729914166044796,-1.9576081396140492,0.8861271324109881,
-            Filter3_B=[     18001809,    -32843215,     14866746];
-            Filter3_A=[     16777216,    -32843215,     16091339];
-
-
-            1.0000000000000000,-1.9197071583239940,0.9219883336398085,0.7545642546264146,-1.4392920140632206,0.6870089347526202,
-            Filter4_B=[     12659487,    -24147313,     11526097];
-            Filter4_A=[     16777216,    -32207342,     15468397];
-
-
-            1.0000000000000000,-1.9102108535747602,0.9139876710346515,0.9829076121866517,-1.9102108535747602,0.9310800588479999,
-            Filter5_B=[     16490453,    -32048020,     15620931];
-            Filter5_A=[     16777216,    -32048020,     15334169];
-            */
 
             .anc_cfg_mc_l =
                 {
@@ -661,7 +557,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         .anc_cfg_ff_l =
             {
                 .total_gain = 512 ,
-                // .total_gain = 312 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = IIR_COUNTER_FF_L,
@@ -690,74 +585,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 .iir_coef[7].coef_b = {134236821, -268342876, 134106183},
                 .iir_coef[7].coef_a = {134217728, -268342908, 134125243},
 
-                // .fir_bypass_flag = 0,
-                // .fir_len = AUD_COEF_LEN,
-                // .fir_coef =
-                //     {
-                //         0,      0,     0,      0,     0,      0,     0, 0, 0,
-                //         0,     0,      0,     0,      0,     0,      0, 0, 0,
-                //         0,      0,     0,      0,     0,      0, 0,      0,
-                //         0,      0,     0,      0,     0,      0, 0,      0,
-                //         0,      0,     0,      0,     0,      0, 0,      0,
-                //         0,      0,     0,      0,     0,      0, 0,      0,
-                //         0,      0,     0,      0,     0,      0, 0,      0,
-                //         0,      0,     0,      0,     0,      -6144, 0, 0, 0,
-                //         1,     0,      2048,  -13511, -4060, -9831,  2011, 0,
-                //         2048,  -13511, -4060, -9831,  2011, 0,      0,     0,
-                //         0,     0,      0,     0,      0, 0,      0,     0, 0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      -6144, 512,    0, 0,      6,     -14642,
-                //         1154,  -18440, -2296, -26004, 1140, 0,      2048,
-                //         22833,  -4082, -11362, 2033,  -6957,  2081, 2958,
-                //         -4073, 24038,  1991,  0,      2048,  2958,   -4073,
-                //         17081,  2025,  29362,  2050,  25335,  -4088, 16424,
-                //         2037, 0,      2048,  23654,  -4088, -21431, 2039,
-                //         28309,  1889, 16812,  -3657, 3193,   1783,  0, 2048,
-                //         16812,  -3657, 31503,  1624,  9636,   1982,  -13421,
-                //         -3875, 2188,   1895, 0,      2048,  -13421, -3875,
-                //         11824,  1829,  -11954, 2049, -20607, -4095, -32689,
-                //         2044,  0,      2048,  -20607, -4095, 20894,  2046, 0,
-                //         0,     0,      0,     0,      0, 0,      0,     0, 0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0, -6144, 0,
-                //         0,     0,      1, 0,      2048,  -13511, -4060,
-                //         -9831,  2011,  0,      2048, -13511, -4060, -9831,
-                //         2011,  0,      0,     0,      0, 0,      0,     0, 0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //         0,      0,     0,      0, 0,      0,     0,      0,
-                //     },
                 .reserved_for_drc =
                     {
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -769,7 +596,6 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         .anc_cfg_ff_r =
             {
                 .total_gain = 382 ,
-                // .total_gain = 288 ,
 
                 .iir_bypass_flag = 0,
                 .iir_counter = IIR_COUNTER_FF_R,
@@ -792,32 +618,10 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 .iir_coef[5].coef_b = {0x8000000, 0, 0},
                 .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                /*		.fir_bypass_flag=1,
-                        .fir_len = AUD_COEF_LEN,
-                        .fir_coef =
-                        {
-                            32767,
-                        },
-                */
+
                 .dac_gain_offset = 0,
                 .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
-
-        /*
-
-        Filter1_B=[     26719020,    -52852829,     26204379];
-        Filter1_A=[    134217728,   -210410903,     76474119];
-
-        Filter2_B=[    138909433,   -267471808,    128584365];
-        Filter2_A=[    134217728,   -267471808,    133276071];
-
-        Filter3_B=[    134542733,   -268138827,    133597115];
-        Filter3_A=[    134217728,   -268138827,    133922120];
-
-        Filter4_B=[    133541379,   -264235686,    130815458];
-        Filter4_A=[    134217728,   -264235686,    130139109];
-
-        */
 
         .anc_cfg_fb_l =
             {
@@ -844,13 +648,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 .iir_coef[5].coef_b = {134336846, -268324991, 133988431},
                 .iir_coef[5].coef_a = {134217728, -268324991, 134107550},
 
-                /*		.fir_bypass_flag=1,
-                        .fir_len = AUD_COEF_LEN,
-                        .fir_coef =
-                        {
-                            32767,
-                        },
-                */
+
                 .dac_gain_offset = 0,
                 .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
@@ -879,35 +677,12 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 .iir_coef[5].coef_b = {0x8000000, 0, 0},
                 .iir_coef[5].coef_a = {0x8000000, 0, 0},
 
-                /*		.fir_bypass_flag=1,
-                        .fir_len = AUD_COEF_LEN,
-                        .fir_coef =
-                        {
-                            32767,
-                        },
-                */
+
                 .dac_gain_offset = 0,
                 .adc_gain_offset =DEFAULT_ADC_GAIN_qdB,
             },
 #if (AUD_SECTION_STRUCT_VERSION == 2)
 
-        /*
-
-        Filter1_B=[     19847881,    -39594823,     19747071];
-        Filter1_A=[     16777216,    -33314517,     16538159];
-
-        Filter2_B=[      9442890,    -16603187,      7330251];
-        Filter2_A=[     16777216,    -16603187,        -4075];
-
-        Filter3_B=[     18107639,    -32779315,     14701642];
-        Filter3_A=[     16777216,    -32779315,     16032065];
-
-        Filter4_B=[     12666347,    -24058210,     11437046];
-        Filter4_A=[     16777216,    -32089673,     15357640];
-
-        Filter5_B=[     16466312,    -31915122,     15523589];
-        Filter5_A=[     16777216,    -31915122,     15212684];
-        */
 
         .anc_cfg_mc_l =
             {
@@ -1079,7 +854,7 @@ const IIR_CFG_T *const POSSIBLY_UNUSED
     audio_eq_hw_iir_cfg_list[EQ_HW_IIR_LIST_NUM] = {
         &audio_eq_hw_iir_cfg,
 };
-
+// Dynamic Range compression v1 / v2, to limit output volume spikes so they dont clip
 const DrcConfig audio_drc_cfg = {.knee = 3,
                                  .filter_type = {14, -1},
                                  .band_num = 2,
