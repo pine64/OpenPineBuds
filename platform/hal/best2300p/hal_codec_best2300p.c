@@ -82,6 +82,7 @@
 #define MC_DELAY_COMMON 28
 #endif
 
+// VMIC phasing, 0..7 (3 bits)
 #ifndef CODEC_DIGMIC_PHASE
 #define CODEC_DIGMIC_PHASE 7
 #endif

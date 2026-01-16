@@ -120,8 +120,8 @@ extern const struct HAL_KEY_GPIOKEY_CFG_T cfg_hw_gpio_key_cfg[CFG_HW_GPIOKEY_NUM
 #define CFG_HW_AUD_INPUT_PATH_NUM           3
 extern const struct AUD_IO_PATH_CFG_T cfg_audio_input_path_cfg[CFG_HW_AUD_INPUT_PATH_NUM];
 
+// Sidetone routes some of this mic back into the speaker during calls, so we want this to be the voice mic
 #define CFG_HW_AUD_OUTPUT_PATH_SPEAKER_DEV  (AUD_CHANNEL_MAP_CH0)
-
 #define CFG_HW_AUD_SIDETONE_MIC_DEV         (AUD_CHANNEL_MAP_CH4)
 #define CFG_HW_AUD_SIDETONE_GAIN_DBVAL      (-20)
 
