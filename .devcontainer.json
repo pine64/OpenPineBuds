@@ -1,0 +1,20 @@
+{
+	"name": "OpenPineBuds - Dev Environment",
+	"build": {
+		"dockerfile": "../Dockerfile",
+		"context": ".."
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools"
+			]
+		}
+	},
+	"runArgs": [
+		"--privileged"
+	],
+	"userEnvProbe": "loginInteractiveShell",
+	"remoteUser": "root"
+}
