@@ -18,6 +18,36 @@
 #include "drc.h"
 #include "fir_process.h"
 #include "iir_process.h"
+#include "suggested_anc_gains.h"
+
+/*
+ * ANC gain preset selector for the primary (mode0) ANC path.
+ *
+ * Build-time flags:
+ *   -DCFG_ANC_GAIN_AGGRESSIVE   FF=700  FB=500   (max cancellation)
+ *   -DCFG_ANC_GAIN_CONSERVATIVE FF=300  FB=200   (calibration baseline)
+ *   <no flag>                   FF=500  FB=350   MODERATE — default
+ *
+ * Presets are defined in config/suggested_anc_gains.h and chosen
+ * to pair with the IIR coefficients in ef606_average_coefficients.h.
+ * Aggressive requires stability verification on your unit; moderate
+ * is the out-of-box compromise.
+ *
+ * Only mode0 total_gain is routed through these macros; other ANC
+ * modes (voice-call, wind-noise-reduction, ambient) keep their
+ * tuned values below.
+ */
+#if defined(CFG_ANC_GAIN_AGGRESSIVE)
+#define CFG_ANC_FF_GAIN ANC_FF_GAIN_AGGRESSIVE
+#define CFG_ANC_FB_GAIN ANC_FB_GAIN_AGGRESSIVE
+#elif defined(CFG_ANC_GAIN_CONSERVATIVE)
+#define CFG_ANC_FF_GAIN ANC_FF_GAIN_CONSERVATIVE
+#define CFG_ANC_FB_GAIN ANC_FB_GAIN_CONSERVATIVE
+#else
+#define CFG_ANC_FF_GAIN ANC_FF_GAIN_MODERATE
+#define CFG_ANC_FB_GAIN ANC_FB_GAIN_MODERATE
+#endif
+
 #include "limiter.h"
 #include "spectrum_fix.h"
 
@@ -236,8 +266,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
         {
             .anc_cfg_ff_l =
                 {
-                    .total_gain = 440,
-                    // .total_gain = 350,
+                    .total_gain = CFG_ANC_FF_GAIN,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_L,
@@ -272,8 +301,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 },
             .anc_cfg_ff_r =
                 {
-                    .total_gain = 382,
-                    // .total_gain = 350,
+                    .total_gain = CFG_ANC_FF_GAIN,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FF_R,
@@ -326,7 +354,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
 
             .anc_cfg_fb_l =
                 {
-                    .total_gain = 350,
+                    .total_gain = CFG_ANC_FB_GAIN,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_L,
@@ -362,7 +390,7 @@ static const struct_anc_cfg POSSIBLY_UNUSED
                 },
             .anc_cfg_fb_r =
                 {
-                    .total_gain = 350,
+                    .total_gain = CFG_ANC_FB_GAIN,
 
                     .iir_bypass_flag = 0,
                     .iir_counter = IIR_COUNTER_FB_R,
