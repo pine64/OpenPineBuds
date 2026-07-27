@@ -24,7 +24,7 @@ jobs:
 
       - name: Build images
         id: build
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         with:
           image: ${{ github.repository }}
           platforms: linux/amd64, linux/arm64
