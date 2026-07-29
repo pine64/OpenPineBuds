@@ -1,6 +1,6 @@
 CHIP        ?= best2300p
 
-DEBUG       ?= 1
+DEBUG       ?= 0
 
 MBED        ?= 0
 
@@ -12,7 +12,7 @@ NO_PWRKEY    = 0
 LIBC_ROM    ?= 1
 
 # Extas added by Open source community
-CONNECTED_BLUE_LIGHT = 1 # if set to 1, the blue light will flash when connected
+CONNECTED_BLUE_LIGHT = 0 # if set to 1, the blue light will flash when connected
 # end our extras
 
 export USER_SECURE_BOOT	?= 0
@@ -58,13 +58,13 @@ export BT_DEBUG_TPORTS ?= 0
 TPORTS_KEY_COEXIST ?= 0
 
 export SNIFF_MODE_CHECK ?= 0
-# Merge L+R stream down to mono 
+# Merge L+R stream down to mono
 AUDIO_OUTPUT_MONO ?= 0
 
 AUDIO_OUTPUT_DIFF ?= 0
 
 # Raise mic bias from 2.2V to 3.3V
-DIGMIC_HIGH_VOLT ?= 0 
+DIGMIC_HIGH_VOLT ?= 0
 
 #### ANC DEFINE START ######
 export ANC_APP		    ?= 1
@@ -77,7 +77,7 @@ export ANC_WNR_ENABLED ?= 0
 
 # Music cancel mode. Conflicts with audio resampling
 export AUDIO_ANC_FB_MC ?= 0
-export AUDIO_SECTION_SUPPT ?= 0
+export AUDIO_SECTION_SUPPT ?= 1
 export AUD_SECTION_STRUCT_VERSION ?= 2
 # Music cancel hardware?
 export AUDIO_ANC_FB_MC_HW ?=0
@@ -384,7 +384,7 @@ KBUILD_CPPFLAGS += \
 KBUILD_CPPFLAGS += \
     -DAPP_AUDIO_BUFFER_SIZE=$(AUDIO_BUFFER_SIZE) \
     -DCHARGER_PLUGINOUT_RESET=1 \
- 
+
 
 ifeq ($(APP_ANC_KEY),1)
 KBUILD_CPPFLAGS += -D__BT_ANC_KEY__
