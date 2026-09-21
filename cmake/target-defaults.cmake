@@ -33,4 +33,20 @@ add_compile_definitions(
     CHIP_HAS_I2C=2
     CHIP_HAS_USB
     CHIP_HAS_CP
+    # src/config/common.mk: FULL_APP_PROJECT=1 (core-y includes apps/) ->
+    # NEW_NV_RECORD_ENABLED ?= 1
+    NEW_NV_RECORD_ENABLED
+    # open_source/target.mk: used across several services/ Makefiles as a
+    # whole-directory ccflags-y, not just one file — kept global here.
+    AUDIO_OUTPUT_VOLUME_DEFAULT=12
+    FLASH_SUSPEND
+    # src/config/common.mk: CHIP not in {best1000,best2000} -> version 2
+    AUD_SECTION_STRUCT_VERSION=2
 )
+include_directories(${CMAKE_SOURCE_DIR}/src/services/nv_section/userdata_section)
+# ble_stack isn't built (BLE=0 for open_source — see src/services/Makefile),
+# but several non-BLE files pull small shared headers (e.g. co_math.h) out
+# of its common/api tree regardless, matching Makefiles that -I it even
+# when the rest of ble_stack is never compiled for this target.
+include_directories(${CMAKE_SOURCE_DIR}/src/services/ble_stack/common/api)
+include_directories(${CMAKE_SOURCE_DIR}/src/services/ble_stack/ble_ip)
