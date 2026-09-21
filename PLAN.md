@@ -26,12 +26,31 @@
   `T=open_source DEBUG=1`. **Not yet done:** `AUDIO=<lang>` resource
   selection; only one chip/target pair is modeled (see TODOs in
   `cmake/target-defaults.cmake`).
-- **Phase 3 (bulk-convert remaining Makefiles): started.**
-  `services/norflash_api`, `utils/libc`, `utils/sha256` (enabled) converted
-  and verified. ~85 of the original ~90 directories remain — this is
-  genuinely the bulk of the remaining work; each one needs the same
-  Makefile-archaeology treatment applied so far (see recent commits for the
-  pattern) before it can be trusted.
+- **Phase 3 (bulk-convert remaining Makefiles): substantial progress —
+  the `test/smoke/opb_smoke_test` firmware image now links with ZERO
+  undefined references**, producing a real `.elf`/`.bin`/`.hex` (verified in
+  the same arm-none-eabi-gcc container as Phase 1). Converted since the
+  status above: `platform/drivers/bt`, and ~20 `services/` directories
+  (`nvrecord`, `nv_section/userdata_section`, `osif`, `audioflinger`,
+  `audio_process`, `communication`, `audio_dump`, `hw_dsp`, `cp_accel`,
+  `overlay`, `resources`, `bt_if_enhanced`, `bt_profiles_enhanced`,
+  `ibrt_core`, `ibrt_ui`, plus `utils/libc`/`utils/sha256` enabled).
+  Key discoveries that reduced scope: `ble_stack`/`ble_app`/`bridge`/
+  `ble_profiles` are only in `core-y` when `BLE=1` (open_source has `BLE=0`
+  — none of the RivieraWaves BLE stack is needed for this target, just a
+  couple of shared headers); `bt_if_enhanced`/`bt_profiles_enhanced`/
+  `ibrt_core`/`ibrt_ui` ship **zero source** for this config — BES's BT/IBRT
+  stack is a closed-source prebuilt archive per build configuration, wired
+  as CMake `IMPORTED` targets rather than compiled.
+  **Still deferred**: `services/bt_app` (23 files) and the
+  `services/multimedia` audio-codec subsystem it needs (FDK-AAC — 100+
+  files — SBC, DSP filters/DRC/resample; further complicated by
+  `A2DP_CP_ACCEL=1` splitting some of it onto a companion DSP core, hence
+  the prebuilt `services/multimedia/lib/*_cp_anc.a` alongside real source)
+  — this is numerically-sensitive DSP code that can't be meaningfully
+  verified by compilation alone (no audio hardware in this environment).
+  `app_ibrt`/`app_tws` (written, not yet wired — both need `bt_app`'s
+  headers) and `apps/factory` are the other known remaining gaps.
 - **Phase 4 (Rust) and Phase 5 (CI/Makefile removal): not started.**
 
 ## Original plan
