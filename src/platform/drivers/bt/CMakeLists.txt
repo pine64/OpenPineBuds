@@ -1,5 +1,5 @@
 file (GLOB headers "*.h" "${CHIP}/*.h")
-file (GLOB sources "*.c*" "${CHIP}/*.c")
+file (GLOB sources "*.c*" "${CHIP}/*.c*")
 
 add_library (platform_drivers_bt STATIC ${sources} ${headers})
 target_link_libraries(platform_drivers_bt platform_hal platform_drivers_ana util_cqueue util_heap util_crash_catcher)

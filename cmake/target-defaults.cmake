@@ -42,6 +42,13 @@ add_compile_definitions(
     FLASH_SUSPEND
     # src/config/common.mk: CHIP not in {best1000,best2000} -> version 2
     AUD_SECTION_STRUCT_VERSION=2
+    # common.mk: CHIP not in {best1000,best2000,best2001,best3001,best3003,
+    # best3005} -> AUDIO_OUTPUT_DC_CALIB_ANA ?= 1. `export`ed into
+    # CODEC_CFG_FLAGS, consumed by both platform/hal (hal_codec_${CHIP}.c)
+    # and platform/drivers/ana (analog_${CHIP}.c) — must be global, not
+    # per-file, or the two sides of the DAC-reset weak/strong symbol pair
+    # disagree about which one exists.
+    AUDIO_OUTPUT_DC_CALIB_ANA
     # open_source/target.mk: export A2DP_DECODER_VER := 2 (applied globally
     # via src/Makefile's KBUILD_CPPFLAGS, not per-file)
     A2DP_DECODER_VER=2

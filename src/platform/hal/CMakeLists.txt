@@ -2,7 +2,7 @@
 # hal_iomux_*/hal_codec_*/hal_psc_*/hal_sensor_eng_* live in the per-chip
 # subdirectory, matching platform/drivers/{ana,codec,norflash}.
 file (GLOB headers "*.h" "${CHIP}/*.h")
-file (GLOB sources "*.c*" "${CHIP}/*.c")
+file (GLOB sources "*.c*" "${CHIP}/*.c*")
 
 add_library (platform_hal STATIC ${sources} ${headers})
 target_include_directories(platform_hal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${CHIP})

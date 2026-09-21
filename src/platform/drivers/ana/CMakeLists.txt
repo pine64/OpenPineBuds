@@ -1,5 +1,5 @@
 file (GLOB headers "*.h" "${CHIP}/*.h")
-file (GLOB sources "*.c*" "${CHIP}/*.c")
+file (GLOB sources "*.c*" "${CHIP}/*.c*")
 
 add_library (platform_drivers_ana STATIC ${sources} ${headers})
 target_link_libraries(platform_drivers_ana platform_hal)
@@ -18,7 +18,6 @@ if(CHIP STREQUAL "best2300p")
     set_property(SOURCE ${CHIP}/analog_${CHIP}.c APPEND PROPERTY COMPILE_DEFINITIONS
         VCODEC_VOLT=1.8
         ANC_VMIC_CFG=AUD_VMIC_MAP_VMIC2 # config/open_source/tgt_hardware.h
-        AUDIO_OUTPUT_DC_CALIB_ANA
         LOW_POWER_ADC
     )
     set_property(SOURCE ${CHIP}/pmu_${CHIP}.c APPEND PROPERTY COMPILE_DEFINITIONS
