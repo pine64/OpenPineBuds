@@ -42,6 +42,36 @@ add_compile_definitions(
     FLASH_SUSPEND
     # src/config/common.mk: CHIP not in {best1000,best2000} -> version 2
     AUD_SECTION_STRUCT_VERSION=2
+    # open_source/target.mk: export A2DP_DECODER_VER := 2 (applied globally
+    # via src/Makefile's KBUILD_CPPFLAGS, not per-file)
+    A2DP_DECODER_VER=2
+    SHOW_RSSI # src/Makefile: always added to KBUILD_CPPFLAGS
+    # open_source/target.mk: DEBUG ?= 1
+    DEBUG
+    # common.mk "BT features" (BT_APP=1) block — these translate `?=`-style
+    # Make variables into unconditional -D flags, and were missed because
+    # they were only tracked here as CMake variables for target naming
+    # (e.g. IMPORTED-library filenames), not also passed to the compiler.
+    ENHANCED_STACK       # ENHANCED_STACK=1
+    __2M_PACK__          # BT_RF_PREFER=2M -> -D__$(RF_PREFER)_PACK__
+    _SCO_BTPCM_CHANNEL_  # AUDIO_SCO_BTPCM_CHANNEL=1
+    __A2DP_PLAYER_USE_BT_TRIGGER__ # A2DP_PLAYER_USE_BT_TRIGGER ?= 1
+    A2DP_CP_ACCEL        # A2DP_CP_ACCEL=1
+    SCO_CP_ACCEL         # SCO_CP_ACCEL=1
+    USE_CMSIS_F32_FFT    # SCO_CP_ACCEL=1 implies this too
+    BT_XTAL_SYNC_NEW_METHOD FIXED_BIT_OFFSET_TARGET # BT_XTAL_SYNC=1
+    IBRT_BLOCKED IBRT_NOT_USE __A2DP_AUDIO_SYNC_FIX_DIFF_NOPID__ # IBRT=1
+    TWS_SYSTEM_ENABLED   # derived from IBRT=1
+    SUPPORT_BATTERY_REPORT SUPPORT_HF_INDICATORS SUPPORT_SIRI
+    # common.mk FULL_APP_PROJECT=1 block
+    MEDIA_PLAYER_SUPPORT # VOICE_PROMPT=1 (also matches resources.cpp's own copy)
+    MULTIPOINT_DUAL_SLAVE
+    SPEECH_PROCESS_FRAME_MS=16
+    SPEECH_SCO_FRAME_MS=15
+    # common.mk SPEECH_LIB=1 block (SPEECH_LIB derived true: FULL_APP_PROJECT=1)
+    SPEECH_CODEC_CAPTURE_CHANNEL_NUM=1
+    # apps/main/Makefile: APP_ANC_KEY=1 (open_source/target.mk)
+    __BT_ANC_KEY__
 )
 include_directories(${CMAKE_SOURCE_DIR}/src/services/nv_section/userdata_section)
 # ble_stack isn't built (BLE=0 for open_source — see src/services/Makefile),
@@ -50,3 +80,5 @@ include_directories(${CMAKE_SOURCE_DIR}/src/services/nv_section/userdata_section
 # when the rest of ble_stack is never compiled for this target.
 include_directories(${CMAKE_SOURCE_DIR}/src/services/ble_stack/common/api)
 include_directories(${CMAKE_SOURCE_DIR}/src/services/ble_stack/ble_ip)
+# same story for services/ble_app/app_main/app.h, referenced from bt_app
+include_directories(${CMAKE_SOURCE_DIR}/src/services/ble_app/app_main)
