@@ -1,9 +1,30 @@
-# services/bt_app/Makefile
-# TODO(Phase 3): the Makefile also bakes config/_default_cfg_src_/res/<AUDIO>/
-# assets into *.snd.cpp via a generation step (obj_snd) — audio-prompt
-# resource embedding isn't wired up yet (needs the AUDIO=<lang> selection
-# from PLAN.md's Phase 2 TODOs). Only the app-logic sources are built here.
+# services/bt_app/Makefile: obj_snd := $(wildcard
+# ../../config/_default_cfg_src_/res/$(AUDIO)/*), each entry going through
+# a `%.snd.cpp: %` pattern rule (src/scripts/build.mk) that shells out to
+# src/convert.sh -C, which ffmpeg-transcodes the resource (opus, etc.) to
+# 16kHz mono SBC and xxd-dumps it as a `uint8_t <BASENAME>[]` +
+# `unsigned int <BASENAME>_len` pair — exactly the symbols
+# res_audio_data.h declares extern. Needs ffmpeg + xxd on PATH.
+file(GLOB _opb_res_audio_files "${CMAKE_SOURCE_DIR}/src/config/_default_cfg_src_/res/${OPB_AUDIO_LANGUAGE}/*")
+set(_opb_res_audio_dir ${CMAKE_CURRENT_BINARY_DIR}/res_audio)
+file(MAKE_DIRECTORY ${_opb_res_audio_dir})
+set(_opb_res_audio_sources "")
+foreach(_res_file ${_opb_res_audio_files})
+    get_filename_component(_res_name ${_res_file} NAME)
+    set(_snd_cpp ${_opb_res_audio_dir}/${_res_name}.snd.cpp)
+    add_custom_command(
+        OUTPUT ${_snd_cpp}
+        COMMAND sh ${CMAKE_SOURCE_DIR}/src/convert.sh -C ${_res_file} ${_snd_cpp}
+        WORKING_DIRECTORY ${_opb_res_audio_dir}
+        DEPENDS ${_res_file} ${CMAKE_SOURCE_DIR}/src/convert.sh
+        COMMENT "SND     ${_res_name}"
+        VERBATIM
+    )
+    list(APPEND _opb_res_audio_sources ${_snd_cpp})
+endforeach()
+
 file (GLOB sources "*.c*")
+list(APPEND sources ${_opb_res_audio_sources})
 # app_fp_rfcomm.cpp (Google Fast Pair over classic-BT RFCOMM) references
 # RFCOMM_CHANNEL_FP/BTIF_APP_SPP_SERVER_FP_RFCOMM_ID, which are not defined
 # anywhere in this repository's shipped bt_if_enhanced/bt_profiles_enhanced

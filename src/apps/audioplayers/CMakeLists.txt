@@ -15,6 +15,10 @@ list(REMOVE_ITEM sources
     ${CMAKE_CURRENT_SOURCE_DIR}/voicebtpcmplay.cpp
 )
 
+# Makefile: ifeq ($(AUDIO_QUEUE_SUPPORT),1) CFLAGS_app_audio.o += -D__AUDIO_QUEUE_SUPPORT__
+# (common.mk: AUDIO_QUEUE_SUPPORT ?= 1)
+set_property(SOURCE app_audio.cpp APPEND PROPERTY COMPILE_DEFINITIONS __AUDIO_QUEUE_SUPPORT__)
+
 add_library (apps_audioplayers STATIC ${sources} ${headers})
 target_include_directories(apps_audioplayers PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(apps_audioplayers

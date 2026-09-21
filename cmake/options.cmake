@@ -81,3 +81,14 @@ opb_option(WL_UI ON "\"Wear lock\" in-ear detection UI")
 # per-file defines instead of the hardcoded DIG_DCDC_MODE currently missing
 # there (a known gap — see that file).
 set(POWER_MODE "DIG_DCDC" CACHE STRING "Power-supply mode: LDO, DIG_DCDC, or ANA_DCDC")
+
+# AUDIO (services/bt_app/Makefile: obj_snd := $(wildcard
+# ../../config/_default_cfg_src_/res/$(AUDIO)/*)) selects which voice-prompt
+# resource language directory gets baked into the firmware (see
+# src/config/_default_cfg_src_/res/{en,cn,gs_hw,ring}). Unlike every other
+# target.mk/common.mk variable audited for this port, AUDIO has no `?=`
+# default anywhere in the tree -- it's presumably passed on the `make`
+# command line by whatever produces the real release binaries, which isn't
+# reproducible from what's in this repository. "en" is a reasonable,
+# arbitrary default; override with -DOPB_AUDIO_LANGUAGE=cn etc.
+set(OPB_AUDIO_LANGUAGE "en" CACHE STRING "Voice-prompt resource language directory under src/config/_default_cfg_src_/res/")
