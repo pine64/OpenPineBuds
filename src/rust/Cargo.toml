@@ -1,0 +1,20 @@
+[package]
+name = "openpinebuds_rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "openpinebuds_rs"
+crate-type = ["staticlib"]
+
+[dependencies]
+# default-features = false, features = ["alloc"]: this crate runs on bare
+# metal (no OS), so the "std" feature isn't available; cxx's own default
+# build refuses to compile without picking std/alloc/no_alloc explicitly.
+cxx = { version = "1.0", default-features = false, features = ["alloc"] }
+
+[build-dependencies]
+cxx-build = "1.0"
+
+[profile.release]
+panic = "abort"

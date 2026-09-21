@@ -23,6 +23,7 @@ include(compile-flags)
 include(target-defaults)
 include(options)
 include(image)
+include(rust)
 
 add_subdirectory (src)
 

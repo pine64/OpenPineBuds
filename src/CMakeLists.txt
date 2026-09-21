@@ -14,8 +14,9 @@ include_directories (include/rtos/rtx)
 include_directories (config/${OPB_TARGET_CFG_DIR})
 include_directories (config/_default_cfg_src_)
 
-# TODO(Phase 4): re-enable once cmake/Rust.cmake + src/rust/CMakeLists.txt land
-# add_subdirectory(rust)
+if(OPB_ENABLE_RUST)
+    add_subdirectory(rust)
+endif()
 
 add_subdirectory(apps)
 add_subdirectory(config)
