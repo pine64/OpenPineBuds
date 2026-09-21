@@ -1,0 +1,23 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": { "major": 3, "minor": 19, "patch": 0 },
+    "configurePresets": [
+        {
+            "name": "open_source",
+            "displayName": "open_source (best2300p, DEBUG=1) — matches CI",
+            "description": "Mirrors `make T=open_source DEBUG=1`, the only configuration .github/workflows/build-firmware.yml builds today.",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/open_source",
+            "toolchainFile": "${sourceDir}/cmake/toolchain-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "OPB_TARGET_CFG_DIR": "open_source"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "open_source",
+            "configurePreset": "open_source"
+        }
+    ]
+}
