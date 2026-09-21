@@ -1,14 +1,17 @@
 # apps/audioplayers/a2dp_decoder/Makefile: this is an EXPLICIT obj-y list,
 # not a glob — a2dp_decoder_example.cpp, a2dp_decoder_scalable.cpp (needs
-# A2DP_SCALABLE_ON=1), a2dp_decoder_lhdc.o (A2DP_LHDC_ON=1), and
-# a2dp_decoder_cp.c are never in obj-y for any flag combination this repo
-# documents. open_source/target.mk: A2DP_AAC_ON=1, A2DP_LDAC_ON=1,
-# A2DP_SCALABLE_ON=0, A2DP_LHDC_ON=0.
+# A2DP_SCALABLE_ON=1), and a2dp_decoder_lhdc.o (A2DP_LHDC_ON=1) are never in
+# obj-y for open_source's flag combination. open_source/target.mk:
+# A2DP_AAC_ON=1, A2DP_LDAC_ON=1, A2DP_SCALABLE_ON=0, A2DP_LHDC_ON=0.
+# A2DP_CP_ACCEL=1 (common.mk, applied globally) does add a2dp_decoder_cp.c
+# (the a2dp_cp_* companion-DSP hooks the codec decoders call into) —
+# corrected here after the full firmware link exposed it missing.
 set (sources
     a2dp_decoder.cpp
     a2dp_decoder_sbc.cpp
     a2dp_decoder_aac_lc.cpp
     a2dp_decoder_ldac.cpp
+    a2dp_decoder_cp.c
 )
 file (GLOB headers "*.h")
 
@@ -32,8 +35,10 @@ target_link_libraries(apps_audioplayers_a2dpdecoder
     services_audioflinger
     thirdparty_ldac
     platform_drivers_bt
+    services_cp_accel
 )
 target_include_directories(apps_audioplayers_a2dpdecoder PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/services/cp_accel
     ${CMAKE_SOURCE_DIR}/src/services/app_ai/inc
     ${CMAKE_SOURCE_DIR}/src/services/fs/fat
     ${CMAKE_SOURCE_DIR}/src/services/fs/sd

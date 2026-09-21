@@ -23,7 +23,7 @@ target_include_directories(apps_main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(apps_main platform_hal apps_key apps_common services_bt_if_enhanced
     services_bt_app services_nvrecord services_resources services_overlay services_norflash_api
     services_nv_section_factory services_nv_section_log services_ibrt_core services_ibrt_ui
-    services_app_ibrt services_app_tws apps_pwl apps_audioplayers)
+    services_app_ibrt services_app_tws apps_pwl apps_audioplayers apps_battery)
 target_include_directories(apps_main PRIVATE
     ${CMAKE_SOURCE_DIR}/src/apps/apptester
     ${CMAKE_SOURCE_DIR}/src/utils/cqueue
