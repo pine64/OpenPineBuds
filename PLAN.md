@@ -92,7 +92,47 @@
   happened to touch before now. Needs its own investigation rather than
   a blind per-file flag override; left as a follow-up, same treatment as
   the `app_fp_rfcomm.cpp`/`anc_assist.c` upstream gaps.
-- **Phase 5 (CI/Makefile removal): not started.**
+- **Phase 3 follow-up: the real bootable `open_source.bin` (as opposed to
+  `test/smoke`'s synthetic image) is now wired up** — `platform/main` (the
+  genuine `main.cpp`/`startup_main.S` entry point) and a new top-level
+  `firmware/` target linking it plus `apps_main` and everything not
+  transitively reachable from it, through the same `best1000.lds.S`
+  pipeline already proven by `test/smoke`. Getting here surfaced and fixed
+  several more real, previously-hidden bugs: a chip-subdirectory source
+  glob using `*.c` instead of `*.c*` (silently dropping
+  `bt_drv_reg_op.cpp` and two others in `platform/drivers/bt/best2300p/`
+  — every `bt_drv_reg_op_*()` came back undefined at final-link time, not
+  a prebuilt-blob gap as first suspected); a missing global
+  `AUDIO_OUTPUT_DC_CALIB_ANA` define (only applied to one of the two
+  files that need to agree on it); a missing `__AUDIO_QUEUE_SUPPORT__`
+  per-file define; `apps_battery` never linked into `apps_main`; and
+  `a2dp_decoder_cp.c` wrongly believed to never be in `obj-y` (it is,
+  under `A2DP_CP_ACCEL=1`, which is set globally). Also implemented the
+  voice-prompt audio-resource pipeline (`services/bt_app`'s `obj_snd`)
+  that Phase 2 had deferred: `.opus` files under
+  `config/_default_cfg_src_/res/<lang>/` are transcoded via the
+  repo's own `src/convert.sh` into `.snd.cpp` byte-array sources,
+  gated by a new `OPB_AUDIO_LANGUAGE` cache variable (default `en` —
+  `AUDIO` has no `?=` default anywhere in the Makefiles, so this is a
+  best-guess, overridable choice, not a discovered truth).
+  `cmake/image.cmake`'s `opb_add_firmware_image()` now wraps its link
+  libraries in `-Wl,--start-group`/`--end-group`, since a plain
+  left-to-right static-archive scan isn't guaranteed to resolve symbols
+  across a dependency graph with cycles this deep (already flagged as a
+  TODO from the real Makefile's `--whole-archive` link recipe).
+  **Still blocking a full link:** `CHIP_HAS_CP=1` pulls in support for a
+  companion DSP core (`hal_mcu2cp_*`, and `platform/cmsis/system_cp.c`
+  expecting `__cp_*_sram_*` symbols from a dedicated CP memory region in
+  the linker script) — a second, dual-core image/linker-section concern
+  distinct from anything solved so far, not a simple missing
+  include/link fix. A handful of adjacent subsystems (the voicebtpcm SCO
+  audio path, ANC coefficient-table selection, the status-indication
+  LED/UI service) are also still unresolved and may or may not be
+  related to the same root cause. This is a materially different scope
+  of problem and a reasonable place to pause full-firmware-link work.
+- **Phase 5 (CI/Makefile removal): not started**, and shouldn't be until
+  the real firmware image above actually links — removing the Makefiles
+  before then would leave no way to produce `open_source.bin` at all.
 
 ## Original plan
 
