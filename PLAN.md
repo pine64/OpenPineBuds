@@ -1,5 +1,41 @@
 # Makefile → CMake Migration Plan
 
+## Status (2026-09-21)
+- **Phase 0 (fix broken WIP): done.** Top-level and `src/CMakeLists.txt`
+  configure cleanly again; stray `rust_backend/` removed.
+- **Phase 1 (toolchain + minimal link): done, verified in a real
+  arm-none-eabi-gcc container.** `cmake/toolchain-arm-none-eabi.cmake` +
+  `cmake/compile-flags.cmake` + `cmake/image.cmake` (linker-script
+  preprocessing, build_info.c generation, objcopy) are in place. The full
+  `platform_hal → platform_cmsis → platform_drivers_{ana,codec,norflash} →
+  rtos → utils` chain compiles with correct per-file/per-chip flags, and
+  `test/smoke/` links a real firmware image through the real
+  `best1000.lds.S` down to exactly one missing symbol
+  (`nv_record_flash_flush`, genuinely in unconverted `services/nvrecord`) —
+  confirming the pipeline itself is correct. Several real pre-existing bugs
+  were found and fixed along the way (see commit log): `assembler-with-cpp`
+  leaking onto C sources in `cmsis`/`rtos`, a missing `platform_hal/best2300p/`
+  chip-source glob, a missing `util_cqueue` macro define, missing RTX kernel
+  defines, missing global include paths (`include_directories()` was called
+  after the `add_subdirectory()`s it was meant to affect).
+- **Phase 2 (options + chip/target selection): core deliverable done.**
+  `cmake/options.cmake` provides `opb_option()`/`opb_option_value()` —
+  ~30 KConfig-like feature toggles matching `open_source/target.mk`, each a
+  real CMake `option()` that also becomes a global `-D<NAME>` when ON.
+  `CMakePresets.json` has an `open_source` preset matching CI's
+  `T=open_source DEBUG=1`. **Not yet done:** `AUDIO=<lang>` resource
+  selection; only one chip/target pair is modeled (see TODOs in
+  `cmake/target-defaults.cmake`).
+- **Phase 3 (bulk-convert remaining Makefiles): started.**
+  `services/norflash_api`, `utils/libc`, `utils/sha256` (enabled) converted
+  and verified. ~85 of the original ~90 directories remain — this is
+  genuinely the bulk of the remaining work; each one needs the same
+  Makefile-archaeology treatment applied so far (see recent commits for the
+  pattern) before it can be trusted.
+- **Phase 4 (Rust) and Phase 5 (CI/Makefile removal): not started.**
+
+## Original plan
+
 ## Context
 
 OpenPineBuds builds BES2300P earbud firmware with a Linux-Kbuild-style
