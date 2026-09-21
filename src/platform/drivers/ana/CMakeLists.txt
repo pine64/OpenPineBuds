@@ -13,12 +13,11 @@ target_include_directories(platform_drivers_ana PUBLIC ${CMAKE_CURRENT_SOURCE_DI
 if(CHIP STREQUAL "best2300p")
     # best2300p/Makefile: VCODEC_VOLT ?= 1.7V/1.95V, but target.mk exports
     # VCODEC_VOLT=1.8V first and `?=` doesn't override an exported value.
+    # ANC_APP/ANC_FF_ENABLED/ANC_FB_ENABLED come from cmake/options.cmake
+    # (global when ON) — not repeated here.
     set_property(SOURCE ${CHIP}/analog_${CHIP}.c APPEND PROPERTY COMPILE_DEFINITIONS
         VCODEC_VOLT=1.8
         ANC_VMIC_CFG=AUD_VMIC_MAP_VMIC2 # config/open_source/tgt_hardware.h
-        ANC_APP
-        ANC_FF_ENABLED
-        ANC_FB_ENABLED
         AUDIO_OUTPUT_DC_CALIB_ANA
         LOW_POWER_ADC
     )
@@ -30,6 +29,6 @@ if(CHIP STREQUAL "best2300p")
         HIGH_VCORE    # best2300p/Makefile default
         OSC_26M_X4_AUD2BB # open_source/target.mk
         VCRYSTAL_OFF  # best2300p/Makefile default (CHIP != best1000)
-        ANC_APP
+        DIG_DCDC_MODE # POWER_MODE=DIG_DCDC (cmake/options.cmake default)
     )
 endif()

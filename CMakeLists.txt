@@ -12,6 +12,7 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(compile-flags)
 include(target-defaults)
+include(options)
 include(image)
 
 add_subdirectory (src)
