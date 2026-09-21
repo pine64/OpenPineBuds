@@ -42,16 +42,35 @@
   `ibrt_core`/`ibrt_ui` ship **zero source** for this config — BES's BT/IBRT
   stack is a closed-source prebuilt archive per build configuration, wired
   as CMake `IMPORTED` targets rather than compiled.
-  **Still deferred**: `services/bt_app` (23 files) and the
-  `services/multimedia` audio-codec subsystem it needs (FDK-AAC — 100+
-  files — SBC, DSP filters/DRC/resample; further complicated by
-  `A2DP_CP_ACCEL=1` splitting some of it onto a companion DSP core, hence
-  the prebuilt `services/multimedia/lib/*_cp_anc.a` alongside real source)
-  — this is numerically-sensitive DSP code that can't be meaningfully
-  verified by compilation alone (no audio hardware in this environment).
-  `app_ibrt`/`app_tws` (written, not yet wired — both need `bt_app`'s
-  headers) and `apps/factory` are the other known remaining gaps.
+  **Update: `services/bt_app`, `services/multimedia`, `app_ibrt`, `app_tws`,
+  and the remaining `apps/*` application layer are now converted and the
+  FULL `open_source` target (293/293 ninja targets — every library under
+  `src/`, not just `test/smoke`) compiles and links with ZERO errors** in
+  the same arm-none-eabi-gcc container used for Phase 1 verification.
+  `services/multimedia` (FDK-AAC, SBC, speech, ANC/DRC/resample/limiter
+  filters) turned out to be, like the BT/IBRT stack, a closed-source
+  prebuilt archive (`best2300p_libmultimedia_cp_anc.a`) for this build
+  config — wired as an `IMPORTED` target rather than converted, with only
+  the handful of directories that do ship real `.c` (`anc/cfg`,
+  `filters/cfg`, `resample/coef`) built from source. `thirdparty/audio_codec_lib/ldac`
+  is likewise an `IMPORTED` blob (`ldac_lib.a`). This eliminated the
+  numerically-sensitive-DSP verification concern raised earlier — there is
+  almost no real multimedia *source* to verify, just headers/link wiring.
+  `services/bt_app`, `app_ibrt`, and `app_tws` have a genuine circular
+  static-library dependency (also involving `apps/anc`), which CMake
+  tolerates. One upstream-only source gap was found and excluded rather
+  than patched: `app_fp_rfcomm.cpp` references RFCOMM constants absent from
+  every shipped header (dead code anyway, since `GFPS_ENABLE=0`).
+  `apps/factory` is now wired. Note: only `test/smoke` produces an actual
+  linked `.elf`/`.bin` executable — wiring `apps_main` et al. into a real
+  bootable `open_source` firmware image (matching the Makefile's final
+  link step, real entry point, full linker script) is unstarted and would
+  be a reasonable next milestone, distinct from "everything compiles."
 - **Phase 4 (Rust) and Phase 5 (CI/Makefile removal): not started.**
+  A placeholder `src/rust/{Cargo.toml,src/lib.rs}` crate stub exists
+  (`opb_rust`, plain `staticlib`/`cdylib`, no `#[cxx::bridge]`) but is not
+  wired into the CMake build and predates the cxx-bridge design decision
+  — needs to be redone properly when Phase 4 starts.
 
 ## Original plan
 
