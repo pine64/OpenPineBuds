@@ -4,6 +4,9 @@ set(CHIP_ID_LITERAL best2300p)
 
 add_compile_definitions(CHIP=${CHIP} CHIP_BEST2300P=${CHIP_BEST2300P} CHIP_ID_LITERAL=${CHIP_ID_LITERAL})
 
+# TODO(Phase 4): re-enable once cmake/Rust.cmake + src/rust/CMakeLists.txt land
+# add_subdirectory(rust)
+
 add_subdirectory(apps)
 add_subdirectory(utils)
 add_subdirectory(platform)
