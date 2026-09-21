@@ -66,11 +66,33 @@
   bootable `open_source` firmware image (matching the Makefile's final
   link step, real entry point, full linker script) is unstarted and would
   be a reasonable next milestone, distinct from "everything compiles."
-- **Phase 4 (Rust) and Phase 5 (CI/Makefile removal): not started.**
-  A placeholder `src/rust/{Cargo.toml,src/lib.rs}` crate stub exists
-  (`opb_rust`, plain `staticlib`/`cdylib`, no `#[cxx::bridge]`) but is not
-  wired into the CMake build and predates the cxx-bridge design decision
-  — needs to be redone properly when Phase 4 starts.
+- **Phase 4 (Rust/Corrosion): plumbing done and verified end-to-end.**
+  `cmake/rust.cmake` fetches Corrosion behind a new `OPB_ENABLE_RUST`
+  option (default ON) and pins `Rust_CARGO_TARGET=thumbv7em-none-eabihf`
+  (Corrosion's own triple-guessing has no way to know we want the
+  Cortex-M4F hard-float ABI). `src/rust/` is a single `openpinebuds_rs`
+  crate — one crate for the whole firmware, not one per rewritten module,
+  since `#[global_allocator]`/`#[panic_handler]` must be defined exactly
+  once — using `cxx` for the bridge, matching the `rust-support` branch's
+  chosen design but adapted to genuinely be `#![no_std]` (own allocator
+  wrapping the C heap's `malloc`/`free`, own panic handler; `cxx` needs
+  `default-features = false, features = ["alloc"]`). Verified in the same
+  container as the rest of the build: the crate cross-compiles via
+  `cargo rustc --target thumbv7em-none-eabihf`, produces correct
+  `armv7e-m` object code, and the generated `opb_rust_ping` bridge symbol
+  has the expected C++ mangling — Corrosion is correctly driving cargo
+  with this toolchain's `CC`/`CXX`/`AR` (via `corrosion_set_env_vars`).
+  Both `OPB_ENABLE_RUST=ON` and `=OFF` build the full `open_source`
+  target cleanly. **Not yet done:** an actual C/C++ call site consuming
+  the bridge output — this hit an unrelated pre-existing issue where
+  `cmake/compile-flags.cmake`'s global `-U__INT32_TYPE__`/
+  `-U__UINT32_TYPE__` (needed so newlib's `<stdint.h>` matches
+  `plat_types.h`'s typedefs) breaks libstdc++'s real `<cstdint>`, which
+  `rust/cxx.h` pulls in transitively and no existing file in the tree
+  happened to touch before now. Needs its own investigation rather than
+  a blind per-file flag override; left as a follow-up, same treatment as
+  the `app_fp_rfcomm.cpp`/`anc_assist.c` upstream gaps.
+- **Phase 5 (CI/Makefile removal): not started.**
 
 ## Original plan
 
