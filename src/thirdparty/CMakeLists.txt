@@ -1,0 +1,1 @@
+add_subdirectory(audio_codec_lib)

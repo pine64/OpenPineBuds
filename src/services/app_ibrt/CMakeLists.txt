@@ -9,7 +9,6 @@ target_link_libraries(services_app_ibrt
     platform_drivers_bt
     util_cqueue
     util_heap
-    util_lockcqueue
     util_intersyshci
     services_osif
     services_overlay
@@ -19,6 +18,9 @@ target_link_libraries(services_app_ibrt
     services_bt_if_enhanced
     services_ibrt_core
     services_ibrt_ui
+    services_bt_app
+    services_multimedia
+    apps_anc
 )
 target_include_directories(services_app_ibrt PRIVATE
     ${CMAKE_SOURCE_DIR}/src/services/fs/fat
@@ -31,4 +33,14 @@ target_include_directories(services_app_ibrt PRIVATE
     ${CMAKE_SOURCE_DIR}/src/apps/common
     ${CMAKE_SOURCE_DIR}/src/apps/audioplayers
     ${CMAKE_SOURCE_DIR}/src/apps/audioplayers/a2dp_decoder
+    ${CMAKE_SOURCE_DIR}/src/services/bt_app
+    ${CMAKE_SOURCE_DIR}/src/services/app_ai/inc
+    ${CMAKE_SOURCE_DIR}/src/services/nv_section/factory_section
+    ${CMAKE_SOURCE_DIR}/src/apps/anc/inc
+    ${CMAKE_SOURCE_DIR}/src/services/app_tws/inc
+    ${CMAKE_SOURCE_DIR}/src/apps/battery
+    ${CMAKE_SOURCE_DIR}/src/apps/factory
+    ${CMAKE_SOURCE_DIR}/src/services/ble_app
+    ${CMAKE_SOURCE_DIR}/src/utils/crc16
+    ${CMAKE_SOURCE_DIR}/src/utils/lockcqueue # header-only: not in core-y for open_source
 )

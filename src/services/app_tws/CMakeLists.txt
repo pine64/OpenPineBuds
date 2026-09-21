@@ -10,6 +10,8 @@ target_link_libraries(services_app_tws
     services_ibrt_core
     services_ibrt_ui
     services_app_ibrt
+    services_bt_app
+    services_multimedia
     util_cqueue
 )
 target_include_directories(services_app_tws PRIVATE
@@ -17,4 +19,6 @@ target_include_directories(services_app_tws PRIVATE
     ${CMAKE_SOURCE_DIR}/src/services/bt_app
     ${CMAKE_SOURCE_DIR}/src/services/app_ibrt/inc
     ${CMAKE_SOURCE_DIR}/src/services/app_tws/inc
+    ${CMAKE_SOURCE_DIR}/src/services/app_ai/inc
+    ${CMAKE_SOURCE_DIR}/src/services/ble_app/app_sec
 )

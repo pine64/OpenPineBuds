@@ -14,10 +14,7 @@ add_subdirectory(audioflinger)
 add_subdirectory(communication)
 add_subdirectory(audio_dump)
 add_subdirectory(hw_dsp)
-# TODO(Phase 3): bt_app needs the multimedia audio-codec subsystem
-# (services/multimedia/audio/codec/{fdkaac,sbc,...}, filters/drc/resample) —
-# a large, mostly-unconverted subsystem in its own right. Deferred, along
-# with app_ibrt/app_tws which both need bt_app's headers.
-#add_subdirectory(bt_app)
-#add_subdirectory(app_ibrt)
-#add_subdirectory(app_tws)
+add_subdirectory(multimedia)
+add_subdirectory(bt_app)
+add_subdirectory(app_ibrt)
+add_subdirectory(app_tws)
