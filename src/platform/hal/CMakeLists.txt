@@ -6,11 +6,7 @@ file (GLOB sources "*.c*" "${CHIP}/*.c")
 
 add_library (platform_hal STATIC ${sources} ${headers})
 target_include_directories(platform_hal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${CHIP})
-# TODO(Phase 3): util_crash_catcher needs services/nv_section/log_section
-# (coredump_section.h) which isn't ported yet; hal_trace.c calls into it, so
-# re-add once that's converted (the final image link will otherwise report
-# undefined CrashCatcher references, matching CORE_DUMP=1's core-y addition).
-target_link_libraries(platform_hal platform_drivers_ana platform_cmsis platform_drivers_norflash util_boot_struct)
+target_link_libraries(platform_hal platform_drivers_ana platform_cmsis platform_drivers_norflash util_boot_struct util_crash_catcher services_nv_section_log)
 target_include_directories(platform_hal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(platform_hal PRIVATE
     ${CMAKE_SOURCE_DIR}/platform/drivers/spi_norflash/

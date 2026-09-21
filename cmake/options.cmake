@@ -67,12 +67,7 @@ opb_option(HFP_1_6_ENABLE ON "HFP 1.6 (mSBC wideband speech)")
 # --- Misc (open_source/target.mk) ---
 opb_option(FACTORY_MODE OFF "Factory test mode")
 opb_option(ENGINEER_MODE OFF "Engineering diagnostics mode")
-# open_source/target.mk default is ON, but hal_trace.c's CORE_DUMP path pulls
-# in util_crash_catcher, which platform_hal can't yet link against (needs
-# services/nv_section/log_section — see platform/hal/CMakeLists.txt). Default
-# OFF here until Phase 3 converts that directory, to keep the smoke-test
-# image linking as a regression baseline; flip back to ON once it's ported.
-opb_option(CORE_DUMP OFF "Crash core-dump capture")
+opb_option(CORE_DUMP ON "Crash core-dump capture")
 opb_option(TILE_DATAPATH_ENABLED OFF "Tile find-my-item datapath")
 opb_option(INTERCONNECTION OFF "Huawei Interconnection service")
 opb_option(INTERACTION OFF "Find-My-Device-style interaction service")

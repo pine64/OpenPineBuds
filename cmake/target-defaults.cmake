@@ -26,4 +26,11 @@ add_compile_definitions(
     RTOS
     KERNEL_RTX
     __RTX_CPU_STATISTICS__=1
+    # src/config/common.mk CHIP=best2300p capability table. These gate
+    # whole driver files (e.g. hal_uart.c/hal_i2c.c compile to nothing
+    # without CHIP_HAS_UART/CHIP_HAS_I2C defined), so they're not optional.
+    CHIP_HAS_UART=3
+    CHIP_HAS_I2C=2
+    CHIP_HAS_USB
+    CHIP_HAS_CP
 )
