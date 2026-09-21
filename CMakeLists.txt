@@ -27,6 +27,11 @@ include(rust)
 
 add_subdirectory (src)
 
+option (OPB_BUILD_FIRMWARE_IMAGE "Build the real open_source.bin firmware image (src/build.sh's `make T=open_source`), as opposed to just the smoke-test regression image" ON)
+if(OPB_BUILD_FIRMWARE_IMAGE)
+    add_subdirectory (firmware)
+endif()
+
 option (OPB_BUILD_SMOKE_TEST "Build a minimal firmware image against the ported subset of the tree, to regression-test the toolchain/link/image pipeline independently of unported apps/services" ON)
 if(OPB_BUILD_SMOKE_TEST)
     add_subdirectory (test/smoke)

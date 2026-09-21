@@ -58,7 +58,7 @@ function(opb_preprocess_linker_script out_lds in_lds_s)
     set(${out_lds} ${_out} PARENT_SCOPE)
 endfunction()
 
-function(opb_add_build_info out_var)
+function(opb_add_build_info out_var target_name)
     # src/Makefile: BUILD_INFO_FLAGS / cmd_image_ver -> utils/build_info/build_info.c
     execute_process(
         COMMAND git rev-parse --short HEAD
@@ -76,26 +76,35 @@ function(opb_add_build_info out_var)
         set(${out_var} "" PARENT_SCOPE)
         return()
     endif()
-    add_library(opb_build_info OBJECT ${_src})
-    target_compile_definitions(opb_build_info PRIVATE
+    add_library(${target_name} OBJECT ${_src})
+    target_compile_definitions(${target_name} PRIVATE
         REVISION_INFO=${_git_rev}:${OPB_TARGET_CFG_DIR}
         FLASH_SIZE=${FLASH_SIZE}
         OTA_UPGRADE_CRC_LOG_SIZE=0
         NV_REC_DEV_VER=2
         CHIP=${CHIP}
     )
-    target_include_directories(opb_build_info PRIVATE ${CMAKE_SOURCE_DIR}/src/platform/hal)
-    set(${out_var} $<TARGET_OBJECTS:opb_build_info> PARENT_SCOPE)
+    target_include_directories(${target_name} PRIVATE ${CMAKE_SOURCE_DIR}/src/platform/hal)
+    set(${out_var} $<TARGET_OBJECTS:${target_name}> PARENT_SCOPE)
 endfunction()
 
 function(opb_add_firmware_image name)
     cmake_parse_arguments(FW "" "LDS" "SOURCES;LINK_LIBRARIES" ${ARGN})
 
     opb_preprocess_linker_script(_lds ${FW_LDS})
-    opb_add_build_info(_build_info_obj)
+    opb_add_build_info(_build_info_obj ${name}_build_info)
 
     add_executable(${name} ${FW_SOURCES} ${_build_info_obj})
-    target_link_libraries(${name} ${FW_LINK_LIBRARIES})
+    # src/Makefile's real link recipe wraps IMAGE_INIT/IMAGE_MAIN in
+    # --whole-archive/--no-whole-archive; CMake's own transitive
+    # target_link_libraries ordering is a single left-to-right pass over a
+    # topologically-sorted, de-duplicated list, which isn't guaranteed to
+    # satisfy every symbol once the graph has real cross-archive cycles this
+    # deep (bt_app <-> audioplayers <-> app_ibrt/app_tws, several levels
+    # removed from any single CMake target's direct dependency edges).
+    # --start-group/--end-group makes ld re-scan the whole set until no more
+    # symbols resolve, which is the accepted fix for exactly this.
+    target_link_libraries(${name} -Wl,--start-group ${FW_LINK_LIBRARIES} -Wl,--end-group)
     # LINK_DEPENDS alone only adds an order-only prerequisite; the custom
     # command producing ${_lds} is only wired into the ninja/make graph if
     # something treats it as a source. Add it as a non-compiled source so
