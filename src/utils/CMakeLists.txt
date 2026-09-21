@@ -12,7 +12,12 @@ add_subdirectory(intersyshci)
 add_subdirectory(kfifo)
 add_subdirectory(libc)
 add_subdirectory(list)
-add_subdirectory(lockcqueue)
+# lockcqueue: not in core-y for open_source (services/Makefile never
+# selects it); callers only need its header (included directly via
+# src/utils/lockcqueue path), and lockcqueue.c itself has a genuine
+# upstream header-order bug (includes lockcqueue.h before cmsis_os.h)
+# that only manifests if it's actually compiled.
+#add_subdirectory(lockcqueue)
 add_subdirectory(retention_ram)
 # rom_utils: not built for open_source (ROM_UTILS_ON=0 — see utils/libc/CMakeLists.txt)
 #add_subdirectory(rom_utils)
