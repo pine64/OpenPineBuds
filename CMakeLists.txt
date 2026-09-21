@@ -9,4 +9,14 @@ set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_EXTENSIONS OFF)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+include(compile-flags)
+include(target-defaults)
+include(image)
+
 add_subdirectory (src)
+
+option (OPB_BUILD_SMOKE_TEST "Build a minimal firmware image against the ported subset of the tree, to regression-test the toolchain/link/image pipeline independently of unported apps/services" ON)
+if(OPB_BUILD_SMOKE_TEST)
+    add_subdirectory (test/smoke)
+endif()
