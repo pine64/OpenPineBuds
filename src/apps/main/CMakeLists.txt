@@ -1,6 +1,18 @@
 file (GLOB headers "*.h")
 file (GLOB sources "*.c*")
 
+# apps/main/Makefile: obj-y += ../../config/$(T)/app_status_ind.c if it
+# exists, else ../../config/$(DEFAULT_CFG_SRC)/app_status_ind.c — same
+# override-else-default pattern as config/CMakeLists.txt's tgt_hardware.c
+# (duplicated rather than shared: that function is defined in config/,
+# processed after apps/ by src/CMakeLists.txt's add_subdirectory order).
+set(_status_ind_override ${CMAKE_SOURCE_DIR}/src/config/${OPB_TARGET_CFG_DIR}/app_status_ind.c)
+if(OPB_TARGET_CFG_DIR AND EXISTS ${_status_ind_override})
+    list(APPEND sources ${_status_ind_override})
+else()
+    list(APPEND sources ${CMAKE_SOURCE_DIR}/src/config/_default_cfg_src_/app_status_ind.c)
+endif()
+
 # apps/main/Makefile: CFLAGS_apps.o += $(LDS_SECTION_FLAGS) — the same
 # section-size macros cmake/image.cmake computes for the linker script
 # (OPB_LDS_* there), also needed by the C code that references these

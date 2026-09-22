@@ -18,7 +18,7 @@ set (headers "./inc/anc_wnr.h"
 add_library (apps_anc STATIC ${sources} ${headers})
 target_include_directories(apps_anc PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 target_link_libraries (apps_anc PUBLIC apps_common platform_hal platform_drivers_ana services_multimedia services_audio_process
-    services_audio_dump services_audioflinger services_app_ibrt)
+    services_audio_dump services_audioflinger services_app_ibrt services_multimedia_anc_cfg)
 target_include_directories(apps_anc PRIVATE
     ${CMAKE_SOURCE_DIR}/src/services/multimedia/audio/process/anc/include
     ${CMAKE_SOURCE_DIR}/src/services/multimedia/audio/process/filters/include
