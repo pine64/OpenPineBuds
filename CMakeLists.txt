@@ -2,8 +2,6 @@ cmake_minimum_required (VERSION 3.12)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 project (OpenPineBuds C CXX ASM)
 
-option (OPB_BLUE_CONN_LIGHT "Enable the blue connection light" OFF) # Use BLE to control this.
-
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # src/Makefile: C++_ONLY_FLAGS := -std=gnu++98 -fno-rtti. This isn't just
 # historical — the codebase's TRACE_*() macros pervasively paste a string

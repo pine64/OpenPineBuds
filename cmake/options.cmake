@@ -92,3 +92,14 @@ set(POWER_MODE "DIG_DCDC" CACHE STRING "Power-supply mode: LDO, DIG_DCDC, or ANA
 # reproducible from what's in this repository. "en" is a reasonable,
 # arbitrary default; override with -DOPB_AUDIO_LANGUAGE=cn etc.
 set(OPB_AUDIO_LANGUAGE "en" CACHE STRING "Voice-prompt resource language directory under src/config/_default_cfg_src_/res/")
+
+# CONNECTED_BLUE_LIGHT (common.mk default 0, but open_source/target.mk
+# unconditionally overrides to 1) inverts to a -D flag: common.mk only
+# emits DISABLE_CONNECTED_BLUE_LIGHT when CONNECTED_BLUE_LIGHT=0, so this
+# doesn't fit opb_option()'s straight name-to-define mapping. Replaces an
+# earlier orphaned `option(OPB_BLUE_CONN_LIGHT ... OFF)` in the top-level
+# CMakeLists.txt that was never actually wired to anything.
+option(OPB_CONNECTED_BLUE_LIGHT "Blink the blue LED while connected" ON)
+if(NOT OPB_CONNECTED_BLUE_LIGHT)
+    add_compile_definitions(DISABLE_CONNECTED_BLUE_LIGHT)
+endif()

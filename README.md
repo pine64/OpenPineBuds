@@ -17,7 +17,8 @@ In order to program the buds from inside of the docker container; privileged mod
 
 # Now you will be inside of the container, and your prompt will look akin to "root@ec5410d0a265:/usr/src#"
 
-./build.sh # This will run make and build the output program. If you have weird build errors try running clean.sh or rm -rf'ing the out folder first
+cmake --preset open_source # Configures the build (see CMakePresets.json); only needs to be run once, or after changing a -D option below
+cmake --build --preset open_source # This will build the output program. If you have weird build errors try rm -rf'ing the build/ folder first
 
 # Now that the firmware has finished building; if there are no errors you can load it to your buds
 
@@ -32,8 +33,8 @@ In order to program the buds from inside of the docker container; privileged mod
 # Or do it manually by :
 
 # Assuming that your serial ports are 0 and 1, run the following to commands to program each bud in series.
-bestool write-image out/open_source/open_source.bin --port /dev/ttyACM0
-bestool write-image out/open_source/open_source.bin --port /dev/ttyACM1
+bestool write-image build/open_source/firmware/open_source.bin --port /dev/ttyACM0
+bestool write-image build/open_source/firmware/open_source.bin --port /dev/ttyACM1
 ```
 
 ## Changelist from stock open source SDK
@@ -80,20 +81,23 @@ The default audio alerts are stored in:
 
 If you want to change the alert to a custom sound, just replace the sound file you'd like to change
 (ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.opus`) with your own audio file with the same base
-name (ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) and recompile with `./build.sh`!
+name (ie `config/_default_cfg_src_/res/en/SOUND_POWER_ON.mp3`) and recompile with
+`cmake --build --preset open_source`!
 
 ### Language support
 
-The `AUDIO` environment variable can be set when running the `build.sh` script to load sound files
-for languages other than the default English. For example, running `AUDIO=cn ./build.sh` will load sounds files from
+The `OPB_AUDIO_LANGUAGE` CMake cache variable selects which sound files to load,
+for languages other than the default English. For example, configuring with
+`cmake --preset open_source -DOPB_AUDIO_LANGUAGE=cn` will load sound files from
 `config/_default_cfg_src_/res/cn/` instead of the default `en/` folder.
 
 The current languages supported with sound files are English (`en`) and Chinese (`cn`). Other languages
 (or other sets of custom sounds) may be added by adding all the correct sound files into a
-`config/_default_cfg_src_/res/<custom_sounds>/` directory and building with `AUDIO=<custom_sounds> ./build.sh`.
+`config/_default_cfg_src_/res/<custom_sounds>/` directory and configuring with
+`-DOPB_AUDIO_LANGUAGE=<custom_sounds>`.
 
 ### Blue light when connected
 
 The firmware can be configured to either have a blinking blue light when connected or not.
-Build with `CONNECTED_BLUE_LIGHT=1 ./build.sh` to enable blinking when connected,
-or `CONNECTED_BLUE_LIGHT=0 ./build.sh` (or just the default `./build.sh`) to keep the LEDs off when connected.
+Configure with `-DOPB_CONNECTED_BLUE_LIGHT=ON` (the default) to enable blinking when connected,
+or `-DOPB_CONNECTED_BLUE_LIGHT=OFF` to keep the LEDs off when connected.

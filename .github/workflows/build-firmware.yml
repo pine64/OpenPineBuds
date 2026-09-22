@@ -3,28 +3,14 @@ name: CI
 on: [push, pull_request]
 
 jobs:
+  # The Makefile-based build (`make T=open_source`, driven by src/build.sh)
+  # is gone (see PLAN.md) -- CMake has reached parity and is now the only
+  # build system. dev_env's apt-vintage cmake can't even parse
+  # CMakePresets.json (bullseye ships 3.18, the preset file needs >=3.19)
+  # and there's no ninja at all, so both are fetched as pinned binaries
+  # here rather than changing the Dockerfile every other consumer of that
+  # image also uses.
   build-firmware:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/pine64/openpinebuds:latest-sdk
-    steps:
-      - name: Build the main firmware
-        run: cd /usr/src/ && ./build.sh || cat /usr/src/log.txt
-
-      - name: Archive produced firmware
-        uses: actions/upload-artifact@v4
-        with:
-          path: /usr/src/out/open_source/open_source.bin
-
-  # Parity job for the CMake migration (see PLAN.md): builds the same
-  # open_source target through CMakePresets.json instead of make, and
-  # archives the equivalent output. Additive only -- the make-based job
-  # above remains the source of truth until this has proven itself out.
-  # The dev_env image ships an apt-vintage cmake too old to read
-  # CMakePresets.json (bullseye's is 3.18, the preset file needs >=3.19)
-  # and has no ninja at all, so both are fetched as pinned binaries here
-  # rather than changing the Dockerfile everyone else also uses.
-  build-firmware-cmake:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/pine64/openpinebuds:latest-sdk
@@ -43,6 +29,10 @@ jobs:
           chmod +x /usr/local/bin/ninja
 
       - name: Configure and build via CMake
+        # OPB_ENABLE_RUST=OFF: Rust/Corrosion support (PLAN.md Phase 4) is
+        # optional plumbing, not required for the firmware build, and
+        # skipping it avoids a rustup/cxxbridge-cmd/host-gcc bootstrap on
+        # every CI run.
         run: |
           cd /usr/src
           cmake --preset open_source -DOPB_ENABLE_RUST=OFF
@@ -51,5 +41,4 @@ jobs:
       - name: Archive produced firmware
         uses: actions/upload-artifact@v4
         with:
-          name: open_source-cmake.bin
           path: /usr/src/build/open_source/firmware/open_source.bin
