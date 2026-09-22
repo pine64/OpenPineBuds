@@ -1,6 +1,6 @@
 # Makefile → CMake Migration Plan
 
-## Status (2026-09-21)
+## Status (2026-09-22)
 - **Phase 0 (fix broken WIP): done.** Top-level and `src/CMakeLists.txt`
   configure cleanly again; stray `rust_backend/` removed.
 - **Phase 1 (toolchain + minimal link): done, verified in a real
@@ -61,11 +61,9 @@
   tolerates. One upstream-only source gap was found and excluded rather
   than patched: `app_fp_rfcomm.cpp` references RFCOMM constants absent from
   every shipped header (dead code anyway, since `GFPS_ENABLE=0`).
-  `apps/factory` is now wired. Note: only `test/smoke` produces an actual
-  linked `.elf`/`.bin` executable — wiring `apps_main` et al. into a real
-  bootable `open_source` firmware image (matching the Makefile's final
-  link step, real entry point, full linker script) is unstarted and would
-  be a reasonable next milestone, distinct from "everything compiles."
+  `apps/factory` is now wired. (Wiring `apps_main` et al. into a real
+  bootable `open_source` firmware image, not just `test/smoke`, is
+  covered in the Phase 3 follow-up entry below — it now links.)
 - **Phase 4 (Rust/Corrosion): plumbing done and verified end-to-end.**
   `cmake/rust.cmake` fetches Corrosion behind a new `OPB_ENABLE_RUST`
   option (default ON) and pins `Rust_CARGO_TARGET=thumbv7em-none-eabihf`
@@ -120,19 +118,40 @@
   left-to-right static-archive scan isn't guaranteed to resolve symbols
   across a dependency graph with cycles this deep (already flagged as a
   TODO from the real Makefile's `--whole-archive` link recipe).
-  **Still blocking a full link:** `CHIP_HAS_CP=1` pulls in support for a
-  companion DSP core (`hal_mcu2cp_*`, and `platform/cmsis/system_cp.c`
-  expecting `__cp_*_sram_*` symbols from a dedicated CP memory region in
-  the linker script) — a second, dual-core image/linker-section concern
-  distinct from anything solved so far, not a simple missing
-  include/link fix. A handful of adjacent subsystems (the voicebtpcm SCO
-  audio path, ANC coefficient-table selection, the status-indication
-  LED/UI service) are also still unresolved and may or may not be
-  related to the same root cause. This is a materially different scope
-  of problem and a reasonable place to pause full-firmware-link work.
-- **Phase 5 (CI/Makefile removal): not started**, and shouldn't be until
-  the real firmware image above actually links — removing the Makefiles
-  before then would leave no way to produce `open_source.bin` at all.
+  **`firmware/open_source` now links completely — `arm-none-eabi-nm -u`
+  reports zero undefined references — producing a real
+  `open_source.bin`/`.hex`/`.elf`** (878KB `.bin`, matching the CI
+  artifact `build-firmware.yml` archives). What first looked like a
+  dual-core sub-image problem (`CHIP_HAS_CP`'s `hal_mcu2cp_*` /
+  `system_cp.c`'s `__cp_*_sram_*` symbols) turned out to be two ordinary
+  bugs once actually investigated: `opb_preprocess_linker_script()` was
+  missing `-DCHIP_HAS_CP` and the chip-specific `-I` the real Makefile's
+  `cmd_cpp_lds_S` gets from the global `KBUILD_CPPFLAGS`, so the `#if
+  defined(CHIP_HAS_CP) && (RAMCP_SIZE > 0)` linker-script block silently
+  evaluated false; and `hal_mcu2cp.c` needed to be compiled a *second*
+  time with `-DCP_API` (matching `platform/hal/Makefile`'s explicit
+  two-object-one-source rule), since `services/cp_accel/cp_accel.c` and
+  `system_cp.c` all link into the *same* image, just placed in the
+  RAMCP/RAMCPX memory region via section attributes — there is no
+  separate CP build. Also found and fixed along the way: two more
+  missing global defines (`-O2` — a real correctness gap, since a header
+  relies on the compiler actually inlining a plain `inline` function
+  with no out-of-line definition anywhere in the tree; `CHIP_HAS_SPIPHY`);
+  `platform/cmsis/DSP_Lib` (CMSIS-DSP) never wired up despite its
+  `if(DSP_LIB)` hook already existing; `apps_anc` missing
+  `services_multimedia_anc_cfg`; and a `-Wl,--start-group`/`--end-group`
+  ordering bug (CMake appends the auto-discovered transitive dependency
+  graph as a flat tail *after* an explicit `target_link_libraries()`
+  call, landing outside hand-placed group markers no matter where in the
+  call they sit — fixed by making the firmware target's `LINK_LIBRARIES`
+  the complete, already-flattened set rather than relying on
+  auto-discovery inside the group).
+- **Phase 5 (CI/Makefile removal): ready to start.** The real firmware
+  image now links, so CMake has reached functional parity for the
+  `open_source` target — a CI job building via `cmake --preset
+  open_source` alongside (not yet replacing) the existing Make-based job
+  is the natural next step, followed by Makefile removal once that
+  parity job has run clean for a while.
 
 ## Original plan
 
