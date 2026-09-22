@@ -49,6 +49,20 @@ add_compile_definitions(
     # per-file, or the two sides of the DAC-reset weak/strong symbol pair
     # disagree about which one exists.
     AUDIO_OUTPUT_DC_CALIB_ANA
+    # common.mk: CHIP_HAS_SCO_DMA_SNAPSHOT=1 for best2300p -> SCO_DMA_SNAPSHOT
+    # ?= 1 -> KBUILD_CPPFLAGS += -DSCO_DMA_SNAPSHOT (global). Without this,
+    # services/bt_app/app_bt_stream.cpp compiles its #else (non-snapshot)
+    # branches, which call functions only apps/audioplayers/voicebtpcmplay.cpp
+    # defines — correctly excluded from the build in favour of
+    # voicebtpcmplay_sco_dma_snapshot.cpp, whose functions the #if
+    # defined(SCO_DMA_SNAPSHOT) branches actually call.
+    SCO_DMA_SNAPSHOT
+    # common.mk: CHIP_HAS_SPIPHY=1 for best2300p. Needed by both
+    # platform/hal/hal_phyif.c (whole file is `#ifdef CHIP_HAS_SPIPHY`) and
+    # platform/drivers/ana's usbphy_${CHIP}.c/pmu_${CHIP}.c — global rather
+    # than per-file so all three agree on whether usbphy_ldo_config() and
+    # its hal_phyif_* callees exist.
+    CHIP_HAS_SPIPHY
     # open_source/target.mk: export A2DP_DECODER_VER := 2 (applied globally
     # via src/Makefile's KBUILD_CPPFLAGS, not per-file)
     A2DP_DECODER_VER=2

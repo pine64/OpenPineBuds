@@ -4,6 +4,17 @@
 # option). Chip- and target-specific defines live in cmake/chips/*.cmake and
 # cmake/targets/*.cmake (Phase 2), not here.
 
+# src/config/common.mk: KBUILD_CFLAGS += -O2 unconditionally (OPT_LEVEL
+# override only exists for CHIP=best1400). Not just a size/speed nicety:
+# some shipped headers (e.g. services/multimedia/speech/inc/speech_utils.h)
+# declare plain `inline` (not `static inline`) functions with no matching
+# out-of-line definition anywhere in the tree, relying on the compiler
+# actually inlining every call under -O2 — without an explicit optimization
+# flag CMake compiles at the compiler's own default (effectively -O0),
+# which doesn't inline them, producing real undefined-reference link
+# errors for functions that "exist" only as unemitted inline bodies.
+add_compile_options(-O2)
+
 # src/Makefile: KBUILD_CFLAGS
 add_compile_options(
     -fno-common
