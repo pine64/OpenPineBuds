@@ -47,7 +47,18 @@ function(opb_preprocess_linker_script out_lds in_lds_s)
             -DFACTORY_SECTION_SIZE=${OPB_LDS_FACTORY_SECTION_SIZE}
             -DOTA_CODE_OFFSET=${OPB_LDS_OTA_CODE_OFFSET}
             -DCHIP_BEST2300P=${CHIP_BEST2300P} # TODO(Phase 2): parameterize per-chip
+            # src/Makefile's real cmd_cpp_lds_S reuses the full global
+            # KBUILD_CPPFLAGS (every -D/-I the rest of the build gets), not
+            # a hand-picked subset; CHIP_HAS_CP and the chip-specific -I are
+            # the two pieces this needed once RAMCP/RAMCPX (CP companion-DSP
+            # memory regions, gated `#if defined(CHIP_HAS_CP) &&
+            # (RAMCP_SIZE > 0)`) turned out to silently vanish from the
+            # preprocessed .lds without them — plat_addr_map.h's computed
+            # #include of plat_addr_map_${CHIP}.h (where RAMCP_SIZE is
+            # defined) wasn't even resolving.
+            -DCHIP_HAS_CP
             -I${CMAKE_SOURCE_DIR}/src/platform/hal
+            -I${CMAKE_SOURCE_DIR}/src/platform/hal/${CHIP}
             -P -C -E -x c
             -o ${_out}
             ${in_lds_s}
@@ -102,8 +113,27 @@ function(opb_add_firmware_image name)
     # satisfy every symbol once the graph has real cross-archive cycles this
     # deep (bt_app <-> audioplayers <-> app_ibrt/app_tws, several levels
     # removed from any single CMake target's direct dependency edges).
-    # --start-group/--end-group makes ld re-scan the whole set until no more
-    # symbols resolve, which is the accepted fix for exactly this.
+    #
+    # Two things that DON'T work here, both tried and reverted:
+    #  - A hand-written "-Wl,--start-group ... -Wl,--end-group" wrapped
+    #    around just FW_LINK_LIBRARIES: CMake appends the rest of the
+    #    transitively-discovered graph (everything pulled in indirectly via
+    #    platform_main/apps_main's own PUBLIC deps) as a flat tail AFTER
+    #    the whole target_link_libraries() call, landing outside the group
+    #    markers entirely, no matter where within one call they're placed.
+    #  - $<LINK_GROUP:RESCAN,...> (CMake >= 3.24), the native mechanism for
+    #    this exact case: it refuses to configure at all once the same
+    #    libraries also appear (transitively) outside the group from
+    #    ANOTHER target in the same build (test/smoke's LINK_LIBRARIES
+    #    overlaps this set heavily), reporting a "strongly connected
+    #    component" cycle through the group boundary.
+    #
+    # So: rely on FW_LINK_LIBRARIES being the complete, already-flattened
+    # dependency set (verified by inspecting the actual failing link
+    # command and copying every library CMake was auto-appending), wrapped
+    # in start-group/end-group as plain target names. Since nothing is left
+    # for CMake to discover and append afterward, the group markers end up
+    # legitimately bracketing everything.
     target_link_libraries(${name} -Wl,--start-group ${FW_LINK_LIBRARIES} -Wl,--end-group)
     # LINK_DEPENDS alone only adds an order-only prerequisite; the custom
     # command producing ${_lds} is only wired into the ninja/make graph if
