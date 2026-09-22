@@ -30,11 +30,16 @@ endif()
 
 add_compile_definitions(USAGE_FAULT=1 BUS_FAULT=1 MEM_FAULT=1)
 
+# common.mk: export DSP_LIB ?= 1 (unconditional default)
+set(DSP_LIB 1)
 if(DSP_LIB)
     add_subdirectory(DSP_Lib)
 endif(DSP_LIB)
 
 add_library (platform_cmsis STATIC ${sources} ${headers})
+if(DSP_LIB)
+    target_link_libraries(platform_cmsis platform_cmsis_dsp)
+endif()
 file (GLOB asm_sources "ca/*.S" "*.S")
 if(asm_sources)
     set_property(SOURCE ${asm_sources} APPEND PROPERTY COMPILE_OPTIONS "-x" "assembler-with-cpp")
