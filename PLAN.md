@@ -148,10 +148,47 @@
   auto-discovery inside the group).
 - **Phase 5 (CI/Makefile removal): ready to start.** The real firmware
   image now links, so CMake has reached functional parity for the
-  `open_source` target — a CI job building via `cmake --preset
-  open_source` alongside (not yet replacing) the existing Make-based job
-  is the natural next step, followed by Makefile removal once that
-  parity job has run clean for a while.
+  `open_source` target — **Phase 5 is done.** Added a CI job
+  (`.github/workflows/build-firmware.yml`) building via `cmake --preset
+  open_source`, verified end to end in a fresh container from the real
+  published `ghcr.io/pine64/openpinebuds:latest-sdk` image (401/401
+  targets, real `open_source.bin` produced). Then removed all 121
+  Makefiles under `src/`, the Kbuild scaffolding they depended on
+  (`src/scripts/{build,include,extrawarn,lib,clean,submods,
+  submods_init}.mk`), and `src/build.sh`, and replaced the old
+  Make-based CI job with the CMake one — kept `src/scripts/link/`
+  (linker scripts) and `src/convert.sh` (voice-prompt resource
+  transcoding), both still used directly by the CMake build. Verified
+  with a full clean rebuild (fresh configure, `rm -rf build/`) with
+  every Makefile physically absent from disk: 407/407 targets, zero
+  undefined references. Also fixed an orphaned, never-wired
+  `OPB_BLUE_CONN_LIGHT` option found while touching this area (dating
+  to the original pre-migration WIP tree) — moved into
+  `cmake/options.cmake` as `OPB_CONNECTED_BLUE_LIGHT`, correctly wired
+  to the real `DISABLE_CONNECTED_BLUE_LIGHT` inverted-flag semantics,
+  default `ON` matching `open_source/target.mk`.
+
+## Remaining known gaps (not blocking, for future work)
+- **Rust bridge → real call site**: Phase 4's Corrosion/cxx-bridge
+  plumbing is proven (crate cross-compiles, correct object code,
+  correctly-mangled symbols) but nothing in the firmware actually calls
+  into it yet — blocked on `rust/cxx.h` pulling in libstdc++'s real
+  `<cstdint>`, which conflicts with the global
+  `-U__INT32_TYPE__`/`-U__UINT32_TYPE__` hack `cmake/compile-flags.cmake`
+  needs for newlib/`plat_types.h` agreement. Needs its own investigation.
+- **`AUDIO_QUEUE_SUPPORT`/`SCO_DMA_SNAPSHOT`/etc.-style per-target
+  variables** are currently hardcoded to `open_source`'s real values
+  rather than derived from a chip/target selection file
+  (`cmake/target-defaults.cmake`'s long-standing TODOs) — fine for a
+  single-target port, needs revisiting if a second target is ever added.
+- **`OPB_AUDIO_LANGUAGE` default (`en`)** is a best guess, not a
+  discovered truth — `AUDIO` has no `?=` default anywhere in the
+  Makefiles, so whatever the real release process passes on the command
+  line is undocumented in this repository.
+- **Known upstream-only gaps**, excluded rather than patched (see
+  commit log for each): `app_fp_rfcomm.cpp` (undefined GFPS RFCOMM
+  constants, dead code since `GFPS_ENABLE=0`); `apps/anc/src/anc_assist.c`
+  (only relevant when `ANC_ASSIST_ENABLED`, off by default).
 
 ## Original plan
 
